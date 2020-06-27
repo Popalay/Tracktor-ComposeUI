@@ -2,6 +2,7 @@ package com.popalay.tracktor
 
 import androidx.compose.Composable
 import androidx.ui.tooling.preview.Preview
+import com.popalay.tracktor.create.CreateTrackedValue
 
 @Preview("Light CreateTrackedValue")
 @Composable
@@ -16,21 +17,5 @@ fun previewCreateTrackedValueLight() {
 fun previewCreateTrackedValueDark() {
     ThemedPreview(isDarkTheme = true) {
         CreateTrackedValue()
-    }
-}
-
-@Preview("Light DropDownItem")
-@Composable
-fun previewDropDownItemLight() {
-    ThemedPreview {
-        DropDownItem("Item") {}
-    }
-}
-
-@Preview("Dark DropDownItem")
-@Composable
-fun previewDropDownItemDark() {
-    ThemedPreview(isDarkTheme = true) {
-        DropDownItem("Item") {}
     }
 }
