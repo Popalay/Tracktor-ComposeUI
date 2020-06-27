@@ -10,7 +10,14 @@ import androidx.ui.foundation.drawBackground
 import androidx.ui.foundation.shape.corner.CornerSize
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.HorizontalGradient
-import androidx.ui.layout.*
+import androidx.ui.layout.Column
+import androidx.ui.layout.Row
+import androidx.ui.layout.Spacer
+import androidx.ui.layout.fillMaxSize
+import androidx.ui.layout.fillMaxWidth
+import androidx.ui.layout.height
+import androidx.ui.layout.padding
+import androidx.ui.layout.width
 import androidx.ui.material.AlertDialog
 import androidx.ui.material.Card
 import androidx.ui.material.FilledTextField

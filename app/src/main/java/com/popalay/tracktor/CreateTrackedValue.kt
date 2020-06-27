@@ -8,8 +8,19 @@ import androidx.ui.foundation.Border
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.clickable
 import androidx.ui.foundation.shape.corner.CornerSize
-import androidx.ui.layout.*
-import androidx.ui.material.*
+import androidx.ui.layout.Column
+import androidx.ui.layout.Row
+import androidx.ui.layout.Spacer
+import androidx.ui.layout.fillMaxWidth
+import androidx.ui.layout.height
+import androidx.ui.layout.padding
+import androidx.ui.layout.preferredSizeIn
+import androidx.ui.layout.width
+import androidx.ui.material.Button
+import androidx.ui.material.Card
+import androidx.ui.material.DropdownMenu
+import androidx.ui.material.FilledTextField
+import androidx.ui.material.MaterialTheme
 import androidx.ui.material.ripple.ripple
 import androidx.ui.text.style.TextAlign
 import androidx.ui.tooling.preview.Preview
@@ -54,48 +65,7 @@ fun CreateTrackedValue(onSubmit: (TrackedValue) -> Unit = {}) {
         ) {
             Text(text = "Create new tracked item")
             Spacer(modifier = Modifier.height(8.dp))
-            Row {
-                FilledTextField(
-                    value = currentState.title,
-                    onValueChange = {
-                        updateState(currentState.copy(title = it))
-                    },
-                    modifier = Modifier.weight(3F),
-                    label = { Text(text = "Title") }
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                DropdownMenu(
-                    toggle = {
-                        Text(
-                            text = currentState.unit.displayName.ifBlank { "Choose Unit" },
-                            textAlign = TextAlign.Center
-                        )
-                    },
-                    toggleModifier = Modifier
-                        .width(96.dp)
-                        .fillMaxWidth()
-                        .gravity(Alignment.CenterVertically)
-                        .ripple()
-                        .clickable(onClick = {
-                            updateState(currentState.copy(dropdownExpanded = !currentState.dropdownExpanded))
-                        }),
-                    expanded = currentState.dropdownExpanded,
-                    onDismissRequest = {
-                        updateState(currentState.copy(dropdownExpanded = false))
-                    }
-                ) {
-                    TrackableUnit.values().filter { it.displayName.isNotBlank() }.forEach {
-                        DropDownItem(it.displayName) {
-                            updateState(
-                                currentState.copy(
-                                    unit = it,
-                                    dropdownExpanded = !currentState.dropdownExpanded
-                                )
-                            )
-                        }
-                    }
-                }
-            }
+            CreateTrackedValueBody(currentState, updateState)
             Spacer(modifier = Modifier.height(8.dp))
             Button(
                 modifier = Modifier.gravity(Alignment.End),
@@ -111,6 +81,55 @@ fun CreateTrackedValue(onSubmit: (TrackedValue) -> Unit = {}) {
                 }
             ) {
                 Text(text = "Submit")
+            }
+        }
+    }
+}
+
+@Composable
+fun CreateTrackedValueBody(
+    currentState: CreateTrackedValueViewState,
+    updateState: (CreateTrackedValueViewState) -> Unit
+) {
+    Row {
+        FilledTextField(
+            value = currentState.title,
+            onValueChange = {
+                updateState(currentState.copy(title = it))
+            },
+            modifier = Modifier.weight(3F),
+            label = { Text(text = "Title") }
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        DropdownMenu(
+            toggle = {
+                Text(
+                    text = currentState.unit.displayName.ifBlank { "Choose Unit" },
+                    textAlign = TextAlign.Center
+                )
+            },
+            toggleModifier = Modifier
+                .width(96.dp)
+                .fillMaxWidth()
+                .gravity(Alignment.CenterVertically)
+                .ripple()
+                .clickable(onClick = {
+                    updateState(currentState.copy(dropdownExpanded = !currentState.dropdownExpanded))
+                }),
+            expanded = currentState.dropdownExpanded,
+            onDismissRequest = {
+                updateState(currentState.copy(dropdownExpanded = false))
+            }
+        ) {
+            TrackableUnit.values().filter { it.displayName.isNotBlank() }.forEach {
+                DropDownItem(it.displayName) {
+                    updateState(
+                        currentState.copy(
+                            unit = it,
+                            dropdownExpanded = !currentState.dropdownExpanded
+                        )
+                    )
+                }
             }
         }
     }
