@@ -2,10 +2,12 @@ package com.popalay.tracktor.list
 
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.TrackedValue
+import com.popalay.tracktor.model.ValueRecord
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow
 import com.squareup.workflow.action
+import java.time.LocalDateTime
 
 object ListWorkflow : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWorkflow.Rendering>() {
 
@@ -31,7 +33,7 @@ object ListWorkflow : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWo
         nextState = with(nextState) {
             copy(
                 items = items.toMutableList().apply {
-                    this[indexOf(item)] = item.copy(value = newRecord)
+                    this[indexOf(item)] = item.copy(records = item.records.plus(ValueRecord(newRecord, LocalDateTime.now())))
                 }
             )
         }
