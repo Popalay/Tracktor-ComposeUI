@@ -1,8 +1,8 @@
 package com.popalay.tracktor
 
 import androidx.compose.Composable
-import com.popalay.tracktor.list.ListBinding
-import com.popalay.tracktor.list.ListWorkflow
+import com.popalay.tracktor.ui.list.ListBinding
+import com.popalay.tracktor.ui.list.ListWorkflow
 import com.squareup.workflow.diagnostic.SimpleLoggingDiagnosticListener
 import com.squareup.workflow.ui.ViewEnvironment
 import com.squareup.workflow.ui.ViewRegistry

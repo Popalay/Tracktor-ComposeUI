@@ -1,4 +1,4 @@
-package com.popalay.tracktor.list
+package com.popalay.tracktor.ui.list
 
 import androidx.compose.Composable
 import androidx.compose.state
@@ -23,12 +23,15 @@ import androidx.ui.unit.dp
 import androidx.ui.unit.toPx
 import com.popalay.tracktor.ThemedPreview
 import com.popalay.tracktor.model.TrackableUnit
-import com.popalay.tracktor.model.TrackedValue
+import com.popalay.tracktor.model.Tracker
+import com.popalay.tracktor.model.TrackerWithRecords
+import com.popalay.tracktor.model.ValueRecord
+import java.time.LocalDateTime
 
 @Composable
 fun TrackedValueValueListItem(
-    item: TrackedValue,
-    onNewRecordSubmitted: (TrackedValue, Double) -> Unit
+    item: TrackerWithRecords,
+    onEvent: (ListWorkflow.Event) -> Unit
 ) {
     val isDialogShowing = state { false }
 
@@ -44,7 +47,7 @@ fun TrackedValueValueListItem(
         if (isDialogShowing.value) {
             UpdateTrackedValueDialog(
                 onCloseRequest = { isDialogShowing.value = false },
-                onSave = { onNewRecordSubmitted(item, it) }
+                onSave = { onEvent(ListWorkflow.Event.NewRecordSubmitted(item.tracker, it)) }
             )
         }
         WithConstraints {
@@ -56,7 +59,7 @@ fun TrackedValueValueListItem(
                     })
                     .drawBackground(
                         HorizontalGradient(
-                            gradients.getValue(item.unit),
+                            gradients.getValue(item.tracker.unit),
                             startX = 0F,
                             endX = constraints.maxWidth.toPx().value
                         )
@@ -64,7 +67,7 @@ fun TrackedValueValueListItem(
                     .padding(16.dp)
 
             ) {
-                Text(item.title)
+                Text(item.tracker.title)
                 Spacer(modifier = Modifier.weight(1F))
                 Text(item.displayValue)
             }
@@ -79,12 +82,11 @@ fun TrackedValueValueListItemPreview() {
         Column {
             TrackableUnit.values().drop(1).forEach {
                 TrackedValueValueListItem(
-                    TrackedValue(
-                        "title",
-                        42.3,
-                        it
+                    TrackerWithRecords(
+                        Tracker("trackerId", "title", it),
+                        listOf(ValueRecord("valueId", "trackerId", 42.3, LocalDateTime.now()))
                     )
-                ) { _, _ -> }
+                ) {}
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }

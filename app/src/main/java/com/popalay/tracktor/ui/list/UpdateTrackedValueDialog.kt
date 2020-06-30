@@ -1,4 +1,4 @@
-package com.popalay.tracktor.list
+package com.popalay.tracktor.ui.list
 
 import androidx.compose.Composable
 import androidx.compose.state

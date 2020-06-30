@@ -1,4 +1,4 @@
-package com.popalay.tracktor.create
+package com.popalay.tracktor.ui.create
 
 import androidx.compose.Composable
 import androidx.compose.state
@@ -24,7 +24,9 @@ import androidx.ui.text.style.TextAlign
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
 import com.popalay.tracktor.model.TrackableUnit
-import com.popalay.tracktor.model.TrackedValue
+import com.popalay.tracktor.model.Tracker
+import com.popalay.tracktor.ui.list.ListWorkflow
+import java.util.UUID
 
 data class CreateTrackedValueViewState(
     val title: String = "",
@@ -36,7 +38,7 @@ data class CreateTrackedValueViewState(
 
 @Preview
 @Composable
-fun CreateTrackedValue(onSubmit: (TrackedValue) -> Unit = {}) {
+fun CreateTrackedValue(onEvent: (ListWorkflow.Event) -> Unit = {}) {
     val (currentState, updateState) = state { CreateTrackedValueViewState() }
 
     Card(
@@ -58,12 +60,12 @@ fun CreateTrackedValue(onSubmit: (TrackedValue) -> Unit = {}) {
                 modifier = Modifier.gravity(Alignment.End),
                 enabled = currentState.isSubmitEnabled,
                 onClick = {
-                    val result = TrackedValue(
+                    val result = Tracker(
+                        id = UUID.randomUUID().toString(),
                         title = currentState.title,
-                        value = 0.0,
                         unit = currentState.unit
                     )
-                    onSubmit(result)
+                    onEvent(ListWorkflow.Event.NewTrackerSubmitted(result))
                     updateState(CreateTrackedValueViewState())
                 }
             ) {

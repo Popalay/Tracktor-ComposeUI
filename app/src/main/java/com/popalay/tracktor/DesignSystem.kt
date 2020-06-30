@@ -2,7 +2,7 @@ package com.popalay.tracktor
 
 import androidx.compose.Composable
 import androidx.ui.tooling.preview.Preview
-import com.popalay.tracktor.create.CreateTrackedValue
+import com.popalay.tracktor.ui.create.CreateTrackedValue
 
 @Preview("Light CreateTrackedValue")
 @Composable
