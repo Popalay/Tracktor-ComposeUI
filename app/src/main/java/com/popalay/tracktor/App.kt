@@ -1,25 +1,23 @@
 package com.popalay.tracktor
 
 import androidx.compose.Composable
-import androidx.ui.foundation.Text
-import androidx.ui.material.Scaffold
-import androidx.ui.material.TopAppBar
-import com.github.zsoltk.compose.router.Router
-import com.popalay.tracktor.list.ListScreen
+import com.popalay.tracktor.list.ListBinding
+import com.popalay.tracktor.list.ListWorkflow
+import com.squareup.workflow.diagnostic.SimpleLoggingDiagnosticListener
+import com.squareup.workflow.ui.ViewEnvironment
+import com.squareup.workflow.ui.ViewRegistry
+import com.squareup.workflow.ui.compose.WorkflowContainer
+
+private val viewRegistry = ViewRegistry(ListBinding)
+private val viewEnvironment = ViewEnvironment(viewRegistry)
 
 @Composable
-fun App(defaultRouting: Routing) {
-    Scaffold(
-        topAppBar = {
-            TopAppBar(
-                title = { Text("Tracktor") }
-            )
-        }
-    ) {
-        Router("HomeScreen", defaultRouting) { backStack ->
-            when (val routing = backStack.last()) {
-                is Routing.ListDestination -> ListScreen()
-            }
-        }
+fun App() {
+    AppTheme(isDarkTheme = true) {
+        WorkflowContainer(
+            workflow = ListWorkflow,
+            viewEnvironment = viewEnvironment,
+            diagnosticListener = SimpleLoggingDiagnosticListener()
+        )
     }
 }

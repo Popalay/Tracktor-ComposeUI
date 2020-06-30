@@ -26,9 +26,11 @@ import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.TrackedValue
 
 @Composable
-fun TrackedValueValueListItem(item: TrackedValue) {
+fun TrackedValueValueListItem(
+    item: TrackedValue,
+    onNewRecordSubmitted: (TrackedValue, Double) -> Unit
+) {
     val isDialogShowing = state { false }
-    val itemState = state { item }
 
     val gradients = mapOf(
         TrackableUnit.Kilograms to listOf(Color(0xFF64BFE1), Color(0xFFA091B7), Color(0xFFE0608A)),
@@ -42,7 +44,7 @@ fun TrackedValueValueListItem(item: TrackedValue) {
         if (isDialogShowing.value) {
             UpdateTrackedValueDialog(
                 onCloseRequest = { isDialogShowing.value = false },
-                onSave = { itemState.value = itemState.value.copy(value = it) }
+                onSave = { onNewRecordSubmitted(item, it) }
             )
         }
         WithConstraints {
@@ -62,9 +64,9 @@ fun TrackedValueValueListItem(item: TrackedValue) {
                     .padding(16.dp)
 
             ) {
-                Text(itemState.value.title)
+                Text(item.title)
                 Spacer(modifier = Modifier.weight(1F))
-                Text(itemState.value.displayValue)
+                Text(item.displayValue)
             }
         }
     }
@@ -82,7 +84,7 @@ fun TrackedValueValueListItemPreview() {
                         42.3,
                         it
                     )
-                )
+                ) { _, _ -> }
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }

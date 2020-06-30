@@ -1,2 +1,9 @@
 include ':app'
 rootProject.name = "Tracktor"
+
+includeBuild('../workflow-kotlin-compose') {
+    dependencySubstitution {
+        substitute module('com.squareup.workflow:workflow-ui-core-compose') with project(':core-compose')
+        substitute module('com.squareup.workflow:workflow-ui-compose-tooling') with project(':compose-tooling')
+    }
+}
