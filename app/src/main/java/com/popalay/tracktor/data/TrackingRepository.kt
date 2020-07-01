@@ -35,4 +35,6 @@ object TrackingRepository {
     suspend fun saveTracker(tracker: Tracker) = dataBase.trackerDao().insert(tracker)
 
     suspend fun saveRecord(record: ValueRecord) = dataBase.recordDao().insert(record)
+
+    suspend fun deleteTracker(tracker: Tracker) = dataBase.trackerDao().delete(tracker)
 }

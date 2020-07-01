@@ -18,13 +18,20 @@ import java.util.UUID
 object ListWorkflow : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWorkflow.Rendering>() {
 
     data class State(
-        val items: List<Any>
+        val items: List<Any>,
+        val itemInEditing: TrackerWithRecords?,
+        val itemInDeleting: TrackerWithRecords?
     )
 
     sealed class Event {
         data class NewTrackerSubmitted(val tracker: Tracker) : Event()
         data class NewRecordSubmitted(val tracker: Tracker, val value: Double) : Event()
         data class ListUpdated(val list: List<TrackerWithRecords>) : Event()
+        data class ItemClicked(val item: TrackerWithRecords) : Event()
+        data class ItemLongClicked(val item: TrackerWithRecords) : Event()
+        data class DeleteSubmitted(val item: TrackerWithRecords) : Event()
+        object TrackDialogDismissed : Event()
+        object DeleteDialogDismissed : Event()
     }
 
     data class Rendering(
@@ -32,7 +39,11 @@ object ListWorkflow : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWo
         val onEvent: (Event) -> Unit
     )
 
-    override fun initialState(props: Unit, snapshot: Snapshot?): State = State(listOf())
+    override fun initialState(props: Unit, snapshot: Snapshot?): State = State(
+        items = listOf(),
+        itemInEditing = null,
+        itemInDeleting = null
+    )
 
     private val eventDispatcher: (Event) -> WorkflowAction<State, Nothing> = { event ->
         when (event) {
@@ -54,6 +65,23 @@ object ListWorkflow : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWo
             }
             is Event.ListUpdated -> action {
                 nextState = nextState.copy(items = listOf(Any()) + event.list)
+            }
+            is Event.ItemClicked -> action {
+                nextState = nextState.copy(itemInEditing = event.item)
+            }
+            is Event.ItemLongClicked -> action {
+                nextState = nextState.copy(itemInDeleting = event.item)
+            }
+            is Event.DeleteSubmitted -> action {
+                GlobalScope.launch {
+                    TrackingRepository.deleteTracker(event.item.tracker)
+                }
+            }
+            Event.TrackDialogDismissed -> action {
+                nextState = nextState.copy(itemInEditing = null)
+            }
+            Event.DeleteDialogDismissed -> action {
+                nextState = nextState.copy(itemInDeleting = null)
             }
         }
     }

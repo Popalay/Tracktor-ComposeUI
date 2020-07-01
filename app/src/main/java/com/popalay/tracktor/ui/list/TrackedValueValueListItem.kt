@@ -1,7 +1,6 @@
 package com.popalay.tracktor.ui.list
 
 import androidx.compose.Composable
-import androidx.compose.state
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.clickable
@@ -28,10 +27,9 @@ import java.time.LocalDateTime
 @Composable
 fun TrackedValueValueListItem(
     item: TrackerWithRecords,
-    onEvent: (ListWorkflow.Event) -> Unit
+    onClick: () -> Unit,
+    onLongClick: () -> Unit
 ) {
-    val isDialogShowing = state { false }
-
     val gradients = mapOf(
         TrackableUnit.Kilograms to listOf(Color(0xFF64BFE1), Color(0xFFA091B7), Color(0xFFE0608A)),
         TrackableUnit.Quantity to listOf(Color(0xFF64BFE1), Color(0xFF45A190), Color(0xFF348F50)),
@@ -41,17 +39,9 @@ fun TrackedValueValueListItem(
     Card(
         modifier = Modifier
             .ripple(radius = 8.dp)
-            .clickable(onClick = {
-                isDialogShowing.value = true
-            }),
+            .clickable(onClick = onClick, onLongClick = onLongClick),
         shape = MaterialTheme.shapes.medium.copy(CornerSize(8.dp))
     ) {
-        if (isDialogShowing.value) {
-            UpdateTrackedValueDialog(
-                onCloseRequest = { isDialogShowing.value = false },
-                onSave = { onEvent(ListWorkflow.Event.NewRecordSubmitted(item.tracker, it)) }
-            )
-        }
         Column {
             ChartWidget(data = item.records.map { it.value }, gradient = gradients.getValue(item.tracker.unit))
             Row(
@@ -78,8 +68,7 @@ fun TrackedValueValueListItemPreview() {
                     TrackerWithRecords(
                         Tracker("trackerId", "title", it),
                         listOf(ValueRecord("valueId", "trackerId", 42.3, LocalDateTime.now()))
-                    )
-                ) {}
+                    ), {}, {})
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
