@@ -3,13 +3,10 @@ package com.popalay.tracktor.ui.list
 import androidx.compose.Composable
 import androidx.compose.state
 import androidx.ui.core.Modifier
-import androidx.ui.core.WithConstraints
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.clickable
-import androidx.ui.foundation.drawBackground
 import androidx.ui.foundation.shape.corner.CornerSize
 import androidx.ui.graphics.Color
-import androidx.ui.graphics.HorizontalGradient
 import androidx.ui.layout.Column
 import androidx.ui.layout.Row
 import androidx.ui.layout.Spacer
@@ -18,9 +15,9 @@ import androidx.ui.layout.height
 import androidx.ui.layout.padding
 import androidx.ui.material.Card
 import androidx.ui.material.MaterialTheme
+import androidx.ui.material.ripple.ripple
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
-import androidx.ui.unit.toPx
 import com.popalay.tracktor.ThemedPreview
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
@@ -42,6 +39,11 @@ fun TrackedValueValueListItem(
     )
 
     Card(
+        modifier = Modifier
+            .ripple(radius = 8.dp)
+            .clickable(onClick = {
+                isDialogShowing.value = true
+            }),
         shape = MaterialTheme.shapes.medium.copy(CornerSize(8.dp))
     ) {
         if (isDialogShowing.value) {
@@ -50,20 +52,11 @@ fun TrackedValueValueListItem(
                 onSave = { onEvent(ListWorkflow.Event.NewRecordSubmitted(item.tracker, it)) }
             )
         }
-        WithConstraints {
+        Column {
+            PlotWidget(data = item.records.map { it.value }, gradient = gradients.getValue(item.tracker.unit))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(onClick = {
-                        isDialogShowing.value = true
-                    })
-                    .drawBackground(
-                        HorizontalGradient(
-                            gradients.getValue(item.tracker.unit),
-                            startX = 0F,
-                            endX = constraints.maxWidth.toPx().value
-                        )
-                    )
                     .padding(16.dp)
 
             ) {
