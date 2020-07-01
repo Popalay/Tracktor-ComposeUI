@@ -53,7 +53,7 @@ fun TrackedValueValueListItem(
             )
         }
         Column {
-            PlotWidget(data = item.records.map { it.value }, gradient = gradients.getValue(item.tracker.unit))
+            ChartWidget(data = item.records.map { it.value }, gradient = gradients.getValue(item.tracker.unit))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
