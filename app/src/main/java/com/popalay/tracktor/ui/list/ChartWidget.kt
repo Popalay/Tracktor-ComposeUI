@@ -36,7 +36,7 @@ private val definition = transitionDefinition {
     }
     transition(fromState = STATE_START, toState = STATE_END) {
         amplifierKey using tween {
-            duration = 1000
+            duration = 1500
             easing = FastOutSlowInEasing
         }
     }
@@ -61,9 +61,14 @@ fun ChartWidget(data: List<Double>, gradient: List<Color>) {
 
             val maxData = data.max()?.toFloat() ?: 0F
 
+            val yMax = max(bottomY - (maxData / maxData * bottomY), labelRadius)
+            val animatedYMax = min(yMax / state[amplifierKey], size.height)
+
             val points = data.mapIndexed { index, item ->
                 val y = max(bottomY - (item.toFloat() / maxData * bottomY), labelRadius)
-                Offset(xDiff * index, min(y / state[amplifierKey], size.height))
+                val animatedY = min(y / state[amplifierKey], size.height)
+
+                Offset(xDiff * index, min(animatedY, max(animatedYMax, y)))
             }
 
             for (i in 1 until points.size) {
