@@ -1,6 +1,7 @@
 package com.popalay.tracktor.ui.list
 
 import androidx.compose.Composable
+import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.clickable
@@ -9,10 +10,13 @@ import androidx.ui.layout.Column
 import androidx.ui.layout.Row
 import androidx.ui.layout.Spacer
 import androidx.ui.layout.fillMaxWidth
+import androidx.ui.layout.height
 import androidx.ui.layout.padding
 import androidx.ui.material.Card
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.ripple.ripple
+import androidx.ui.text.font.FontWeight
+import androidx.ui.text.style.TextAlign
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
 import com.popalay.tracktor.ThemedPreview
@@ -36,7 +40,18 @@ fun TrackedValueValueListItem(
         shape = MaterialTheme.shapes.medium.copy(CornerSize(8.dp))
     ) {
         Column {
-            ChartWidget(data = item.data.records.map { it.value }, gradient = gradients.getValue(item.data.tracker.unit))
+            if (item.data.records.size > 1) {
+                ChartWidget(data = item.data.records.map { it.value }, gradient = gradients.getValue(item.data.tracker.unit))
+            } else {
+                Row(modifier = Modifier.height(100.dp).fillMaxWidth()) {
+                    Text(
+                        text = item.data.displayValue,
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.h2.copy(fontWeight = FontWeight.Bold),
+                        modifier = Modifier.gravity(Alignment.CenterVertically).fillMaxWidth()
+                    )
+                }
+            }
             Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                 Text(item.data.tracker.title)
                 Spacer(modifier = Modifier.weight(1F))
