@@ -23,7 +23,7 @@ import java.lang.Float.min
 
 private val amplifierKey = FloatPropKey()
 
-private enum class ChartAnimationState {
+enum class ChartAnimationState {
     STATE_START, STATE_END
 }
 
@@ -43,10 +43,14 @@ private val definition = transitionDefinition {
 }
 
 @Composable
-fun ChartWidget(data: List<Double>, gradient: List<Color>) {
+fun ChartWidget(
+    data: List<Double>,
+    gradient: List<Color>,
+    currentState: ChartAnimationState = STATE_START
+) {
     Transition(
         definition = definition,
-        initState = STATE_START,
+        initState = currentState,
         toState = STATE_END
     ) { state ->
         Canvas(modifier = Modifier.preferredHeight(100.dp).fillMaxWidth()) {

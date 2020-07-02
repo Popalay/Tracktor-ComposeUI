@@ -1,5 +1,6 @@
 package com.popalay.tracktor.ui.list
 
+import androidx.compose.Composable
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.AdapterList
 import androidx.ui.foundation.Text
@@ -10,10 +11,15 @@ import androidx.ui.layout.height
 import androidx.ui.layout.padding
 import androidx.ui.material.Scaffold
 import androidx.ui.material.TopAppBar
+import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
+import com.popalay.tracktor.AppTheme
+import com.popalay.tracktor.model.TrackableUnit
+import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.ui.create.CreateTrackedValue
 import com.squareup.workflow.ui.compose.composedViewFactory
+import com.squareup.workflow.ui.compose.tooling.preview
 
 val ListBinding = composedViewFactory<ListWorkflow.Rendering> { rendering, _ ->
     Scaffold(
@@ -48,18 +54,29 @@ val ListBinding = composedViewFactory<ListWorkflow.Rendering> { rendering, _ ->
                 }
             }
             AdapterList(data = rendering.state.items) {
-                if (it is TrackerWithRecords) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    TrackedValueValueListItem(
-                        it,
-                        onClick = { rendering.onEvent(ListWorkflow.Event.ItemClicked(it)) },
-                        onLongClick = { rendering.onEvent(ListWorkflow.Event.ItemLongClicked(it)) }
-                    )
-                }
+                Spacer(modifier = Modifier.height(8.dp))
+                TrackedValueValueListItem(
+                    it,
+                    onClick = { rendering.onEvent(ListWorkflow.Event.ItemClicked(it.data)) },
+                    onLongClick = { rendering.onEvent(ListWorkflow.Event.ItemLongClicked(it.data)) }
+                )
                 if (rendering.state.items.lastOrNull() == it) {
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun ListScreenPreview() {
+    val items = listOf(
+        TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms), emptyList()),
+        TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms), emptyList()),
+        TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms), emptyList())
+    ).map { it.toListItem() }
+    AppTheme(isDarkTheme = true) {
+        ListBinding.preview(rendering = ListWorkflow.Rendering(ListWorkflow.State(items, null, null, null)) {})
     }
 }

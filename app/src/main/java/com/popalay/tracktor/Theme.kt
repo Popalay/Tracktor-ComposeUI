@@ -5,6 +5,7 @@ import androidx.ui.graphics.Color
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.darkColorPalette
 import androidx.ui.material.lightColorPalette
+import com.popalay.tracktor.model.TrackableUnit
 
 val lightThemeColors = lightColorPalette(
     primary = Color(0xFF855446),
@@ -33,6 +34,13 @@ val darkThemeColors = darkColorPalette(
     onBackground = Color.White,
     onSurface = Color.White,
     onError = Color.Black
+)
+
+val gradients = mapOf(
+    TrackableUnit.Kilograms to listOf(Color(0xFF64BFE1), Color(0xFFA091B7), Color(0xFFE0608A)),
+    TrackableUnit.Quantity to listOf(Color(0xFF64BFE1), Color(0xFF45A190), Color(0xFF348F50)),
+    TrackableUnit.Minutes to listOf(Color(0xFF64BFE1), Color(0xFF86A7E7), Color(0xFF8360C3)),
+    TrackableUnit.None to emptyList()
 )
 
 @Composable

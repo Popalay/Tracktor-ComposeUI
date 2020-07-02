@@ -19,7 +19,7 @@ import java.util.UUID
 object ListWorkflow : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWorkflow.Rendering>() {
 
     data class State(
-        val items: List<Any>,
+        val items: List<ListItem>,
         val itemInCreating: Tracker?,
         val itemInEditing: TrackerWithRecords?,
         val itemInDeleting: TrackerWithRecords?
@@ -28,7 +28,7 @@ object ListWorkflow : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWo
     sealed class Event {
         data class UnitSubmitted(val unit: TrackableUnit) : Event()
         data class NewRecordSubmitted(val tracker: Tracker, val value: Double) : Event()
-        data class ListUpdated(val list: List<TrackerWithRecords>) : Event()
+        data class ListUpdated(val list: List<ListItem>) : Event()
         data class ItemClicked(val item: TrackerWithRecords) : Event()
         data class ItemLongClicked(val item: TrackerWithRecords) : Event()
         data class DeleteSubmitted(val item: TrackerWithRecords) : Event()
@@ -111,7 +111,7 @@ object ListWorkflow : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWo
         state: State,
         context: RenderContext<State, Nothing>
     ): Rendering {
-        context.runningWorker(GetAllTrackersWorker()) { eventDispatcher(Event.ListUpdated(it)) }
+        context.runningWorker(GetAllTrackersWorker()) { list -> eventDispatcher(Event.ListUpdated(list.map { it.toListItem() })) }
         return Rendering(
             state = state,
             onEvent = { context.actionSink.send(eventDispatcher(it)) }
