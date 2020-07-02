@@ -1,10 +1,12 @@
 package com.popalay.tracktor.ui.list
 
 import androidx.compose.Composable
+import androidx.compose.state
 import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.clickable
+import androidx.ui.foundation.currentTextStyle
 import androidx.ui.foundation.shape.corner.CornerSize
 import androidx.ui.layout.Column
 import androidx.ui.layout.Row
@@ -33,6 +35,7 @@ fun TrackedValueValueListItem(
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
+    val selectedValue = state<Double?> { null }
     Card(
         modifier = Modifier
             .ripple(radius = 8.dp)
@@ -41,11 +44,16 @@ fun TrackedValueValueListItem(
     ) {
         Column {
             if (item.data.records.size > 1) {
-                ChartWidget(data = item.data.records.map { it.value }, gradient = gradients.getValue(item.data.tracker.unit))
+                ChartWidget(
+                    data = item.data.records.map { it.value },
+                    gradient = gradients.getValue(item.data.tracker.unit),
+                    onPointSelected = { selectedValue.value = it },
+                    onPointUnSelected = { selectedValue.value = null }
+                )
             } else {
                 Row(modifier = Modifier.height(100.dp).fillMaxWidth()) {
                     Text(
-                        text = item.data.displayValue,
+                        text = item.data.format(item.data.currentValue),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.h2.copy(fontWeight = FontWeight.Bold),
                         modifier = Modifier.gravity(Alignment.CenterVertically).fillMaxWidth()
@@ -55,7 +63,14 @@ fun TrackedValueValueListItem(
             Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                 Text(item.data.tracker.title)
                 Spacer(modifier = Modifier.weight(1F))
-                Text(item.data.displayValue)
+                if (selectedValue.value == null) {
+                    Text("Current: ${item.data.format(item.data.currentValue)}")
+                } else {
+                    Text(
+                        "Selected: ${item.data.format(selectedValue.value!!)}",
+                        style = currentTextStyle().copy(fontWeight = FontWeight.Bold)
+                    )
+                }
             }
         }
     }

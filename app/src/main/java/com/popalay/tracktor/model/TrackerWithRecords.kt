@@ -13,13 +13,11 @@ data class TrackerWithRecords(
 ) {
     val currentValue: Double get() = records.firstOrNull()?.value ?: 0.0
 
-    val displayValue: String
-        get() = records.takeLast(3).map { it.value }.ifEmpty { listOf(0.0) }.joinToString {
-            when (tracker.unit) {
-                TrackableUnit.None -> ""
-                TrackableUnit.Quantity -> it.toInt().toString()
-                TrackableUnit.Minutes -> it.let { "$it\"" }
-                TrackableUnit.Kilograms -> it.let { "$it kg" }
-            }
+    fun format(value: Double) =
+        when (tracker.unit) {
+            TrackableUnit.None -> ""
+            TrackableUnit.Quantity -> value.toInt().toString()
+            TrackableUnit.Minutes -> value.let { "$it\"" }
+            TrackableUnit.Kilograms -> value.let { "$it kg" }
         }
 }

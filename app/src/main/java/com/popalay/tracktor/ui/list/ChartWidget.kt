@@ -4,8 +4,10 @@ import androidx.animation.FastOutSlowInEasing
 import androidx.animation.FloatPropKey
 import androidx.animation.transitionDefinition
 import androidx.compose.Composable
+import androidx.compose.state
 import androidx.ui.animation.Transition
 import androidx.ui.core.Modifier
+import androidx.ui.core.gesture.pressIndicatorGestureFilter
 import androidx.ui.foundation.Canvas
 import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Color
@@ -15,7 +17,9 @@ import androidx.ui.graphics.drawscope.Stroke
 import androidx.ui.layout.fillMaxWidth
 import androidx.ui.layout.preferredHeight
 import androidx.ui.tooling.preview.Preview
+import androidx.ui.unit.PxPosition
 import androidx.ui.unit.dp
+import androidx.ui.util.fastFirstOrNull
 import com.popalay.tracktor.ui.list.ChartAnimationState.STATE_END
 import com.popalay.tracktor.ui.list.ChartAnimationState.STATE_START
 import java.lang.Float.max
@@ -46,15 +50,26 @@ private val definition = transitionDefinition {
 fun ChartWidget(
     data: List<Double>,
     gradient: List<Color>,
-    currentState: ChartAnimationState = STATE_START
+    currentState: ChartAnimationState = STATE_START,
+    onPointSelected: (Double) -> Unit,
+    onPointUnSelected: () -> Unit
 ) {
     Transition(
         definition = definition,
         initState = currentState,
         toState = STATE_END
-    ) { state ->
-        Canvas(modifier = Modifier.preferredHeight(100.dp).fillMaxWidth()) {
+    ) { transitionState ->
+        val touchPosition = state<PxPosition?> { null }
 
+        Canvas(
+            modifier = Modifier.preferredHeight(100.dp)
+                .fillMaxWidth()
+                .pressIndicatorGestureFilter(
+                    onStart = { touchPosition.value = it },
+                    onStop = { touchPosition.value = null },
+                    onCancel = { touchPosition.value = null }
+                )
+        ) {
             val conPoints1 = mutableListOf<Offset>()
             val conPoints2 = mutableListOf<Offset>()
 
@@ -63,15 +78,16 @@ fun ChartWidget(
             val lineWidth = 2.dp.toPx().value
             val labelRadius = 4.dp.toPx().value
             val topOffset = 4.dp.toPx().value
+            val touchArea = labelRadius * 2
 
             val maxData = data.max()?.toFloat() ?: 0F
 
             val yMax = max(bottomY - (maxData / maxData * bottomY), labelRadius + topOffset)
-            val animatedYMax = min(yMax / state[amplifierKey], size.height)
+            val animatedYMax = min(yMax / transitionState[amplifierKey], size.height)
 
             val points = data.mapIndexed { index, item ->
                 val y = max(bottomY - (item.toFloat() / maxData * bottomY), labelRadius + topOffset)
-                val animatedY = min(y / state[amplifierKey], size.height)
+                val animatedY = min(y / transitionState[amplifierKey], size.height)
 
                 Offset(xDiff * index, min(animatedY, max(animatedYMax, y)))
             }
@@ -111,13 +127,24 @@ fun ChartWidget(
             )
             drawPath(borderPath, color = Color.White, style = Stroke(width = lineWidth))
 
+            val touchedPoint = if (touchPosition.value == null) null else points.fastFirstOrNull {
+                touchPosition.value!!.x.value in (it.dx - touchArea)..(it.dx + touchArea) &&
+                        touchPosition.value!!.y.value in (it.dy - touchArea)..(it.dy + touchArea)
+            }
+
             points.forEach {
                 val center = Offset(max(min(it.dx, size.width - labelRadius), labelRadius), it.dy)
                 drawCircle(
                     color = Color.White,
-                    radius = labelRadius,
+                    radius = if (it == touchedPoint) labelRadius + topOffset else labelRadius,
                     center = center
                 )
+            }
+
+            if (touchedPoint == null) {
+                onPointUnSelected()
+            } else {
+                onPointSelected(data.reversed()[points.reversed().indexOf(touchedPoint)])
             }
         }
     }
@@ -128,6 +155,8 @@ fun ChartWidget(
 fun PlotPreview() {
     ChartWidget(
         data = listOf(20.0, 12.0, 30.0, 2.0),
-        gradient = listOf(Color(0xFF64BFE1), Color(0xFFA091B7), Color(0xFFE0608A))
+        gradient = listOf(Color(0xFF64BFE1), Color(0xFFA091B7), Color(0xFFE0608A)),
+        onPointSelected = {},
+        onPointUnSelected = {}
     )
 }

@@ -31,7 +31,7 @@ fun previewChartWidget() {
         Column {
             gradients.forEach {
                 val data = listOf(Random.nextDouble(), Random.nextDouble(), Random.nextDouble())
-                ChartWidget(data, it.value, ChartAnimationState.STATE_END)
+                ChartWidget(data, it.value, ChartAnimationState.STATE_END, {}, {})
             }
         }
     }
