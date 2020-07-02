@@ -1,6 +1,7 @@
 package com.popalay.tracktor.ui.list
 
 import com.popalay.tracktor.data.TrackingRepository
+import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.model.ValueRecord
@@ -19,19 +20,22 @@ object ListWorkflow : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWo
 
     data class State(
         val items: List<Any>,
+        val itemInCreating: Tracker?,
         val itemInEditing: TrackerWithRecords?,
         val itemInDeleting: TrackerWithRecords?
     )
 
     sealed class Event {
-        data class NewTrackerSubmitted(val tracker: Tracker) : Event()
+        data class UnitSubmitted(val unit: TrackableUnit) : Event()
         data class NewRecordSubmitted(val tracker: Tracker, val value: Double) : Event()
         data class ListUpdated(val list: List<TrackerWithRecords>) : Event()
         data class ItemClicked(val item: TrackerWithRecords) : Event()
         data class ItemLongClicked(val item: TrackerWithRecords) : Event()
         data class DeleteSubmitted(val item: TrackerWithRecords) : Event()
+        data class NewTrackerTitleSubmitted(val title: String) : Event()
         object TrackDialogDismissed : Event()
         object DeleteDialogDismissed : Event()
+        object ChooseUnitDialogDismissed : Event()
     }
 
     data class Rendering(
@@ -42,14 +46,18 @@ object ListWorkflow : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWo
     override fun initialState(props: Unit, snapshot: Snapshot?): State = State(
         items = listOf(),
         itemInEditing = null,
-        itemInDeleting = null
+        itemInDeleting = null,
+        itemInCreating = null
     )
 
     private val eventDispatcher: (Event) -> WorkflowAction<State, Nothing> = { event ->
         when (event) {
-            is Event.NewTrackerSubmitted -> action {
+            is Event.UnitSubmitted -> action {
                 GlobalScope.launch {
-                    TrackingRepository.saveTracker(event.tracker)
+                    nextState.itemInCreating?.let {
+                        TrackingRepository.saveTracker(it.copy(unit = event.unit))
+                    }
+                    nextState = nextState.copy(itemInCreating = null)
                 }
             }
             is Event.NewRecordSubmitted -> action {
@@ -64,7 +72,7 @@ object ListWorkflow : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWo
                 }
             }
             is Event.ListUpdated -> action {
-                nextState = nextState.copy(items = listOf(Any()) + event.list)
+                nextState = nextState.copy(items = event.list)
             }
             is Event.ItemClicked -> action {
                 nextState = nextState.copy(itemInEditing = event.item)
@@ -77,11 +85,23 @@ object ListWorkflow : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWo
                     TrackingRepository.deleteTracker(event.item.tracker)
                 }
             }
+            is Event.NewTrackerTitleSubmitted -> action {
+                nextState = nextState.copy(
+                    itemInCreating = Tracker(
+                        id = UUID.randomUUID().toString(),
+                        title = event.title,
+                        unit = TrackableUnit.None
+                    )
+                )
+            }
             Event.TrackDialogDismissed -> action {
                 nextState = nextState.copy(itemInEditing = null)
             }
             Event.DeleteDialogDismissed -> action {
                 nextState = nextState.copy(itemInDeleting = null)
+            }
+            Event.ChooseUnitDialogDismissed -> action {
+                nextState = nextState.copy(itemInCreating = null)
             }
         }
     }
