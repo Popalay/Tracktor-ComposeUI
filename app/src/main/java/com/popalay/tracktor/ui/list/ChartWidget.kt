@@ -62,14 +62,15 @@ fun ChartWidget(
             val xDiff = size.width / (data.size - 1)
             val lineWidth = 2.dp.toPx().value
             val labelRadius = 4.dp.toPx().value
+            val topOffset = 4.dp.toPx().value
 
             val maxData = data.max()?.toFloat() ?: 0F
 
-            val yMax = max(bottomY - (maxData / maxData * bottomY), labelRadius)
+            val yMax = max(bottomY - (maxData / maxData * bottomY), labelRadius + topOffset)
             val animatedYMax = min(yMax / state[amplifierKey], size.height)
 
             val points = data.mapIndexed { index, item ->
-                val y = max(bottomY - (item.toFloat() / maxData * bottomY), labelRadius)
+                val y = max(bottomY - (item.toFloat() / maxData * bottomY), labelRadius + topOffset)
                 val animatedY = min(y / state[amplifierKey], size.height)
 
                 Offset(xDiff * index, min(animatedY, max(animatedYMax, y)))
