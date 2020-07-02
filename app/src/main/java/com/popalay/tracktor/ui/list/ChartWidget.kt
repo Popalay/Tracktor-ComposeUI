@@ -56,8 +56,8 @@ fun ChartWidget(data: List<Double>, gradient: List<Color>) {
 
             val bottomY = size.height
             val xDiff = size.width / (data.size - 1)
-            val lineWidth = 5F
-            val labelRadius = 20F
+            val lineWidth = 2.dp.toPx().value
+            val labelRadius = 4.dp.toPx().value
 
             val maxData = data.max()?.toFloat() ?: 0F
 
