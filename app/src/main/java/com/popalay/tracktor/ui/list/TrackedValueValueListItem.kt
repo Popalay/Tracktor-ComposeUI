@@ -9,7 +9,6 @@ import androidx.ui.layout.Column
 import androidx.ui.layout.Row
 import androidx.ui.layout.Spacer
 import androidx.ui.layout.fillMaxWidth
-import androidx.ui.layout.height
 import androidx.ui.layout.padding
 import androidx.ui.material.Card
 import androidx.ui.material.MaterialTheme
@@ -51,10 +50,7 @@ fun TrackedValueValueListItem(
 @Composable
 fun TrackedValueValueListItemPreview() {
     ThemedPreview(isDarkTheme = true) {
-        Column {
-            TrackedValueValueListItem(fakeListItem(), {}, {})
-            Spacer(modifier = Modifier.height(8.dp))
-        }
+        TrackedValueValueListItem(fakeListItem(), {}, {})
     }
 }
 
