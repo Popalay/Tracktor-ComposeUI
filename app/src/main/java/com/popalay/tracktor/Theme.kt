@@ -8,11 +8,11 @@ import androidx.ui.material.lightColorPalette
 import com.popalay.tracktor.model.TrackableUnit
 
 val lightThemeColors = lightColorPalette(
-    primary = Color(0xFF855446),
-    primaryVariant = Color(0xFF9C684B),
+    primary = Color(0xFF1F1F1F),
+    primaryVariant = Color(0xFF404040),
     secondary = Color(0xFF000000),
     secondaryVariant = Color(0xFF0AC9F0),
-    background = Color.White,
+    background = Color(0xFFFBFBFB),
     surface = Color.White,
     error = Color(0xFFB00020),
     onPrimary = Color.White,
@@ -24,7 +24,7 @@ val lightThemeColors = lightColorPalette(
 
 val darkThemeColors = darkColorPalette(
     primary = Color(0xFF1F1F1F),
-    primaryVariant = Color(0xFF3E2723),
+    primaryVariant = Color(0xFF404040),
     secondary = Color(0xFFC2C2C2),
     background = Color(0xFF121212),
     surface = Color.Black,

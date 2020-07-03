@@ -1,4 +1,4 @@
-package com.popalay.tracktor.ui.list
+package com.popalay.tracktor.ui.widget
 
 import androidx.animation.FastOutSlowInEasing
 import androidx.animation.FloatPropKey
@@ -16,20 +16,22 @@ import androidx.ui.graphics.Path
 import androidx.ui.graphics.drawscope.Stroke
 import androidx.ui.layout.fillMaxWidth
 import androidx.ui.layout.preferredHeight
+import androidx.ui.material.MaterialTheme
 import androidx.ui.tooling.preview.Preview
+import androidx.ui.unit.Dp
 import androidx.ui.unit.dp
 import androidx.ui.util.fastFirstOrNull
-import com.popalay.tracktor.ui.list.ChartAnimationState.STATE_END
-import com.popalay.tracktor.ui.list.ChartAnimationState.STATE_START
+import com.popalay.tracktor.ui.widget.ChartAnimationState.STATE_END
+import com.popalay.tracktor.ui.widget.ChartAnimationState.STATE_START
 import java.lang.Float.max
 import java.lang.Float.min
 import kotlin.math.abs
 
-private val amplifierKey = FloatPropKey()
-
 enum class ChartAnimationState {
     STATE_START, STATE_END
 }
+
+private val amplifierKey = FloatPropKey()
 
 private val definition = transitionDefinition {
     state(STATE_START) {
@@ -50,6 +52,9 @@ private val definition = transitionDefinition {
 fun ChartWidget(
     data: List<Double>,
     gradient: List<Color>,
+    pointColor: Color = MaterialTheme.colors.onSurface,
+    lineWidth: Dp = ChartLineWidth,
+    labelRadius: Dp = ChartLabelRadius,
     currentState: ChartAnimationState = STATE_START,
     onPointSelected: (Double) -> Unit,
     onPointUnSelected: () -> Unit
@@ -75,18 +80,16 @@ fun ChartWidget(
 
             val bottomY = size.height
             val xDiff = size.width / (data.size - 1)
-            val lineWidth = 2.dp.toPx()
-            val labelRadius = 4.dp.toPx()
-            val topOffset = 4.dp.toPx()
-            val touchArea = labelRadius * 4
+            val topOffset = labelRadius.toPx()
+            val touchArea = labelRadius.toPx() * 4
 
             val maxData = data.max()?.toFloat() ?: 0F
 
-            val yMax = max(bottomY - (maxData / maxData * bottomY), labelRadius + topOffset)
+            val yMax = max(bottomY - (maxData / maxData * bottomY), labelRadius.toPx() + topOffset)
             val animatedYMax = min(yMax / transitionState[amplifierKey], size.height)
 
             val points = data.mapIndexed { index, item ->
-                val y = max(bottomY - (item.toFloat() / maxData * bottomY), labelRadius + topOffset)
+                val y = max(bottomY - (item.toFloat() / maxData * bottomY), labelRadius.toPx() + topOffset)
                 val animatedY = min(y / transitionState[amplifierKey], size.height)
 
                 Offset(xDiff * index, min(animatedY, max(animatedYMax, y)))
@@ -120,22 +123,30 @@ fun ChartWidget(
             drawPath(
                 path,
                 brush = HorizontalGradient(
-                    colors = gradient,
+                    colors = gradient.map { it.copy(alpha = 0.5F) },
                     startX = 0F,
                     endX = size.width
                 )
             )
-            drawPath(borderPath, color = Color.White, style = Stroke(width = lineWidth))
+            drawPath(
+                borderPath,
+                brush = HorizontalGradient(
+                    colors = gradient,
+                    startX = 0F,
+                    endX = size.width
+                ),
+                style = Stroke(width = lineWidth.toPx())
+            )
 
             val touchedPoint = if (touchPosition.value == null) null else points.fastFirstOrNull { offset ->
                 (touchPosition.value!! - offset).let { abs(it.x) <= touchArea && abs(it.y) <= touchArea }
             }
 
             points.forEach {
-                val center = Offset(max(min(it.x, size.width - labelRadius), labelRadius), it.y)
+                val center = Offset(max(min(it.x, size.width - labelRadius.toPx()), labelRadius.toPx()), it.y)
                 drawCircle(
-                    color = Color.White,
-                    radius = if (it == touchedPoint) labelRadius + topOffset else labelRadius,
+                    color = pointColor,
+                    radius = if (it == touchedPoint) labelRadius.toPx() + topOffset else labelRadius.toPx(),
                     center = center
                 )
             }
@@ -148,6 +159,9 @@ fun ChartWidget(
         }
     }
 }
+
+private val ChartLabelRadius = 4.dp
+private val ChartLineWidth = 2.dp
 
 @Preview
 @Composable

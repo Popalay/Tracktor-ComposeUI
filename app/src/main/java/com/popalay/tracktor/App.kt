@@ -1,6 +1,7 @@
 package com.popalay.tracktor
 
 import androidx.compose.Composable
+import androidx.ui.foundation.isSystemInDarkTheme
 import com.popalay.tracktor.ui.list.ListBinding
 import com.popalay.tracktor.ui.list.ListWorkflow
 import com.squareup.workflow.diagnostic.SimpleLoggingDiagnosticListener
@@ -13,7 +14,7 @@ private val viewEnvironment = ViewEnvironment(viewRegistry)
 
 @Composable
 fun App() {
-    AppTheme(isDarkTheme = true) {
+    AppTheme(isDarkTheme = isSystemInDarkTheme()) {
         WorkflowContainer(
             workflow = ListWorkflow,
             viewEnvironment = viewEnvironment,

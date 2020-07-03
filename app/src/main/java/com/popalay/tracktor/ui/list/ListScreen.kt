@@ -3,10 +3,10 @@ package com.popalay.tracktor.ui.list
 import androidx.compose.Composable
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.Text
+import androidx.ui.foundation.clickable
 import androidx.ui.foundation.lazy.LazyColumnItems
 import androidx.ui.layout.Column
 import androidx.ui.layout.Spacer
-import androidx.ui.layout.fillMaxSize
 import androidx.ui.layout.height
 import androidx.ui.layout.padding
 import androidx.ui.material.Scaffold
@@ -18,6 +18,9 @@ import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.ui.create.CreateTrackedValue
+import com.popalay.tracktor.ui.list.dialog.ChooseUnitDialog
+import com.popalay.tracktor.ui.list.dialog.DeleteTrackerDialog
+import com.popalay.tracktor.ui.list.dialog.UpdateTrackedValueDialog
 import com.squareup.workflow.ui.compose.composedViewFactory
 import com.squareup.workflow.ui.compose.tooling.preview
 
@@ -30,9 +33,7 @@ val ListBinding = composedViewFactory<ListWorkflow.Rendering> { rendering, _ ->
             }
         }
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)
-        ) {
+        Column {
             when {
                 rendering.state.itemInEditing != null -> {
                     UpdateTrackedValueDialog(
@@ -57,8 +58,12 @@ val ListBinding = composedViewFactory<ListWorkflow.Rendering> { rendering, _ ->
                 Spacer(modifier = Modifier.height(8.dp))
                 TrackedValueValueListItem(
                     it,
-                    onClick = { rendering.onEvent(ListWorkflow.Event.ItemClicked(it.data)) },
-                    onLongClick = { rendering.onEvent(ListWorkflow.Event.ItemLongClicked(it.data)) }
+                    Modifier
+                        .padding(horizontal = 16.dp)
+                        .clickable(
+                            onClick = { rendering.onEvent(ListWorkflow.Event.ItemClicked(it.data)) },
+                            onLongClick = { rendering.onEvent(ListWorkflow.Event.ItemLongClicked(it.data)) }
+                        )
                 )
                 if (rendering.state.items.lastOrNull() == it) {
                     Spacer(modifier = Modifier.height(8.dp))

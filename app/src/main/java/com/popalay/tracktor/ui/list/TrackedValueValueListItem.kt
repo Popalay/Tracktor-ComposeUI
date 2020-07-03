@@ -5,7 +5,6 @@ import androidx.compose.state
 import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.Text
-import androidx.ui.foundation.clickable
 import androidx.ui.foundation.currentTextStyle
 import androidx.ui.foundation.shape.corner.CornerSize
 import androidx.ui.layout.Column
@@ -26,18 +25,17 @@ import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.model.ValueRecord
+import com.popalay.tracktor.ui.widget.ChartWidget
 import java.time.LocalDateTime
 
 @Composable
 fun TrackedValueValueListItem(
     item: ListItem,
-    onClick: () -> Unit,
-    onLongClick: () -> Unit
+    modifier: Modifier = Modifier
 ) {
     val selectedValue = state<Double?> { null }
     Card(
-        modifier = Modifier
-            .clickable(onClick = onClick, onLongClick = onLongClick),
+        modifier = modifier,
         shape = MaterialTheme.shapes.medium.copy(CornerSize(8.dp))
     ) {
         Column {
@@ -78,7 +76,7 @@ fun TrackedValueValueListItem(
 @Composable
 fun TrackedValueValueListItemPreview() {
     ThemedPreview(isDarkTheme = true) {
-        TrackedValueValueListItem(fakeListItem(), {}, {})
+        TrackedValueValueListItem(fakeListItem())
     }
 }
 

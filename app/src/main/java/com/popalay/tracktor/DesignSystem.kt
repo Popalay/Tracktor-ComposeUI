@@ -4,8 +4,8 @@ import androidx.compose.Composable
 import androidx.ui.layout.Column
 import androidx.ui.tooling.preview.Preview
 import com.popalay.tracktor.ui.create.CreateTrackedValue
-import com.popalay.tracktor.ui.list.ChartAnimationState
-import com.popalay.tracktor.ui.list.ChartWidget
+import com.popalay.tracktor.ui.widget.ChartAnimationState
+import com.popalay.tracktor.ui.widget.ChartWidget
 import kotlin.random.Random
 
 @Preview("Light CreateTrackedValue")
@@ -31,7 +31,12 @@ fun previewChartWidget() {
         Column {
             gradients.forEach {
                 val data = listOf(Random.nextDouble(), Random.nextDouble(), Random.nextDouble())
-                ChartWidget(data, it.value, ChartAnimationState.STATE_END, {}, {})
+                ChartWidget(
+                    data,
+                    it.value,
+                    currentState = ChartAnimationState.STATE_END,
+                    onPointSelected = {},
+                    onPointUnSelected = {})
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.popalay.tracktor.ui.list
+package com.popalay.tracktor.ui.list.dialog
 
 import androidx.compose.Composable
 import androidx.ui.foundation.Text
