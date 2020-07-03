@@ -23,6 +23,7 @@ import com.popalay.tracktor.ui.list.dialog.DeleteTrackerDialog
 import com.popalay.tracktor.ui.list.dialog.UpdateTrackedValueDialog
 import com.squareup.workflow.ui.compose.composedViewFactory
 import com.squareup.workflow.ui.compose.tooling.preview
+import java.time.LocalDateTime
 
 val ListBinding = composedViewFactory<ListWorkflow.Rendering> { rendering, _ ->
     Scaffold(
@@ -77,9 +78,9 @@ val ListBinding = composedViewFactory<ListWorkflow.Rendering> { rendering, _ ->
 @Composable
 fun ListScreenPreview() {
     val items = listOf(
-        TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms), emptyList()),
-        TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms), emptyList()),
-        TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms), emptyList())
+        TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms, LocalDateTime.now()), emptyList()),
+        TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms, LocalDateTime.now()), emptyList()),
+        TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms, LocalDateTime.now()), emptyList())
     ).map { it.toListItem() }
     AppTheme(isDarkTheme = true) {
         ListBinding.preview(rendering = ListWorkflow.Rendering(ListWorkflow.State(items, null, null, null)) {})

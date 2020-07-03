@@ -90,7 +90,8 @@ object ListWorkflow : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWo
                     itemInCreating = Tracker(
                         id = UUID.randomUUID().toString(),
                         title = event.title,
-                        unit = TrackableUnit.None
+                        unit = TrackableUnit.None,
+                        date = LocalDateTime.now()
                     )
                 )
             }

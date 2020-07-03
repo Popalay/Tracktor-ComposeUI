@@ -9,6 +9,7 @@ import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.model.ValueRecord
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDateTime
 import java.util.concurrent.Executors
 
 object TrackingRepository {
@@ -19,15 +20,15 @@ object TrackingRepository {
             context,
             AppDatabase::class.java, "database-name"
         )
+            .addMigrations(MIGRATION_1_2)
             .addCallback(object : RoomDatabase.Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     Executors.newSingleThreadScheduledExecutor()
                         .execute {
-                            dataBase.trackerDao().insertSync(Tracker("id", "title", TrackableUnit.Kilograms))
+                            dataBase.trackerDao().insertSync(Tracker("id", "title", TrackableUnit.Kilograms, LocalDateTime.now()))
                         }
                 }
-            })
-            .build()
+            }).build()
     }
 
     fun getAllTrackerWithRecords(): Flow<List<TrackerWithRecords>> = dataBase.trackerDao().getAllTrackerWithRecords()

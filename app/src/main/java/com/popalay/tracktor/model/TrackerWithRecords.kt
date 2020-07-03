@@ -20,4 +20,11 @@ data class TrackerWithRecords(
             TrackableUnit.Minutes -> value.let { "$it\"" }
             TrackableUnit.Kilograms -> value.let { "$it kg" }
         }
+
+    val progress: Double
+        get() = try {
+            (records.lastOrNull()?.value ?: 0.0) / (records.firstOrNull()?.value ?: 0.0) - 1
+        } catch (exception: Exception) {
+            0.0
+        }
 }

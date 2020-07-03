@@ -52,9 +52,11 @@ private val definition = transitionDefinition {
 fun ChartWidget(
     data: List<Double>,
     gradient: List<Color>,
+    modifier: Modifier = Modifier,
     pointColor: Color = MaterialTheme.colors.onSurface,
     lineWidth: Dp = ChartLineWidth,
     labelRadius: Dp = ChartLabelRadius,
+    topOffset: Dp = ChartLabelRadius,
     currentState: ChartAnimationState = STATE_START,
     onPointSelected: (Double) -> Unit,
     onPointUnSelected: () -> Unit
@@ -65,9 +67,9 @@ fun ChartWidget(
         toState = STATE_END
     ) { transitionState ->
         val touchPosition = state<Offset?> { null }
-
         Canvas(
-            modifier = Modifier.preferredHeight(100.dp)
+            modifier = modifier
+                .preferredHeight(ChartDefaultHeight)
                 .fillMaxWidth()
                 .pressIndicatorGestureFilter(
                     onStart = { touchPosition.value = it },
@@ -80,16 +82,15 @@ fun ChartWidget(
 
             val bottomY = size.height
             val xDiff = size.width / (data.size - 1)
-            val topOffset = labelRadius.toPx()
             val touchArea = labelRadius.toPx() * 4
 
             val maxData = data.max()?.toFloat() ?: 0F
 
-            val yMax = max(bottomY - (maxData / maxData * bottomY), labelRadius.toPx() + topOffset)
+            val yMax = max(bottomY - (maxData / maxData * bottomY), (labelRadius + topOffset).toPx())
             val animatedYMax = min(yMax / transitionState[amplifierKey], size.height)
 
             val points = data.mapIndexed { index, item ->
-                val y = max(bottomY - (item.toFloat() / maxData * bottomY), labelRadius.toPx() + topOffset)
+                val y = max(bottomY - (item.toFloat() / maxData * bottomY), (labelRadius + topOffset).toPx())
                 val animatedY = min(y / transitionState[amplifierKey], size.height)
 
                 Offset(xDiff * index, min(animatedY, max(animatedYMax, y)))
@@ -146,7 +147,7 @@ fun ChartWidget(
                 val center = Offset(max(min(it.x, size.width - labelRadius.toPx()), labelRadius.toPx()), it.y)
                 drawCircle(
                     color = pointColor,
-                    radius = if (it == touchedPoint) labelRadius.toPx() + topOffset else labelRadius.toPx(),
+                    radius = if (it == touchedPoint) (labelRadius + topOffset).toPx() else labelRadius.toPx(),
                     center = center
                 )
             }
@@ -160,6 +161,7 @@ fun ChartWidget(
     }
 }
 
+private val ChartDefaultHeight = 100.dp
 private val ChartLabelRadius = 4.dp
 private val ChartLineWidth = 2.dp
 
