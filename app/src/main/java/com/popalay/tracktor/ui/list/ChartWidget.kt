@@ -78,7 +78,7 @@ fun ChartWidget(
             val lineWidth = 2.dp.toPx().value
             val labelRadius = 4.dp.toPx().value
             val topOffset = 4.dp.toPx().value
-            val touchArea = labelRadius * 2
+            val touchArea = labelRadius * 4
 
             val maxData = data.max()?.toFloat() ?: 0F
 

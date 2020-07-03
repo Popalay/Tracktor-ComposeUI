@@ -11,7 +11,7 @@ data class TrackerWithRecords(
     )
     val records: List<ValueRecord>
 ) {
-    val currentValue: Double get() = records.firstOrNull()?.value ?: 0.0
+    val currentValue: Double get() = records.lastOrNull()?.value ?: 0.0
 
     fun format(value: Double) =
         when (tracker.unit) {
