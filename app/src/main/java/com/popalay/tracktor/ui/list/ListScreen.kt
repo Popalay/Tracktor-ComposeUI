@@ -3,7 +3,6 @@ package com.popalay.tracktor.ui.list
 import androidx.compose.Composable
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.Text
-import androidx.ui.foundation.clickable
 import androidx.ui.foundation.lazy.LazyColumnItems
 import androidx.ui.layout.Column
 import androidx.ui.layout.Spacer
@@ -59,12 +58,9 @@ val ListBinding = composedViewFactory<ListWorkflow.Rendering> { rendering, _ ->
                 Spacer(modifier = Modifier.height(8.dp))
                 TrackedValueValueListItem(
                     it,
-                    Modifier
-                        .padding(horizontal = 16.dp)
-                        .clickable(
-                            onClick = { rendering.onEvent(ListWorkflow.Event.ItemClicked(it.data)) },
-                            onLongClick = { rendering.onEvent(ListWorkflow.Event.ItemLongClicked(it.data)) }
-                        )
+                    Modifier.padding(horizontal = 16.dp),
+                    onAddClicked = { rendering.onEvent(ListWorkflow.Event.ItemClicked(it.data)) },
+                    onRemoveClicked = { rendering.onEvent(ListWorkflow.Event.ItemLongClicked(it.data)) }
                 )
                 if (rendering.state.items.lastOrNull() == it) {
                     Spacer(modifier = Modifier.height(8.dp))
