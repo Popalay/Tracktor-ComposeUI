@@ -41,7 +41,7 @@ android {
         jvmTarget = '1.8'
     }
     composeOptions {
-        kotlinCompilerExtensionVersion "0.1.0-dev13"
+        kotlinCompilerExtensionVersion "0.1.0-dev14"
     }
 }
 
@@ -56,10 +56,9 @@ dependencies {
 }
 
 dependencies {
-    implementation 'androidx.ui:ui-tooling:0.1.0-dev13'
-    implementation 'androidx.ui:ui-layout:0.1.0-dev13'
-    implementation 'androidx.ui:ui-material:0.1.0-dev13'
-    implementation 'com.github.zsoltk:compose-router:0.13.0'
+    implementation 'androidx.ui:ui-tooling:0.1.0-dev14'
+    implementation 'androidx.ui:ui-layout:0.1.0-dev14'
+    implementation 'androidx.ui:ui-material:0.1.0-dev14'
 }
 
 dependencies {

@@ -2,8 +2,8 @@ package com.popalay.tracktor.ui.list
 
 import androidx.compose.Composable
 import androidx.ui.core.Modifier
-import androidx.ui.foundation.AdapterList
 import androidx.ui.foundation.Text
+import androidx.ui.foundation.lazy.LazyColumnItems
 import androidx.ui.layout.Column
 import androidx.ui.layout.Spacer
 import androidx.ui.layout.fillMaxSize
@@ -23,7 +23,7 @@ import com.squareup.workflow.ui.compose.tooling.preview
 
 val ListBinding = composedViewFactory<ListWorkflow.Rendering> { rendering, _ ->
     Scaffold(
-        topAppBar = {
+        topBar = {
             Column {
                 TopAppBar(title = { Text("Tracktor") })
                 CreateTrackedValue(onSubmit = { rendering.onEvent(ListWorkflow.Event.NewTrackerTitleSubmitted(it)) })
@@ -53,7 +53,7 @@ val ListBinding = composedViewFactory<ListWorkflow.Rendering> { rendering, _ ->
                     )
                 }
             }
-            AdapterList(data = rendering.state.items) {
+            LazyColumnItems(items = rendering.state.items, itemContent = {
                 Spacer(modifier = Modifier.height(8.dp))
                 TrackedValueValueListItem(
                     it,
@@ -63,7 +63,7 @@ val ListBinding = composedViewFactory<ListWorkflow.Rendering> { rendering, _ ->
                 if (rendering.state.items.lastOrNull() == it) {
                     Spacer(modifier = Modifier.height(8.dp))
                 }
-            }
+            })
         }
     }
 }

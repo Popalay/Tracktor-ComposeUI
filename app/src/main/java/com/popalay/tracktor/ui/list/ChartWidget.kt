@@ -17,13 +17,13 @@ import androidx.ui.graphics.drawscope.Stroke
 import androidx.ui.layout.fillMaxWidth
 import androidx.ui.layout.preferredHeight
 import androidx.ui.tooling.preview.Preview
-import androidx.ui.unit.PxPosition
 import androidx.ui.unit.dp
 import androidx.ui.util.fastFirstOrNull
 import com.popalay.tracktor.ui.list.ChartAnimationState.STATE_END
 import com.popalay.tracktor.ui.list.ChartAnimationState.STATE_START
 import java.lang.Float.max
 import java.lang.Float.min
+import kotlin.math.abs
 
 private val amplifierKey = FloatPropKey()
 
@@ -59,7 +59,7 @@ fun ChartWidget(
         initState = currentState,
         toState = STATE_END
     ) { transitionState ->
-        val touchPosition = state<PxPosition?> { null }
+        val touchPosition = state<Offset?> { null }
 
         Canvas(
             modifier = Modifier.preferredHeight(100.dp)
@@ -75,9 +75,9 @@ fun ChartWidget(
 
             val bottomY = size.height
             val xDiff = size.width / (data.size - 1)
-            val lineWidth = 2.dp.toPx().value
-            val labelRadius = 4.dp.toPx().value
-            val topOffset = 4.dp.toPx().value
+            val lineWidth = 2.dp.toPx()
+            val labelRadius = 4.dp.toPx()
+            val topOffset = 4.dp.toPx()
             val touchArea = labelRadius * 4
 
             val maxData = data.max()?.toFloat() ?: 0F
@@ -93,8 +93,8 @@ fun ChartWidget(
             }
 
             for (i in 1 until points.size) {
-                conPoints1.add(Offset((points[i].dx + points[i - 1].dx) / 2, points[i - 1].dy))
-                conPoints2.add(Offset((points[i].dx + points[i - 1].dx) / 2, points[i].dy))
+                conPoints1.add(Offset((points[i].x + points[i - 1].x) / 2, points[i - 1].y))
+                conPoints2.add(Offset((points[i].x + points[i - 1].x) / 2, points[i].y))
             }
 
             if (points.isEmpty() || conPoints1.isEmpty() || conPoints2.isEmpty()) return@Canvas
@@ -102,13 +102,13 @@ fun ChartWidget(
             val path = Path()
 
             path.reset()
-            path.moveTo(points.first().dx, points.first().dy)
+            path.moveTo(points.first().x, points.first().y)
 
             for (i in 1 until points.size) {
                 path.cubicTo(
-                    conPoints1[i - 1].dx, conPoints1[i - 1].dy,
-                    conPoints2[i - 1].dx, conPoints2[i - 1].dy,
-                    points[i].dx, points[i].dy
+                    conPoints1[i - 1].x, conPoints1[i - 1].y,
+                    conPoints2[i - 1].x, conPoints2[i - 1].y,
+                    points[i].x, points[i].y
                 )
             }
 
@@ -127,13 +127,12 @@ fun ChartWidget(
             )
             drawPath(borderPath, color = Color.White, style = Stroke(width = lineWidth))
 
-            val touchedPoint = if (touchPosition.value == null) null else points.fastFirstOrNull {
-                touchPosition.value!!.x.value in (it.dx - touchArea)..(it.dx + touchArea) &&
-                        touchPosition.value!!.y.value in (it.dy - touchArea)..(it.dy + touchArea)
+            val touchedPoint = if (touchPosition.value == null) null else points.fastFirstOrNull { offset ->
+                (touchPosition.value!! - offset).let { abs(it.x) <= touchArea && abs(it.y) <= touchArea }
             }
 
             points.forEach {
-                val center = Offset(max(min(it.dx, size.width - labelRadius), labelRadius), it.dy)
+                val center = Offset(max(min(it.x, size.width - labelRadius), labelRadius), it.y)
                 drawCircle(
                     color = Color.White,
                     radius = if (it == touchedPoint) labelRadius + topOffset else labelRadius,

@@ -16,7 +16,6 @@ import androidx.ui.layout.height
 import androidx.ui.layout.padding
 import androidx.ui.material.Card
 import androidx.ui.material.MaterialTheme
-import androidx.ui.material.ripple.ripple
 import androidx.ui.text.font.FontWeight
 import androidx.ui.text.style.TextAlign
 import androidx.ui.tooling.preview.Preview
@@ -38,7 +37,6 @@ fun TrackedValueValueListItem(
     val selectedValue = state<Double?> { null }
     Card(
         modifier = Modifier
-            .ripple(radius = 8.dp)
             .clickable(onClick = onClick, onLongClick = onLongClick),
         shape = MaterialTheme.shapes.medium.copy(CornerSize(8.dp))
     ) {
