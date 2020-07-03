@@ -18,7 +18,7 @@ import androidx.ui.material.FilledTextField
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.Surface
 import androidx.ui.material.icons.Icons
-import androidx.ui.material.icons.filled.Add
+import androidx.ui.material.icons.filled.Done
 import androidx.ui.material.primarySurface
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
@@ -33,7 +33,8 @@ fun CreateTrackedValue(onSubmit: (String) -> Unit = {}) {
         elevation = 4.dp
     ) {
         Row(
-            modifier = Modifier.padding(InnerPadding(16.dp))
+            modifier = Modifier.padding(InnerPadding(16.dp)),
+            verticalGravity = Alignment.CenterVertically
         ) {
             FilledTextField(
                 value = currentState,
@@ -44,18 +45,19 @@ fun CreateTrackedValue(onSubmit: (String) -> Unit = {}) {
                 inactiveColor = MaterialTheme.colors.onPrimary,
                 activeColor = MaterialTheme.colors.onPrimary
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(
-                text = { Icon(asset = Icons.Default.Add) },
-                modifier = Modifier.gravity(Alignment.CenterVertically).preferredSize(48.dp),
-                backgroundColor = MaterialTheme.colors.secondary,
-                enabled = currentState.isNotBlank(),
-                shape = CircleShape,
-                onClick = {
-                    onSubmit(currentState)
-                    updateState("")
-                }
-            )
+            if (currentState.isNotBlank()) {
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    text = { Icon(asset = Icons.Default.Done) },
+                    modifier = Modifier.preferredSize(48.dp),
+                    backgroundColor = MaterialTheme.colors.secondary,
+                    shape = CircleShape,
+                    onClick = {
+                        onSubmit(currentState)
+                        updateState("")
+                    }
+                )
+            }
         }
     }
 }
