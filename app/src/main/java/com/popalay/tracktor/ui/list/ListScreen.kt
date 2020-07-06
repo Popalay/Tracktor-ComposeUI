@@ -56,7 +56,7 @@ val ListBinding = composedViewFactory<ListWorkflow.Rendering> { rendering, _ ->
             }
             LazyColumnItems(items = rendering.state.items, itemContent = {
                 Spacer(modifier = Modifier.height(8.dp))
-                TrackedValueValueListItem(
+                TrackedValueListItem(
                     it,
                     Modifier.padding(horizontal = 16.dp),
                     onAddClicked = { rendering.onEvent(ListWorkflow.Event.ItemClicked(it.data)) },

@@ -10,6 +10,7 @@ import androidx.ui.core.Modifier
 import androidx.ui.core.gesture.pressIndicatorGestureFilter
 import androidx.ui.foundation.Canvas
 import androidx.ui.geometry.Offset
+import androidx.ui.geometry.Size
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.HorizontalGradient
 import androidx.ui.graphics.Path
@@ -77,29 +78,10 @@ fun ChartWidget(
                     onCancel = { touchPosition.value = null }
                 )
         ) {
-            val conPoints1 = mutableListOf<Offset>()
-            val conPoints2 = mutableListOf<Offset>()
-
-            val bottomY = size.height
-            val xDiff = size.width / (data.size - 1)
             val touchArea = labelRadius.toPx() * 4
 
-            val maxData = data.max()?.toFloat() ?: 0F
-
-            val yMax = max(bottomY - (maxData / maxData * bottomY), (labelRadius + topOffset).toPx())
-            val animatedYMax = min(yMax / transitionState[amplifierKey], size.height)
-
-            val points = data.mapIndexed { index, item ->
-                val y = max(bottomY - (item.toFloat() / maxData * bottomY), (labelRadius + topOffset).toPx())
-                val animatedY = min(y / transitionState[amplifierKey], size.height)
-
-                Offset(xDiff * index, min(animatedY, max(animatedYMax, y)))
-            }
-
-            for (i in 1 until points.size) {
-                conPoints1.add(Offset((points[i].x + points[i - 1].x) / 2, points[i - 1].y))
-                conPoints2.add(Offset((points[i].x + points[i - 1].x) / 2, points[i].y))
-            }
+            val points = createPoints(data, size, labelRadius.toPx(), topOffset.toPx(), transitionState[amplifierKey])
+            val (conPoints1, conPoints2) = createConnectionPoints(points)
 
             if (points.isEmpty() || conPoints1.isEmpty() || conPoints2.isEmpty()) return@Canvas
 
@@ -116,8 +98,9 @@ fun ChartWidget(
                 )
             }
 
-            val borderPath = Path()
-            borderPath.addPath(path)
+            val borderPath = Path().apply {
+                addPath(path)
+            }
 
             path.lineTo(size.width, size.height)
             path.lineTo(0F, size.height)
@@ -159,6 +142,39 @@ fun ChartWidget(
             }
         }
     }
+}
+
+private fun createPoints(
+    data: List<Double>,
+    size: Size,
+    labelRadiusPx: Float,
+    topOffsetPx: Float,
+    amplifier: Float
+): List<Offset> {
+    val bottomY = size.height
+    val xDiff = size.width / (data.size - 1)
+
+    val maxData = data.max()?.toFloat() ?: 0F
+
+    val yMax = max(bottomY - (maxData / maxData * bottomY), labelRadiusPx + topOffsetPx)
+    val animatedYMax = min(yMax / amplifier, size.height)
+
+    return data.mapIndexed { index, item ->
+        val y = max(bottomY - (item.toFloat() / maxData * bottomY), labelRadiusPx + topOffsetPx)
+        val animatedY = min(y / amplifier, size.height)
+
+        Offset(xDiff * index, min(animatedY, max(animatedYMax, y)))
+    }
+}
+
+private fun createConnectionPoints(points: List<Offset>): Pair<List<Offset>, List<Offset>> {
+    val conPoints1 = mutableListOf<Offset>()
+    val conPoints2 = mutableListOf<Offset>()
+    for (i in 1 until points.size) {
+        conPoints1.add(Offset((points[i].x + points[i - 1].x) / 2, points[i - 1].y))
+        conPoints2.add(Offset((points[i].x + points[i - 1].x) / 2, points[i].y))
+    }
+    return conPoints1 to conPoints2
 }
 
 private val ChartDefaultHeight = 100.dp

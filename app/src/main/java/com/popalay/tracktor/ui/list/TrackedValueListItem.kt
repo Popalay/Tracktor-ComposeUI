@@ -38,7 +38,7 @@ import com.popalay.tracktor.ui.widget.ChartWidget
 import java.time.LocalDateTime
 
 @Composable
-fun TrackedValueValueListItem(
+fun TrackedValueListItem(
     item: ListItem,
     modifier: Modifier = Modifier,
     onAddClicked: () -> Unit,
@@ -141,7 +141,7 @@ fun ProgressTextField(
 @Composable
 fun TrackedValueValueListItemPreview() {
     ThemedPreview(isDarkTheme = true) {
-        TrackedValueValueListItem(fakeListItem(), Modifier, {}, {})
+        TrackedValueListItem(fakeListItem(), Modifier, {}, {})
     }
 }
 
