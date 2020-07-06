@@ -1,6 +1,10 @@
-<img align="left" src="https://github.com/Popalay/Tracktor/blob/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" width="48">
 
-# Tracktor
+<h1 align="center">
+  <img src="https://github.com/Popalay/Tracktor/blob/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" alt="Tracktor" width="150">
+  <br>
+  Tracktor
+  <br>
+</h1>
 
 ![Build](https://github.com/Popalay/Tracktor/workflows/Android%20CI/badge.svg)
 
