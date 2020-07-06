@@ -85,41 +85,19 @@ fun ChartWidget(
 
             if (points.isEmpty() || conPoints1.isEmpty() || conPoints2.isEmpty()) return@Canvas
 
-            val path = Path()
+            val borderPath = createBorderPath(points, conPoints1, conPoints2)
+            val fillPath = createFillPath(borderPath, size)
 
-            path.reset()
-            path.moveTo(points.first().x, points.first().y)
-
-            for (i in 1 until points.size) {
-                path.cubicTo(
-                    conPoints1[i - 1].x, conPoints1[i - 1].y,
-                    conPoints2[i - 1].x, conPoints2[i - 1].y,
-                    points[i].x, points[i].y
-                )
-            }
-
-            val borderPath = Path().apply {
-                addPath(path)
-            }
-
-            path.lineTo(size.width, size.height)
-            path.lineTo(0F, size.height)
             drawPath(
-                path,
-                brush = HorizontalGradient(
-                    colors = gradient.map { it.copy(alpha = 0.5F) },
-                    startX = 0F,
-                    endX = size.width
-                )
+                fillPath,
+                createBrush(gradient, size),
+                0.5F
             )
             drawPath(
                 borderPath,
-                brush = HorizontalGradient(
-                    colors = gradient,
-                    startX = 0F,
-                    endX = size.width
-                ),
-                style = Stroke(width = lineWidth.toPx())
+                createBrush(gradient, size),
+                1.0F,
+                Stroke(lineWidth.toPx())
             )
 
             val touchedPoint = if (touchPosition.value == null) null else points.fastFirstOrNull { offset ->
@@ -162,7 +140,6 @@ private fun createPoints(
     return data.mapIndexed { index, item ->
         val y = max(bottomY - (item.toFloat() / maxData * bottomY), labelRadiusPx + topOffsetPx)
         val animatedY = min(y / amplifier, size.height)
-
         Offset(xDiff * index, min(animatedY, max(animatedYMax, y)))
     }
 }
@@ -176,6 +153,42 @@ private fun createConnectionPoints(points: List<Offset>): Pair<List<Offset>, Lis
     }
     return conPoints1 to conPoints2
 }
+
+private fun createBorderPath(
+    points: List<Offset>,
+    conPoints1: List<Offset>,
+    conPoints2: List<Offset>
+): Path {
+    val borderPath = Path()
+
+    borderPath.reset()
+    borderPath.moveTo(points.first().x, points.first().y)
+
+    for (i in 1 until points.size) {
+        borderPath.cubicTo(
+            conPoints1[i - 1].x, conPoints1[i - 1].y,
+            conPoints2[i - 1].x, conPoints2[i - 1].y,
+            points[i].x, points[i].y
+        )
+    }
+    return borderPath
+}
+
+private fun createFillPath(borderPath: Path, size: Size): Path {
+    val fillPath = Path().apply {
+        addPath(borderPath)
+    }
+
+    fillPath.lineTo(size.width, size.height)
+    fillPath.lineTo(0F, size.height)
+    return fillPath
+}
+
+private fun createBrush(gradient: List<Color>, size: Size) = HorizontalGradient(
+    colors = gradient,
+    startX = 0F,
+    endX = size.width
+)
 
 private val ChartDefaultHeight = 100.dp
 private val ChartLabelRadius = 4.dp
