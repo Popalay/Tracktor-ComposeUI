@@ -88,17 +88,8 @@ fun ChartWidget(
             val borderPath = createBorderPath(points, conPoints1, conPoints2)
             val fillPath = createFillPath(borderPath, size)
 
-            drawPath(
-                fillPath,
-                createBrush(gradient, size),
-                0.5F
-            )
-            drawPath(
-                borderPath,
-                createBrush(gradient, size),
-                1.0F,
-                Stroke(lineWidth.toPx())
-            )
+            drawPath(fillPath, createBrush(gradient, size), 0.5F)
+            drawPath(borderPath, createBrush(gradient, size), 1.0F, Stroke(lineWidth.toPx()))
 
             val touchedPoint = if (touchPosition.value == null) null else points.fastFirstOrNull { offset ->
                 (touchPosition.value!! - offset).let { abs(it.x) <= touchArea && abs(it.y) <= touchArea }
