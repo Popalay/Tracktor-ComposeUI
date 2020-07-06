@@ -64,8 +64,16 @@ dependencies {
 dependencies {
     implementation "com.squareup.workflow:workflow-core-jvm:1.0.0-alpha.1"
     implementation "com.squareup.workflow:workflow-runtime-jvm:1.0.0-alpha.1"
-    implementation "com.squareup.workflow:workflow-ui-core-compose:0.30.0"
-    debugImplementation "com.squareup.workflow:workflow-ui-compose-tooling:0.30.0"
+    implementation('com.squareup.workflow:core-compose') {
+        version {
+            branch = 'dev14'
+        }
+    }
+    debugImplementation('com.squareup.workflow:compose-tooling') {
+        version {
+            branch = 'dev14'
+        }
+    }
 }
 
 dependencies {
