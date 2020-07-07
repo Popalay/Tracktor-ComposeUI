@@ -10,9 +10,11 @@ import androidx.ui.layout.height
 import androidx.ui.layout.padding
 import androidx.ui.material.Scaffold
 import androidx.ui.material.TopAppBar
+import androidx.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
 import com.popalay.tracktor.AppTheme
+import com.popalay.tracktor.R
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.model.TrackerWithRecords
@@ -28,7 +30,7 @@ val ListBinding = composedViewFactory<ListWorkflow.Rendering> { rendering, _ ->
     Scaffold(
         topBar = {
             Column {
-                TopAppBar(title = { Text("Tracktor") })
+                TopAppBar(title = { Text(stringResource(R.string.app_name)) })
                 CreateTrackedValue(onSubmit = { rendering.onEvent(ListWorkflow.Event.NewTrackerTitleSubmitted(it)) })
             }
         }

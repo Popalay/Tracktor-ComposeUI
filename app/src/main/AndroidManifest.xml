@@ -8,6 +8,7 @@
     <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
 
     <application
+        android:name=".Application"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"

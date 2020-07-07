@@ -5,6 +5,8 @@ import com.popalay.tracktor.model.TrackerWithRecords
 import com.squareup.workflow.Worker
 import kotlinx.coroutines.flow.Flow
 
-class GetAllTrackersWorker : Worker<List<TrackerWithRecords>> {
-    override fun run(): Flow<List<TrackerWithRecords>> = TrackingRepository.getAllTrackerWithRecords()
+class GetAllTrackersWorker(
+    private val trackingRepository: TrackingRepository
+) : Worker<List<TrackerWithRecords>> {
+    override fun run(): Flow<List<TrackerWithRecords>> = trackingRepository.getAllTrackerWithRecords()
 }

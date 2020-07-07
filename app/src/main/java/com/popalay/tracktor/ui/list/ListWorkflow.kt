@@ -16,7 +16,10 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.util.UUID
 
-object ListWorkflow : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWorkflow.Rendering>() {
+class ListWorkflow(
+    private val trackingRepository: TrackingRepository,
+    private val getAllTrackersWorker: GetAllTrackersWorker
+) : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWorkflow.Rendering>() {
 
     data class State(
         val items: List<ListItem>,
@@ -55,7 +58,7 @@ object ListWorkflow : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWo
             is Event.UnitSubmitted -> action {
                 GlobalScope.launch {
                     nextState.itemInCreating?.let {
-                        TrackingRepository.saveTracker(it.copy(unit = event.unit))
+                        trackingRepository.saveTracker(it.copy(unit = event.unit))
                     }
                     nextState = nextState.copy(itemInCreating = null)
                 }
@@ -68,7 +71,7 @@ object ListWorkflow : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWo
                         value = event.value,
                         date = LocalDateTime.now()
                     )
-                    TrackingRepository.saveRecord(record)
+                    trackingRepository.saveRecord(record)
                 }
             }
             is Event.ListUpdated -> action {
@@ -82,7 +85,7 @@ object ListWorkflow : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWo
             }
             is Event.DeleteSubmitted -> action {
                 GlobalScope.launch {
-                    TrackingRepository.deleteTracker(event.item.tracker)
+                    trackingRepository.deleteTracker(event.item.tracker)
                 }
             }
             is Event.NewTrackerTitleSubmitted -> action {
@@ -112,7 +115,7 @@ object ListWorkflow : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWo
         state: State,
         context: RenderContext<State, Nothing>
     ): Rendering {
-        context.runningWorker(GetAllTrackersWorker()) { list -> eventDispatcher(Event.ListUpdated(list.map { it.toListItem() })) }
+        context.runningWorker(getAllTrackersWorker) { list -> eventDispatcher(Event.ListUpdated(list.map { it.toListItem() })) }
         return Rendering(
             state = state,
             onEvent = { context.actionSink.send(eventDispatcher(it)) }
