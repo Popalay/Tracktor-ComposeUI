@@ -61,8 +61,8 @@ val ListBinding = composedViewFactory<ListWorkflow.Rendering> { rendering, _ ->
                 TrackedValueListItem(
                     it,
                     Modifier.padding(horizontal = 16.dp),
-                    onAddClicked = { rendering.onEvent(ListWorkflow.Event.ItemClicked(it.data)) },
-                    onRemoveClicked = { rendering.onEvent(ListWorkflow.Event.ItemLongClicked(it.data)) }
+                    onAddClicked = { rendering.onEvent(ListWorkflow.Event.AddRecordClicked(it.data)) },
+                    onRemoveClicked = { rendering.onEvent(ListWorkflow.Event.RemoveTrackerClicked(it.data)) }
                 )
                 if (rendering.state.items.lastOrNull() == it) {
                     Spacer(modifier = Modifier.height(8.dp))

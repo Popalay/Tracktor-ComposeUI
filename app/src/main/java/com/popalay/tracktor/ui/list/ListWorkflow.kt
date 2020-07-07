@@ -11,7 +11,10 @@ import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow
 import com.squareup.workflow.WorkflowAction
 import com.squareup.workflow.action
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.util.UUID
@@ -20,6 +23,9 @@ class ListWorkflow(
     private val trackingRepository: TrackingRepository,
     private val getAllTrackersWorker: GetAllTrackersWorker
 ) : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, ListWorkflow.Rendering>() {
+
+    private val job: Job = SupervisorJob()
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
 
     data class State(
         val items: List<ListItem>,
@@ -32,8 +38,8 @@ class ListWorkflow(
         data class UnitSubmitted(val unit: TrackableUnit) : Event()
         data class NewRecordSubmitted(val tracker: Tracker, val value: Double) : Event()
         data class ListUpdated(val list: List<ListItem>) : Event()
-        data class ItemClicked(val item: TrackerWithRecords) : Event()
-        data class ItemLongClicked(val item: TrackerWithRecords) : Event()
+        data class AddRecordClicked(val item: TrackerWithRecords) : Event()
+        data class RemoveTrackerClicked(val item: TrackerWithRecords) : Event()
         data class DeleteSubmitted(val item: TrackerWithRecords) : Event()
         data class NewTrackerTitleSubmitted(val title: String) : Event()
         object TrackDialogDismissed : Event()
@@ -56,7 +62,7 @@ class ListWorkflow(
     private val eventDispatcher: (Event) -> WorkflowAction<State, Nothing> = { event ->
         when (event) {
             is Event.UnitSubmitted -> action {
-                GlobalScope.launch {
+                coroutineScope.launch {
                     nextState.itemInCreating?.let {
                         trackingRepository.saveTracker(it.copy(unit = event.unit))
                     }
@@ -64,7 +70,7 @@ class ListWorkflow(
                 }
             }
             is Event.NewRecordSubmitted -> action {
-                GlobalScope.launch {
+                coroutineScope.launch {
                     val record = ValueRecord(
                         id = UUID.randomUUID().toString(),
                         trackerId = event.tracker.id,
@@ -77,14 +83,14 @@ class ListWorkflow(
             is Event.ListUpdated -> action {
                 nextState = nextState.copy(items = event.list)
             }
-            is Event.ItemClicked -> action {
+            is Event.AddRecordClicked -> action {
                 nextState = nextState.copy(itemInEditing = event.item)
             }
-            is Event.ItemLongClicked -> action {
+            is Event.RemoveTrackerClicked -> action {
                 nextState = nextState.copy(itemInDeleting = event.item)
             }
             is Event.DeleteSubmitted -> action {
-                GlobalScope.launch {
+                coroutineScope.launch {
                     trackingRepository.deleteTracker(event.item.tracker)
                 }
             }
