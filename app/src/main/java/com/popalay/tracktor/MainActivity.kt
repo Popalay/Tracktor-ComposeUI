@@ -8,6 +8,7 @@ import com.popalay.tracktor.data.TrackingRepository
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         TrackingRepository.init(applicationContext)
         setContent {
