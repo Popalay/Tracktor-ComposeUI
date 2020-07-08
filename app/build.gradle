@@ -10,6 +10,7 @@ println("APK version code: " + appVersionCode)
 ext {
     ci = System.getenv("CI") == "true"
 }
+println("Is CI environment: " + ci)
 
 android {
     compileSdkVersion 29
@@ -101,7 +102,7 @@ dependencies {
     implementation "com.squareup.workflow:workflow-runtime-jvm:1.0.0-alpha.1"
     if (!ci) {
         implementation "com.squareup.workflow:workflow-ui-core-compose:0.30.0"
-        debugImplementation "com.squareup.workflow:workflow-ui-compose-tooling:0.30.0"
+        implementation "com.squareup.workflow:workflow-ui-compose-tooling:0.30.0"
     } else {
         implementation('com.squareup.workflow:core-compose') {
             version {
