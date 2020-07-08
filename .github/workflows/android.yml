@@ -44,7 +44,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
 
       - name: Build with Gradle
-        run: ./gradlew assempleRelease bundleRelease -Ptracktor.versioncode=$BUILD_NUMBER --scan --stacktrace
+        run: ./gradlew assembleRelease bundleRelease -Ptracktor.versioncode=$BUILD_NUMBER --scan --stacktrace
 
       - name: Detekt all
         uses: natiginfo/action-detekt-all@1.10.0-RC1
