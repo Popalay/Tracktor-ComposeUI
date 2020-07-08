@@ -109,7 +109,7 @@ dependencies {
                 branch = 'dev14'
             }
         }
-        debugImplementation('com.squareup.workflow:compose-tooling') {
+        implementation('com.squareup.workflow:compose-tooling') {
             version {
                 branch = 'dev14'
             }

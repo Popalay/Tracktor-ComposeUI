@@ -50,3 +50,10 @@ jobs:
         uses: natiginfo/action-detekt-all@1.10.0-RC1
         with:
           args: --fail-fast --config .github/detekt.yml --excludes **/workflow-kotlin-compose/**
+
+      - name: Upload build outputs
+        if: always()
+        uses: actions/upload-artifact@v1
+        with:
+          name: build-outputs
+          path: app/build/outputs
