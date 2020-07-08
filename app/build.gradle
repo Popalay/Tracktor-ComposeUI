@@ -29,9 +29,9 @@ android {
             }
             release {
                 storeFile file('../release/release.keystore')
-                keyAlias propOrDef("ANDROID_RELEASE_KEY_ALIAS", "")
-                storePassword propOrDef("ANDROID_RELEASE_KEYSTORE_PWD", "")
-                keyPassword propOrDef("ANDROID_RELEASE_KEY_PWD", "")
+                keyAlias "tracktor"
+                storePassword envOrDef("ANDROID_RELEASE_KEYSTORE_PWD", "")
+                keyPassword envOrDef("ANDROID_RELEASE_KEY_PWD", "")
             }
         }
 
