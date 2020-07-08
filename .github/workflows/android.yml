@@ -12,8 +12,7 @@ jobs:
     timeout-minutes: 30
     env:
       ANDROID_RELEASE_KEYSTORE_PWD: ${{ secrets.ANDROID_RELEASE_KEYSTORE_PWD }}
-      ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.ANDROID_RELEASE_KEY_ALIAS }}
-      ANDROID_RELEASE_KEY_PWD: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_RELEASE_KEY_PWD }}
+      ANDROID_RELEASE_KEY_PWD: ${{ secrets.ANDROID_RELEASE_KEY_PWD }}
 
     steps:
       - name: Generate build number
