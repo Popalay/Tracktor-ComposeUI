@@ -5,15 +5,22 @@ on:
     branches:
       - master
   pull_request:
-    branches:
-      - master
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ANDROID_RELEASE_KEYSTORE_PWD: ${{ secrets.ANDROID_RELEASE_KEYSTORE_PWD }}
+      ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.ANDROID_RELEASE_KEY_ALIAS }}
+      ANDROID_RELEASE_KEY_PWD: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_RELEASE_KEY_PWD }}
 
     steps:
+      - name: Generate build number
+        shell: bash
+        run: |
+          echo "::set-env name=BUILD_NUMBER::$(expr $GITHUB_RUN_NUMBER + 5200)"
+
       - uses: actions/checkout@v2
 
       - name: set up JDK 1.8
@@ -37,7 +44,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
 
       - name: Build with Gradle
-        run: ./gradlew assembleDebug --scan --stacktrace
+        run: ./gradlew assempleRelease bundleRelease -Ptracktor.versioncode=$BUILD_NUMBER --scan --stacktrace
 
       - name: Detekt all
         uses: natiginfo/action-detekt-all@1.10.0-RC1

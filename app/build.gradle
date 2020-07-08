@@ -4,6 +4,13 @@ plugins {
     id 'kotlin-kapt'
 }
 
+def appVersionCode = propOrDef("tracktor.versioncode", 1) as Integer
+println("APK version code: " + appVersionCode)
+
+ext {
+    ci = System.getenv("CI") == "true"
+}
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -15,12 +22,37 @@ android {
         versionCode 1
         versionName "1.0"
 
-/*        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments += ["room.incremental"     : "true",
-                              "room.expandProjection": "true"]
+        signingConfigs {
+            debug {
+                storeFile file('../release/debug.keystore')
             }
-        }*/
+            release {
+                storeFile file('../release/release.keystore')
+                keyAlias propOrDef("ANDROID_RELEASE_KEY_ALIAS", "")
+                storePassword propOrDef("ANDROID_RELEASE_KEYSTORE_PWD", "")
+                keyPassword propOrDef("ANDROID_RELEASE_KEY_PWD", "")
+            }
+        }
+
+        buildTypes {
+            debug {
+                signingConfig signingConfigs.debug
+                versionNameSuffix "-dev"
+                applicationIdSuffix ".debug"
+            }
+
+            release {
+                if (ci) signingConfig signingConfigs.release else signingConfig signingConfigs.debug
+                minifyEnabled true
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            }
+        }
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     buildFeatures {
@@ -33,13 +65,21 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    dexOptions {
+        // Don't pre-dex on CI
+        preDexLibraries !ci
+    }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion "0.1.0-dev14"
     }
@@ -59,7 +99,7 @@ dependencies {
 dependencies {
     implementation "com.squareup.workflow:workflow-core-jvm:1.0.0-alpha.1"
     implementation "com.squareup.workflow:workflow-runtime-jvm:1.0.0-alpha.1"
-    if (System.getProperties()['idea.platform.prefix'] != null) {
+    if (!ci) {
         implementation "com.squareup.workflow:workflow-ui-core-compose:0.30.0"
         debugImplementation "com.squareup.workflow:workflow-ui-compose-tooling:0.30.0"
     } else {
