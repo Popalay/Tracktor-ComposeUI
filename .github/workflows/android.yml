@@ -4,7 +4,11 @@ on:
   push:
     branches:
       - master
+    tags:
+      - v**
   pull_request:
+    branches:
+      - master
 
 jobs:
   build:
@@ -18,7 +22,7 @@ jobs:
       - name: Generate build number
         shell: bash
         run: |
-          echo "::set-env name=BUILD_NUMBER::$(expr $GITHUB_RUN_NUMBER + 5200)"
+          echo "::set-env name=BUILD_NUMBER::$(expr $GITHUB_RUN_NUMBER + 5200)"; echo github.ref
 
       - uses: actions/checkout@v2
 
