@@ -1,6 +1,6 @@
 
 <h1 align="center">
-  <img src="https://github.com/Popalay/Tracktor/blob/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" alt="Tracktor" width="150">
+  <img src="https://github.com/Popalay/Tracktor/blob/master/app/src/main/ic_launcher-playstore.png" alt="Tracktor" width="150">
   <br>
   Tracktor
   <br>
