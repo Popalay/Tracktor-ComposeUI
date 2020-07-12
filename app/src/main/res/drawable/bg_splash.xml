@@ -3,4 +3,8 @@
 
     <item android:drawable="@android:color/black" />
 
+    <item
+        android:drawable="@drawable/ic_logo"
+        android:gravity="center" />
+
 </layer-list>

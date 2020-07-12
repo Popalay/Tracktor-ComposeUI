@@ -1,4 +1,4 @@
-package com.popalay.tracktor.ui.list.dialog
+package com.popalay.tracktor.ui.dialog
 
 import androidx.compose.Composable
 import androidx.compose.state
@@ -31,10 +31,7 @@ fun UpdateTrackedValueDialog(
         confirmButton = {
             Button(
                 enabled = newValue.value.toDoubleOrNull() != null,
-                onClick = {
-                    onSave(newValue.value.toDoubleOrNull() ?: 0.0)
-                    onCloseRequest()
-                }
+                onClick = { onSave(newValue.value.toDoubleOrNull() ?: 0.0) }
             ) {
                 Text(text = "Save")
             }

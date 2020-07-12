@@ -13,7 +13,11 @@ import kotlinx.coroutines.flow.Flow
 interface TrackerDao {
     @Transaction
     @Query("SELECT * FROM tracker ORDER by date DESC")
-    fun getAllTrackerWithRecords(): Flow<List<TrackerWithRecords>>
+    fun getAllTrackersWithRecords(): Flow<List<TrackerWithRecords>>
+
+    @Transaction
+    @Query("SELECT * FROM tracker WHERE id=:id")
+    fun getTrackerWithRecordsById(id: String): Flow<TrackerWithRecords>
 
     @Insert
     suspend fun insert(value: Tracker)

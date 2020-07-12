@@ -8,5 +8,5 @@ import kotlinx.coroutines.flow.Flow
 class GetAllTrackersWorker(
     private val trackingRepository: TrackingRepository
 ) : Worker<List<TrackerWithRecords>> {
-    override fun run(): Flow<List<TrackerWithRecords>> = trackingRepository.getAllTrackerWithRecords()
+    override fun run(): Flow<List<TrackerWithRecords>> = trackingRepository.getAllTrackersWithRecords()
 }

@@ -1,15 +1,11 @@
 package com.popalay.tracktor.ui.list
 
 import androidx.compose.Composable
-import androidx.compose.MutableState
-import androidx.compose.remember
-import androidx.compose.state
 import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.Icon
 import androidx.ui.foundation.Text
-import androidx.ui.foundation.currentTextStyle
 import androidx.ui.foundation.shape.corner.CornerSize
 import androidx.ui.graphics.Color
 import androidx.ui.layout.Column
@@ -35,33 +31,32 @@ import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.model.ValueRecord
 import com.popalay.tracktor.ui.widget.ChartWidget
+import com.popalay.tracktor.ui.widget.ProgressTextField
 import java.time.LocalDateTime
 
 @Composable
-fun TrackedValueListItem(
-    item: ListItem,
+fun TrackerListItem(
+    item: TrackerListItem,
     modifier: Modifier = Modifier,
     onAddClicked: () -> Unit,
     onRemoveClicked: () -> Unit
 ) {
-    val selectedValue = state<Double?> { null }
-    val gradient = remember { gradients.getValue(item.data.tracker.unit) }
+    val gradient = gradients.getValue(item.data.tracker.unit)
     Card(
         modifier = modifier,
         shape = MaterialTheme.shapes.medium.copy(CornerSize(16.dp))
     ) {
         Column {
             Header(item, gradient)
-            Body(item, gradient, selectedValue)
-            Footer(selectedValue.value, item, onAddClicked, onRemoveClicked)
+            Body(item, gradient)
+            Footer(item, onAddClicked, onRemoveClicked)
         }
     }
 }
 
 @Composable
 private fun Footer(
-    selectedValue: Double?,
-    item: ListItem,
+    item: TrackerListItem,
     onAddClicked: () -> Unit,
     onRemoveClicked: () -> Unit
 ) {
@@ -74,20 +69,13 @@ private fun Footer(
         }
         Spacer(modifier = Modifier.weight(1F))
         Box(paddingEnd = 16.dp) {
-            if (selectedValue == null) {
-                Text("Current: ${item.data.format(item.data.currentValue)}")
-            } else {
-                Text(
-                    "Selected: ${item.data.format(selectedValue)}",
-                    style = currentTextStyle().copy(fontWeight = FontWeight.Bold)
-                )
-            }
+            Text("Current: ${item.data.format(item.data.currentValue)}")
         }
     }
 }
 
 @Composable
-private fun Header(item: ListItem, gradient: List<Color>) {
+private fun Header(item: TrackerListItem, gradient: List<Color>) {
     Row(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp), verticalGravity = Alignment.CenterVertically) {
         Text(item.data.tracker.title)
         Spacer(modifier = Modifier.weight(1F))
@@ -97,16 +85,14 @@ private fun Header(item: ListItem, gradient: List<Color>) {
 
 @Composable
 private fun Body(
-    item: ListItem,
-    gradient: List<Color>,
-    selectedValue: MutableState<Double?>
+    item: TrackerListItem,
+    gradient: List<Color>
 ) {
     if (item.data.records.size > 1) {
         ChartWidget(
             data = item.data.records.map { it.value },
             gradient = gradient,
-            onPointSelected = { selectedValue.value = it },
-            onPointUnSelected = { selectedValue.value = null }
+            touchable = false
         )
     } else {
         Row(modifier = Modifier.height(100.dp).fillMaxWidth()) {
@@ -120,32 +106,15 @@ private fun Body(
     }
 }
 
-@Composable
-fun ProgressTextField(
-    progress: Double,
-    color: Color = MaterialTheme.colors.secondary,
-    modifier: Modifier = Modifier
-) {
-    val progressPercent = (progress * 100).toInt()
-    val arrow = if (progressPercent >= 0) "↑" else "↓"
-    Text(
-        text = "$arrow$progressPercent%",
-        color = color,
-        fontWeight = FontWeight.Bold,
-        style = MaterialTheme.typography.caption,
-        modifier = modifier
-    )
-}
-
 @Preview
 @Composable
 fun TrackedValueValueListItemPreview() {
     ThemedPreview(isDarkTheme = true) {
-        TrackedValueListItem(fakeListItem(), Modifier, {}, {})
+        TrackerListItem(fakeListItem(), Modifier, {}, {})
     }
 }
 
-private fun fakeListItem() = ListItem(
+private fun fakeListItem() = TrackerListItem(
     data = TrackerWithRecords(
         Tracker("trackerId", "title", TrackableUnit.Kilograms, LocalDateTime.now()),
         listOf(ValueRecord("valueId", "trackerId", 42.3, LocalDateTime.now()))

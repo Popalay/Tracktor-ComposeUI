@@ -10,6 +10,7 @@ import com.popalay.tracktor.data.TrackingRepository
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.ui.list.ListWorkflow
+import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow
 import com.popalay.tracktor.worker.GetAllTrackersWorker
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -18,6 +19,7 @@ import java.util.concurrent.Executors
 
 val coreModule = module {
     factory { ListWorkflow(get(), get()) }
+    factory { TrackerDetailWorkflow(get()) }
 }
 
 val domainModule = module {

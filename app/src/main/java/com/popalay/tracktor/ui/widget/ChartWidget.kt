@@ -14,6 +14,7 @@ import androidx.ui.geometry.Size
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.HorizontalGradient
 import androidx.ui.graphics.Path
+import androidx.ui.graphics.drawscope.DrawScope
 import androidx.ui.graphics.drawscope.Stroke
 import androidx.ui.layout.fillMaxWidth
 import androidx.ui.layout.preferredHeight
@@ -53,14 +54,15 @@ private val definition = transitionDefinition {
 fun ChartWidget(
     data: List<Double>,
     gradient: List<Color>,
-    modifier: Modifier = Modifier,
+    touchable: Boolean,
+    modifier: Modifier = Modifier.preferredHeight(ChartDefaultHeight),
     pointColor: Color = MaterialTheme.colors.onSurface,
     lineWidth: Dp = ChartLineWidth,
     labelRadius: Dp = ChartLabelRadius,
     topOffset: Dp = ChartLabelRadius,
     currentState: ChartAnimationState = STATE_START,
-    onPointSelected: (Double) -> Unit,
-    onPointUnSelected: () -> Unit
+    onPointSelected: (Offset, Double) -> Unit = { _, _ -> },
+    onPointUnSelected: () -> Unit = {}
 ) {
     Transition(
         definition = definition,
@@ -70,13 +72,16 @@ fun ChartWidget(
         val touchPosition = state<Offset?> { null }
         Canvas(
             modifier = modifier
-                .preferredHeight(ChartDefaultHeight)
                 .fillMaxWidth()
-                .pressIndicatorGestureFilter(
-                    onStart = { touchPosition.value = it },
-                    onStop = { touchPosition.value = null },
-                    onCancel = { touchPosition.value = null }
-                )
+                .let {
+                    if (touchable) {
+                        it.pressIndicatorGestureFilter(
+                            onStart = { touchPosition.value = it },
+                            onStop = { touchPosition.value = null },
+                            onCancel = { touchPosition.value = null }
+                        )
+                    } else it
+                }
         ) {
             val touchArea = labelRadius.toPx() * 4
 
@@ -91,25 +96,41 @@ fun ChartWidget(
             drawPath(fillPath, createBrush(gradient, size), 0.5F)
             drawPath(borderPath, createBrush(gradient, size), 1.0F, Stroke(lineWidth.toPx()))
 
-            val touchedPoint = if (touchPosition.value == null) null else points.fastFirstOrNull { offset ->
-                (touchPosition.value!! - offset).let { abs(it.x) <= touchArea && abs(it.y) <= touchArea }
-            }
-
-            points.forEach {
-                val center = Offset(max(min(it.x, size.width - labelRadius.toPx()), labelRadius.toPx()), it.y)
-                drawCircle(
-                    color = pointColor,
-                    radius = if (it == touchedPoint) (labelRadius + topOffset).toPx() else labelRadius.toPx(),
-                    center = center
-                )
-            }
-
-            if (touchedPoint == null) {
-                onPointUnSelected()
-            } else {
-                onPointSelected(data.reversed()[points.reversed().indexOf(touchedPoint)])
+            if (touchable) {
+                drawTouchable(data, touchPosition.value, points, touchArea, labelRadius, pointColor, topOffset, onPointUnSelected, onPointSelected)
             }
         }
+    }
+}
+
+private fun DrawScope.drawTouchable(
+    data: List<Double>,
+    touchPosition: Offset?,
+    points: List<Offset>,
+    touchArea: Float,
+    labelRadius: Dp,
+    pointColor: Color,
+    topOffset: Dp,
+    onPointUnSelected: () -> Unit,
+    onPointSelected: (Offset, Double) -> Unit
+) {
+    val touchedPoint = if (touchPosition == null) null else points.fastFirstOrNull { offset ->
+        (touchPosition - offset).let { abs(it.x) <= touchArea && abs(it.y) <= touchArea }
+    }
+
+    points.forEach {
+        val center = Offset(max(min(it.x, size.width - labelRadius.toPx()), labelRadius.toPx()), it.y)
+        drawCircle(
+            color = pointColor,
+            radius = if (it == touchedPoint) (labelRadius + topOffset).toPx() else labelRadius.toPx(),
+            center = center
+        )
+    }
+
+    if (touchedPoint == null) {
+        onPointUnSelected()
+    } else {
+        onPointSelected(touchedPoint, data.reversed()[points.reversed().indexOf(touchedPoint)])
     }
 }
 
@@ -191,7 +212,6 @@ fun PlotPreview() {
     ChartWidget(
         data = listOf(20.0, 12.0, 30.0, 2.0),
         gradient = listOf(Color(0xFF64BFE1), Color(0xFFA091B7), Color(0xFFE0608A)),
-        onPointSelected = {},
-        onPointUnSelected = {}
+        touchable = true
     )
 }

@@ -2,8 +2,8 @@ package com.popalay.tracktor.ui.list
 
 import com.popalay.tracktor.model.TrackerWithRecords
 
-data class ListItem(
+data class TrackerListItem(
     val data: TrackerWithRecords
 )
 
-fun TrackerWithRecords.toListItem() = ListItem(this)
+fun TrackerWithRecords.toListItem() = TrackerListItem(this)
