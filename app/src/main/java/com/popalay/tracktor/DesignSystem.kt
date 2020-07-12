@@ -3,7 +3,7 @@ package com.popalay.tracktor
 import androidx.compose.Composable
 import androidx.ui.layout.Column
 import androidx.ui.tooling.preview.Preview
-import com.popalay.tracktor.ui.create.CreateTrackedValue
+import com.popalay.tracktor.ui.list.CreateTrackedValue
 import com.popalay.tracktor.ui.widget.ChartAnimationState
 import com.popalay.tracktor.ui.widget.ChartWidget
 import kotlin.random.Random
@@ -34,9 +34,9 @@ fun previewChartWidget() {
                 ChartWidget(
                     data,
                     it.value,
-                    currentState = ChartAnimationState.STATE_END,
-                    onPointSelected = {},
-                    onPointUnSelected = {})
+                    touchable = true,
+                    currentState = ChartAnimationState.STATE_END
+                )
             }
         }
     }

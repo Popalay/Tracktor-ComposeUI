@@ -24,9 +24,13 @@ data class TrackerWithRecords(
     }
 
     val progress: Double
-        get() = try {
-            (records.lastOrNull()?.value ?: 0.0) / (records.firstOrNull()?.value ?: 0.0) - 1
+        get() = progress(records.lastOrNull()?.value ?: 0.0)
+
+    fun progress(lastValue: Double): Double {
+        return try {
+            (lastValue) / (records.firstOrNull()?.value ?: 0.0) - 1
         } catch (exception: Exception) {
             0.0
         }
+    }
 }

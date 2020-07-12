@@ -1,4 +1,4 @@
-package com.popalay.tracktor.ui.list.dialog
+package com.popalay.tracktor.ui.dialog
 
 import androidx.compose.Composable
 import androidx.ui.foundation.Text
@@ -20,10 +20,7 @@ fun ChooseUnitDialog(
                 .forEach {
                     ListItem(
                         text = it.displayName,
-                        onClick = {
-                            onSubmit(it)
-                            onCloseRequest()
-                        }
+                        onClick = { onSubmit(it) }
                     )
                 }
         },

@@ -1,4 +1,4 @@
-package com.popalay.tracktor.ui.list.dialog
+package com.popalay.tracktor.ui.dialog
 
 import androidx.compose.Composable
 import androidx.ui.foundation.Text
@@ -17,10 +17,7 @@ fun DeleteTrackerDialog(
         confirmButton = {
             Button(
                 text = { Text(text = "Yes") },
-                onClick = {
-                    onSubmit()
-                    onCloseRequest()
-                }
+                onClick = { onSubmit() }
             )
         },
         dismissButton = {
