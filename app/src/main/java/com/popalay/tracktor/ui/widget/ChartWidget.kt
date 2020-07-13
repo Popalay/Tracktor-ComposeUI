@@ -115,7 +115,7 @@ private fun DrawScope.drawTouchable(
     onPointSelected: (Offset, Double) -> Unit
 ) {
     val touchedPoint = if (touchPosition == null) null else points.fastFirstOrNull { offset ->
-        (touchPosition - offset).let { abs(it.x) <= touchArea && abs(it.y) <= touchArea }
+        (touchPosition - offset).let { abs(it.x) <= touchArea /*&& abs(it.y) <= touchArea */ }
     }
 
     points.forEach {
