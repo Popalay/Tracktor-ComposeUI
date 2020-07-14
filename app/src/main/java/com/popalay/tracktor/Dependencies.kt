@@ -1,5 +1,7 @@
 package com.popalay.tracktor
 
+import android.content.SharedPreferences
+import androidx.preference.PreferenceManager
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -7,6 +9,10 @@ import com.popalay.tracktor.data.AppDatabase
 import com.popalay.tracktor.data.MIGRATION_1_2
 import com.popalay.tracktor.data.TrackerDao
 import com.popalay.tracktor.data.TrackingRepository
+import com.popalay.tracktor.data.featureflags.FeatureFlagsManager
+import com.popalay.tracktor.data.featureflags.RealFeatureFlagsManager
+import com.popalay.tracktor.data.featureflags.RealSmallTrackerListItemFeatureFlag
+import com.popalay.tracktor.data.featureflags.SmallTrackerListItemFeatureFlag
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.ui.list.ListWorkflow
@@ -42,10 +48,18 @@ val dataModule = module {
     single { get<AppDatabase>().trackerDao() }
     single { get<AppDatabase>().recordDao() }
     single { TrackingRepository(get(), get()) }
+
+    single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
+}
+
+val featureFlagsModule = module {
+    single<SmallTrackerListItemFeatureFlag> { RealSmallTrackerListItemFeatureFlag(get()) }
+    single<FeatureFlagsManager> { RealFeatureFlagsManager(get()) }
 }
 
 val modules = listOf(
     coreModule,
     domainModule,
-    dataModule
+    dataModule,
+    featureFlagsModule
 )
