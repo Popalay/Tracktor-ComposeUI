@@ -23,23 +23,44 @@ import androidx.ui.material.icons.filled.Delete
 import androidx.ui.text.font.FontWeight
 import androidx.ui.text.style.TextAlign
 import androidx.ui.tooling.preview.Preview
+import androidx.ui.tooling.preview.PreviewParameter
+import androidx.ui.tooling.preview.PreviewParameterProvider
 import androidx.ui.unit.dp
-import com.popalay.tracktor.ThemedPreview
 import com.popalay.tracktor.gradients
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
+import com.popalay.tracktor.model.TrackerListItem
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.model.ValueRecord
 import com.popalay.tracktor.ui.widget.ChartWidget
 import com.popalay.tracktor.ui.widget.ProgressTextField
 import java.time.LocalDateTime
 
+class TrackerListItemPreviewProvider : PreviewParameterProvider<TrackerListItem> {
+    override val values: Sequence<TrackerListItem>
+        get() {
+            val records = listOf(
+                ValueRecord("valueId", "trackerId", 42.3, LocalDateTime.now()),
+                ValueRecord("valueId", "trackerId", 12.3, LocalDateTime.now()),
+                ValueRecord("valueId", "trackerId", 62.3, LocalDateTime.now()),
+                ValueRecord("valueId", "trackerId", 2.3, LocalDateTime.now())
+            )
+            val tracker = TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms, LocalDateTime.now()), records)
+
+            return sequenceOf(
+                TrackerListItem(tracker.copy(records = emptyList())),
+                TrackerListItem(tracker)
+            )
+        }
+}
+
+@Preview
 @Composable
 fun TrackerListItem(
-    item: TrackerListItem,
+    @PreviewParameter(TrackerListItemPreviewProvider::class) item: TrackerListItem,
     modifier: Modifier = Modifier,
-    onAddClicked: () -> Unit,
-    onRemoveClicked: () -> Unit
+    onAddClicked: () -> Unit = {},
+    onRemoveClicked: () -> Unit = {}
 ) {
     val gradient = gradients.getValue(item.data.tracker.unit)
     Card(
@@ -105,18 +126,3 @@ private fun Body(
         }
     }
 }
-
-@Preview
-@Composable
-fun TrackedValueValueListItemPreview() {
-    ThemedPreview(isDarkTheme = true) {
-        TrackerListItem(fakeListItem(), Modifier, {}, {})
-    }
-}
-
-private fun fakeListItem() = TrackerListItem(
-    data = TrackerWithRecords(
-        Tracker("trackerId", "title", TrackableUnit.Kilograms, LocalDateTime.now()),
-        listOf(ValueRecord("valueId", "trackerId", 42.3, LocalDateTime.now()))
-    )
-)

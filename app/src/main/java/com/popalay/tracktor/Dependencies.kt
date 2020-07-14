@@ -15,6 +15,7 @@ import com.popalay.tracktor.data.featureflags.RealSmallTrackerListItemFeatureFla
 import com.popalay.tracktor.data.featureflags.SmallTrackerListItemFeatureFlag
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
+import com.popalay.tracktor.ui.featureflagslist.FeatureFlagsListWorkflow
 import com.popalay.tracktor.ui.list.ListWorkflow
 import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow
 import com.popalay.tracktor.worker.GetAllTrackersWorker
@@ -26,6 +27,7 @@ import java.util.concurrent.Executors
 val coreModule = module {
     factory { ListWorkflow(get(), get()) }
     factory { TrackerDetailWorkflow(get()) }
+    factory { FeatureFlagsListWorkflow(get()) }
 }
 
 val domainModule = module {
