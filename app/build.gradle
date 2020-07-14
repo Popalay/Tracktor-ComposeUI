@@ -96,20 +96,24 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'com.google.android.material:material:1.1.0'
+    implementation "androidx.preference:preference-ktx:1.1.1"
 }
 
 dependencies {
-    implementation 'androidx.ui:ui-tooling:0.1.0-dev14'
-    implementation 'androidx.ui:ui-layout:0.1.0-dev14'
-    implementation 'androidx.ui:ui-material:0.1.0-dev14'
+    def compose_version = "0.1.0-dev14"
+    implementation "androidx.ui:ui-tooling:$compose_version"
+    implementation "androidx.ui:ui-layout:$compose_version"
+    implementation "androidx.ui:ui-material:$compose_version"
 }
 
 dependencies {
-    implementation "com.squareup.workflow:workflow-core-jvm:1.0.0-alpha.1"
-    implementation "com.squareup.workflow:workflow-runtime-jvm:1.0.0-alpha.1"
+    def workflow_version = "1.0.0-alpha.1"
+    def workflow_compose_version = "0.30.0"
+    implementation "com.squareup.workflow:workflow-core-jvm:$workflow_version"
+    implementation "com.squareup.workflow:workflow-runtime-jvm:$workflow_version"
     if (!ci) {
-        implementation "com.squareup.workflow:workflow-ui-core-compose:0.30.0"
-        implementation "com.squareup.workflow:workflow-ui-compose-tooling:0.30.0"
+        implementation "com.squareup.workflow:workflow-ui-core-compose:$workflow_compose_version"
+        implementation "com.squareup.workflow:workflow-ui-compose-tooling:$workflow_compose_version"
     } else {
         implementation('com.squareup.workflow:core-compose') {
             version {
