@@ -2,6 +2,7 @@ package com.popalay.tracktor
 
 import androidx.compose.Composable
 import androidx.ui.foundation.isSystemInDarkTheme
+import com.popalay.tracktor.ui.featureflagslist.FeatureFlagsListBinding
 import com.popalay.tracktor.ui.list.ListBinding
 import com.popalay.tracktor.ui.list.ListWorkflow
 import com.popalay.tracktor.ui.trackerdetail.TrackerDetailBinding
@@ -11,7 +12,7 @@ import com.squareup.workflow.ui.ViewEnvironment
 import com.squareup.workflow.ui.ViewRegistry
 import com.squareup.workflow.ui.compose.WorkflowContainer
 
-private val viewRegistry = ViewRegistry(ListBinding, TrackerDetailBinding)
+private val viewRegistry = ViewRegistry(ListBinding, TrackerDetailBinding, FeatureFlagsListBinding)
 private val viewEnvironment = ViewEnvironment(viewRegistry)
 
 @Composable

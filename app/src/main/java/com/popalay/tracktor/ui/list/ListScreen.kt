@@ -11,44 +11,73 @@ import androidx.ui.layout.height
 import androidx.ui.layout.padding
 import androidx.ui.material.Scaffold
 import androidx.ui.tooling.preview.Preview
+import androidx.ui.tooling.preview.PreviewParameter
+import androidx.ui.tooling.preview.PreviewParameterProvider
 import androidx.ui.unit.dp
-import com.popalay.tracktor.AppTheme
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
+import com.popalay.tracktor.model.TrackerListItem
 import com.popalay.tracktor.model.TrackerWithRecords
+import com.popalay.tracktor.model.toListItem
 import com.popalay.tracktor.ui.dialog.ChooseUnitDialog
 import com.popalay.tracktor.ui.dialog.DeleteTrackerDialog
 import com.popalay.tracktor.ui.dialog.UpdateTrackedValueDialog
 import com.popalay.tracktor.ui.list.ListWorkflow.Action
 import com.squareup.workflow.ui.compose.composedViewFactory
-import com.squareup.workflow.ui.compose.tooling.preview
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalLayout::class)
 val ListBinding = composedViewFactory<ListWorkflow.Rendering> { rendering, _ ->
-    Scaffold(topBar = { CreateTrackerAppBar(onSubmit = { rendering.onAction(Action.NewTrackerTitleSubmitted(it)) }) }) {
+    ListScreen(rendering.state, rendering.onAction)
+}
+
+class ListStatePreviewProvider : PreviewParameterProvider<ListWorkflow.State> {
+    override val values: Sequence<ListWorkflow.State>
+        get() {
+            val items = listOf(
+                TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms, LocalDateTime.now()), emptyList()),
+                TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms, LocalDateTime.now()), emptyList()),
+                TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms, LocalDateTime.now()), emptyList())
+            ).map { it.toListItem() }
+            return sequenceOf(ListWorkflow.State(items))
+        }
+}
+
+@Preview
+@Composable
+fun ListScreen(
+    @PreviewParameter(ListStatePreviewProvider::class) state: ListWorkflow.State,
+    onAction: (Action) -> Unit = {}
+) {
+    Scaffold(topBar = {
+        CreateTrackerAppBar(
+            menuItems = state.menuItems,
+            onMenuItemClicked = { onAction(Action.MenuItemClicked(it)) },
+            onSubmit = { onAction(Action.NewTrackerTitleSubmitted(it)) }
+        )
+    }) {
         Column {
             when {
-                rendering.state.itemInEditing != null -> {
+                state.itemInEditing != null -> {
                     UpdateTrackedValueDialog(
-                        onCloseRequest = { rendering.onAction(Action.TrackDialogDismissed) },
-                        onSave = { rendering.onAction(Action.NewRecordSubmitted(rendering.state.itemInEditing.input, it)) }
+                        onCloseRequest = { onAction(Action.TrackDialogDismissed) },
+                        onSave = { onAction(Action.NewRecordSubmitted(state.itemInEditing.input, it)) }
                     )
                 }
-                rendering.state.itemInDeleting != null -> {
+                state.itemInDeleting != null -> {
                     DeleteTrackerDialog(
-                        onCloseRequest = { rendering.onAction(Action.DeleteDialogDismissed) },
-                        onSubmit = { rendering.onAction(Action.DeleteSubmitted(rendering.state.itemInDeleting.input)) }
+                        onCloseRequest = { onAction(Action.DeleteDialogDismissed) },
+                        onSubmit = { onAction(Action.DeleteSubmitted(state.itemInDeleting.input)) }
                     )
                 }
-                rendering.state.itemInCreating != null -> {
+                state.itemInCreating != null -> {
                     ChooseUnitDialog(
-                        onCloseRequest = { rendering.onAction(Action.ChooseUnitDialogDismissed) },
-                        onSubmit = { rendering.onAction(Action.UnitSubmitted(it)) }
+                        onCloseRequest = { onAction(Action.ChooseUnitDialogDismissed) },
+                        onSubmit = { onAction(Action.UnitSubmitted(it)) }
                     )
                 }
             }
-            TrackerList(rendering.state.items, rendering.onAction)
+            TrackerList(state.items, onAction)
         }
     }
 }
@@ -70,17 +99,4 @@ private fun TrackerList(
             Spacer(modifier = Modifier.height(8.dp))
         }
     })
-}
-
-@Preview
-@Composable
-fun ListScreenPreview() {
-    val items = listOf(
-        TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms, LocalDateTime.now()), emptyList()),
-        TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms, LocalDateTime.now()), emptyList()),
-        TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms, LocalDateTime.now()), emptyList())
-    ).map { it.toListItem() }
-    AppTheme(isDarkTheme = true) {
-        ListBinding.preview(rendering = ListWorkflow.Rendering(ListWorkflow.State(items, null, null, null, null)) {})
-    }
 }

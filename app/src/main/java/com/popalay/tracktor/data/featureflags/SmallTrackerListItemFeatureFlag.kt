@@ -1,8 +1,13 @@
 package com.popalay.tracktor.data.featureflags
 
 import android.content.SharedPreferences
+import com.popalay.tracktor.data.featureflags.SmallTrackerListItemFeatureFlag.Companion.KEY_SMALL_TRACKER_LIST_ITEM
 
 interface SmallTrackerListItemFeatureFlag {
+    companion object {
+        const val KEY_SMALL_TRACKER_LIST_ITEM = "KEY_SMALL_TRACKER_LIST_ITEM"
+    }
+
     fun isSmallTrackerListItemEnabled(): Boolean
     fun setSmallTrackerListItemEnabled(value: Boolean)
 }
@@ -10,9 +15,6 @@ interface SmallTrackerListItemFeatureFlag {
 class RealSmallTrackerListItemFeatureFlag(
     private val sharedPreferences: SharedPreferences
 ) : SmallTrackerListItemFeatureFlag {
-    companion object {
-        private const val KEY_SMALL_TRACKER_LIST_ITEM = "KEY_SMALL_TRACKER_LIST_ITEM"
-    }
 
     override fun isSmallTrackerListItemEnabled(): Boolean =
         sharedPreferences.getBoolean(KEY_SMALL_TRACKER_LIST_ITEM, false)
