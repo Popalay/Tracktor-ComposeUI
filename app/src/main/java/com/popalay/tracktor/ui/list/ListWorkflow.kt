@@ -76,17 +76,18 @@ class ListWorkflow(
                         TrackableUnit.None
                     )
                 )
-                is MenuItemClicked -> {
-                    when (action.menuItem) {
-                        MenuItem.FeatureFlagsMenuItem -> nextState.copy(featureFlagsList = true)
-                    }
-                }
+                is MenuItemClicked -> handleMenuItem(nextState, action.menuItem)
                 TrackDialogDismissed -> nextState.copy(itemInEditing = null)
                 DeleteDialogDismissed -> nextState.copy(itemInDeleting = null)
                 ChooseUnitDialogDismissed -> nextState.copy(itemInCreating = null)
                 Back -> nextState.copy(trackerDetails = null, featureFlagsList = false)
             }
         }
+
+        private fun handleMenuItem(nextState: State, menuItem: MenuItem): State =
+            when (menuItem) {
+                MenuItem.FeatureFlagsMenuItem -> nextState.copy(featureFlagsList = true)
+            }
     }
 
     data class Rendering(
