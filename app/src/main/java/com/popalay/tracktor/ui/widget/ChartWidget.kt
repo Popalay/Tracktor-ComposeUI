@@ -25,6 +25,7 @@ import androidx.ui.unit.dp
 import androidx.ui.util.fastFirstOrNull
 import com.popalay.tracktor.ui.widget.ChartAnimationState.STATE_END
 import com.popalay.tracktor.ui.widget.ChartAnimationState.STATE_START
+import com.popalay.tracktor.utils.getSubPath
 import java.lang.Float.max
 import java.lang.Float.min
 import kotlin.math.abs
@@ -46,6 +47,32 @@ private val definition = transitionDefinition {
         amplifierKey using tween {
             duration = 1500
             easing = FastOutSlowInEasing
+        }
+    }
+}
+
+@Composable
+fun SimpleChartWidget(
+    data: List<Double>,
+    gradient: List<Color>,
+    modifier: Modifier = Modifier,
+    lineWidth: Dp = ChartLineWidth
+) {
+    Transition(
+        definition = definition,
+        initState = STATE_START,
+        toState = STATE_END
+    ) { transitionState ->
+        Canvas(modifier) {
+            val points = createPoints(data, size, 0F, 0F, 1F)
+            val (conPoints1, conPoints2) = createConnectionPoints(points)
+
+            if (points.isEmpty() || conPoints1.isEmpty() || conPoints2.isEmpty()) return@Canvas
+
+            val borderPath = createBorderPath(points, conPoints1, conPoints2)
+
+            val partPath = borderPath.getSubPath(0F, transitionState[amplifierKey])
+            drawPath(partPath, createBrush(gradient, size), 1.0F, Stroke(lineWidth.toPx()))
         }
     }
 }
@@ -144,12 +171,14 @@ private fun createPoints(
     val bottomY = size.height
     val xDiff = size.width / (data.size - 1)
 
-    val maxData = data.max()?.toFloat() ?: 0F
+    val minData = data.min() ?: 0.0
+    val optimizedData = data.map { it - minData }
+    val maxData = optimizedData.max()?.toFloat() ?: 0F
 
     val yMax = max(bottomY - (maxData / maxData * bottomY), labelRadiusPx + topOffsetPx)
     val animatedYMax = min(yMax / amplifier, size.height)
 
-    return data.mapIndexed { index, item ->
+    return optimizedData.mapIndexed { index, item ->
         val y = max(bottomY - (item.toFloat() / maxData * bottomY), labelRadiusPx + topOffsetPx)
         val animatedY = min(y / amplifier, size.height)
         Offset(xDiff * index, min(animatedY, max(animatedYMax, y)))

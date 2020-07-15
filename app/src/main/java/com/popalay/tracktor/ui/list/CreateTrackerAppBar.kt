@@ -36,7 +36,7 @@ fun CreateTrackerAppBar(
     onSubmit: (String) -> Unit = {},
     onMenuItemClicked: (MenuItem) -> Unit = {}
 ) {
-    TopAppBar(modifier = Modifier.preferredHeight(140.dp)) {
+    TopAppBar(modifier = Modifier.preferredHeight(160.dp)) {
         Column(verticalArrangement = Arrangement.SpaceAround) {
             Spacer(modifier = Modifier.height(16.dp))
             Stack(modifier = Modifier.fillMaxWidth()) {
