@@ -1,6 +1,8 @@
 package com.popalay.tracktor.ui.list
 
 import androidx.compose.Composable
+import androidx.compose.onCommit
+import androidx.compose.state
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.clickable
 import androidx.ui.foundation.lazy.LazyColumnItems
@@ -87,10 +89,12 @@ private fun TrackerList(
     items: List<TrackerListItem>,
     onAction: (Action) -> Unit
 ) {
+    val animated = state { false }
+
     LazyColumnItems(items = items, itemContent = {
         Spacer(modifier = Modifier.height(8.dp))
         TrackerListItem(
-            it,
+            it.copy(animate = !animated.value),
             Modifier.padding(horizontal = 16.dp).clickable(onClick = { onAction(Action.TrackerClicked(it.data)) }),
             onAddClicked = { onAction(Action.AddRecordClicked(it.data)) },
             onRemoveClicked = { onAction(Action.DeleteTrackerClicked(it.data)) }
@@ -99,4 +103,8 @@ private fun TrackerList(
             Spacer(modifier = Modifier.height(8.dp))
         }
     })
+
+    onCommit {
+        animated.value = true
+    }
 }

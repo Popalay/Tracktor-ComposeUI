@@ -160,7 +160,8 @@ private fun Body(
         ChartWidget(
             data = item.data.records.map { it.value },
             gradient = gradient,
-            touchable = false
+            touchable = false,
+            animate = item.animate
         )
     } else {
         Row(modifier = Modifier.height(100.dp).fillMaxWidth()) {
@@ -217,6 +218,7 @@ private fun SimpleBody(item: TrackerListItem, gradient: List<Color>) {
             SimpleChartWidget(
                 data = item.data.records.map { it.value },
                 gradient = gradient,
+                animate = item.animate,
                 modifier = Modifier.preferredSize(100.dp, 50.dp)
             )
         } else {
