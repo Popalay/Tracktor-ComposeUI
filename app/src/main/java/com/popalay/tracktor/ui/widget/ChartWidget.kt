@@ -30,7 +30,7 @@ import java.lang.Float.max
 import java.lang.Float.min
 import kotlin.math.abs
 
-enum class ChartAnimationState {
+private enum class ChartAnimationState {
     STATE_START, STATE_END
 }
 
@@ -56,11 +56,12 @@ fun SimpleChartWidget(
     data: List<Double>,
     gradient: List<Color>,
     modifier: Modifier = Modifier,
-    lineWidth: Dp = ChartLineWidth
+    lineWidth: Dp = ChartLineWidth,
+    animate: Boolean = true
 ) {
     Transition(
         definition = definition,
-        initState = STATE_START,
+        initState = if (animate) STATE_START else STATE_END,
         toState = STATE_END
     ) { transitionState ->
         Canvas(modifier) {
@@ -87,13 +88,13 @@ fun ChartWidget(
     lineWidth: Dp = ChartLineWidth,
     labelRadius: Dp = ChartLabelRadius,
     topOffset: Dp = ChartLabelRadius,
-    currentState: ChartAnimationState = STATE_START,
+    animate: Boolean = true,
     onPointSelected: (Offset, Double) -> Unit = { _, _ -> },
     onPointUnSelected: () -> Unit = {}
 ) {
     Transition(
         definition = definition,
-        initState = currentState,
+        initState = if (animate) STATE_START else STATE_END,
         toState = STATE_END
     ) { transitionState ->
         val touchPosition = state<Offset?> { null }
