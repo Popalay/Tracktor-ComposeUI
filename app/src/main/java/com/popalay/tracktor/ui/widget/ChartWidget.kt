@@ -30,7 +30,7 @@ import java.lang.Float.max
 import java.lang.Float.min
 import kotlin.math.abs
 
-private enum class ChartAnimationState {
+enum class ChartAnimationState {
     STATE_START, STATE_END
 }
 
