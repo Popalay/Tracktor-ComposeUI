@@ -47,7 +47,7 @@ fun CreateTrackedValue(onSubmit: (String) -> Unit = {}) {
                 backgroundColor = MaterialTheme.colors.secondary,
                 shape = CircleShape,
                 onClick = {
-                    onSubmit(currentState)
+                    onSubmit(currentState.trim())
                     updateState("")
                 }
             )

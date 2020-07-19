@@ -52,6 +52,7 @@ fun ListScreen(
             when {
                 state.itemInEditing != null -> {
                     UpdateTrackedValueDialog(
+                        unit = state.itemInEditing.unit,
                         onCloseRequest = { onAction(Action.TrackDialogDismissed) },
                         onSave = { onAction(Action.NewRecordSubmitted(state.itemInEditing, it)) }
                     )

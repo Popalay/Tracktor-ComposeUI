@@ -19,7 +19,8 @@ class ValueRecordFormatterFacade(
 }
 
 class NumberValueRecordFormatter : ValueRecordFormatter {
-    override fun isForUnit(unit: TrackableUnit): Boolean = true
+    override fun isForUnit(unit: TrackableUnit): Boolean = unit == TrackableUnit.None ||
+            unit == TrackableUnit.Quantity || unit == TrackableUnit.Minutes || unit == TrackableUnit.Kilograms
 
     override fun format(tracker: Tracker, record: ValueRecord?): String {
         val value = record?.value ?: 0.0
@@ -29,6 +30,13 @@ class NumberValueRecordFormatter : ValueRecordFormatter {
             TrackableUnit.Quantity -> roundedValue.toInt().toString()
             TrackableUnit.Minutes -> roundedValue.let { "$it\"" }
             TrackableUnit.Kilograms -> roundedValue.let { "$it kg" }
+            else -> throw IllegalArgumentException("Unit ${tracker.unit} is not supported")
         }
     }
+}
+
+class StringValueRecordFormatter : ValueRecordFormatter {
+    override fun isForUnit(unit: TrackableUnit): Boolean = unit == TrackableUnit.Word
+
+    override fun format(tracker: Tracker, record: ValueRecord?): String = record?.stringValue ?: "~"
 }

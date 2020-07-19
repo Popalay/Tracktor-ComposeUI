@@ -9,12 +9,14 @@ import androidx.ui.foundation.Icon
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.shape.corner.CornerSize
 import androidx.ui.graphics.Color
+import androidx.ui.layout.Arrangement
 import androidx.ui.layout.Column
 import androidx.ui.layout.Row
 import androidx.ui.layout.Spacer
 import androidx.ui.layout.fillMaxWidth
 import androidx.ui.layout.height
 import androidx.ui.layout.padding
+import androidx.ui.layout.preferredHeight
 import androidx.ui.layout.preferredSize
 import androidx.ui.layout.preferredWidth
 import androidx.ui.layout.width
@@ -79,7 +81,10 @@ fun SimpleTrackerListItem(
         modifier = modifier,
         shape = MaterialTheme.shapes.medium.copy(CornerSize(16.dp))
     ) {
-        Column {
+        Column(
+            modifier = Modifier.preferredHeight(120.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
             SimpleBody(item, gradient)
             SimpleFooter(onAddClicked, onRemoveClicked, item, gradient)
         }

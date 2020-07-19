@@ -22,6 +22,19 @@ class TrackingRepository(
             id = UUID.randomUUID().toString(),
             trackerId = tracker.id,
             value = value,
+            stringValue = "",
+            date = LocalDateTime.now()
+        )
+        saveRecord(record)
+    }
+
+    suspend fun saveRecord(tracker: Tracker, value: String) {
+        val size = recordDao.getAllByTrackerId(tracker.id).size
+        val record = ValueRecord(
+            id = UUID.randomUUID().toString(),
+            trackerId = tracker.id,
+            value = size + 1.0,
+            stringValue = value,
             date = LocalDateTime.now()
         )
         saveRecord(record)

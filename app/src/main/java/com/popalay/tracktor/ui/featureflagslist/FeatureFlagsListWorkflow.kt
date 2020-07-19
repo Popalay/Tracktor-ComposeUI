@@ -47,7 +47,7 @@ class FeatureFlagsListWorkflow(
         state: State,
         context: RenderContext<State, Unit>
     ): Rendering {
-        runSideEffects(state, context)
+        runSideEffects(state)
 
         return Rendering(
             state = state,
@@ -57,7 +57,7 @@ class FeatureFlagsListWorkflow(
 
     override fun snapshotState(state: State): Snapshot = Snapshot.EMPTY
 
-    private fun runSideEffects(state: State, context: RenderContext<State, Unit>) {
+    private fun runSideEffects(state: State) {
         state.featureFlags.forEach {
             if (it.id == KEY_SMALL_TRACKER_LIST_ITEM && it.isEnabled != featureFlagsManager.isSmallTrackerListItemEnabled()) {
                 featureFlagsManager.setSmallTrackerListItemEnabled(it.isEnabled)

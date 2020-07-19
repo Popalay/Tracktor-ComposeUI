@@ -2,6 +2,7 @@ package com.popalay.tracktor.ui.trackerdetail
 
 import com.popalay.tracktor.data.TrackingRepository
 import com.popalay.tracktor.domain.worker.GetTrackerByIdWorker
+import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot
@@ -25,7 +26,7 @@ class TrackerDetailWorkflow(
     sealed class Action : WorkflowAction<State, Unit> {
         data class SideEffectAction(val action: Action) : Action()
         data class TrackerUpdated(val tracker: TrackerWithRecords) : Action()
-        data class NewRecordSubmitted(val value: Double) : Action()
+        data class NewRecordSubmitted(val value: String) : Action()
         object BackClicked : Action()
         object AddRecordClicked : Action()
         object TrackDialogDismissed : Action()
@@ -68,7 +69,12 @@ class TrackerDetailWorkflow(
     private fun runSideEffects(state: State, context: RenderContext<State, Unit>) {
         when (val action = state.currentAction) {
             is Action.NewRecordSubmitted -> {
-                val worker = Worker.from { trackingRepository.saveRecord(requireNotNull(state.trackerWithRecords).tracker, action.value) }
+                val tracker = requireNotNull(state.trackerWithRecords).tracker
+                val worker = if (tracker.unit == TrackableUnit.Word) {
+                    Worker.from { trackingRepository.saveRecord(tracker, action.value) }
+                } else {
+                    Worker.from { trackingRepository.saveRecord(tracker, action.value.toDoubleOrNull() ?: 0.0) }
+                }
                 context.runningWorker(worker) { Action.SideEffectAction(Action.TrackDialogDismissed) }
             }
         }

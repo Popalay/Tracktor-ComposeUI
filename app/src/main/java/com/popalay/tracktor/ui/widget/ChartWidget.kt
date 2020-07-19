@@ -125,14 +125,13 @@ fun ChartWidget(
             drawPath(borderPath, createBrush(gradient, size), 1.0F, Stroke(lineWidth.toPx()))
 
             if (touchable) {
-                drawTouchable(data, touchPosition.value, points, touchArea, labelRadius, pointColor, topOffset, onPointUnSelected, onPointSelected)
+                drawTouchable(touchPosition.value, points, touchArea, labelRadius, pointColor, topOffset, onPointUnSelected, onPointSelected)
             }
         }
     }
 }
 
 private fun DrawScope.drawTouchable(
-    data: List<Double>,
     touchPosition: Offset?,
     points: List<Offset>,
     touchArea: Float,
