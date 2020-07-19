@@ -1,8 +1,8 @@
 package com.popalay.tracktor.ui.trackerdetail
 
 import com.popalay.tracktor.data.TrackingRepository
+import com.popalay.tracktor.domain.worker.GetTrackerByIdWorker
 import com.popalay.tracktor.model.TrackerWithRecords
-import com.popalay.tracktor.worker.GetTrackerByIdWorker
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow

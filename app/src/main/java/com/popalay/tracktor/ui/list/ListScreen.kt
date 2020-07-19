@@ -102,9 +102,8 @@ private fun TrackerList(
         if (items.lastOrNull() == it) {
             Spacer(modifier = Modifier.height(8.dp))
         }
+        onCommit {
+            animated.value = true
+        }
     })
-
-    onCommit {
-        animated.value = true
-    }
 }

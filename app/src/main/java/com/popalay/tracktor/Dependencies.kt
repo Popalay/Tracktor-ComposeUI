@@ -13,12 +13,15 @@ import com.popalay.tracktor.data.featureflags.FeatureFlagsManager
 import com.popalay.tracktor.data.featureflags.RealFeatureFlagsManager
 import com.popalay.tracktor.data.featureflags.RealSmallTrackerListItemFeatureFlag
 import com.popalay.tracktor.data.featureflags.SmallTrackerListItemFeatureFlag
+import com.popalay.tracktor.domain.formatter.NumberValueRecordFormatter
+import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
+import com.popalay.tracktor.domain.formatter.ValueRecordFormatterFacade
+import com.popalay.tracktor.domain.worker.GetAllTrackersWorker
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.ui.featureflagslist.FeatureFlagsListWorkflow
 import com.popalay.tracktor.ui.list.ListWorkflow
 import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow
-import com.popalay.tracktor.worker.GetAllTrackersWorker
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import java.time.LocalDateTime
@@ -32,6 +35,8 @@ val coreModule = module {
 
 val domainModule = module {
     single { GetAllTrackersWorker(get()) }
+    single<Set<ValueRecordFormatter>> { setOf(NumberValueRecordFormatter()) }
+    single<ValueRecordFormatter> { ValueRecordFormatterFacade(get()) }
 }
 
 val dataModule = module {

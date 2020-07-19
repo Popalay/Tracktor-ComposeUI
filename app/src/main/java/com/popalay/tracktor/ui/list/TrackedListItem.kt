@@ -32,6 +32,7 @@ import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
 import androidx.ui.unit.dp
 import com.popalay.tracktor.data.featureflags.FeatureFlagsManager
+import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
 import com.popalay.tracktor.gradients
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
@@ -126,6 +127,8 @@ private fun Footer(
     onAddClicked: () -> Unit,
     onRemoveClicked: () -> Unit
 ) {
+    val formatter: ValueRecordFormatter by inject()
+
     Row(verticalGravity = Alignment.CenterVertically) {
         IconButton(onClick = onAddClicked) {
             Icon(asset = Icons.Default.Add)
@@ -135,7 +138,7 @@ private fun Footer(
         }
         Spacer(modifier = Modifier.weight(1F))
         Box(paddingEnd = 16.dp) {
-            Text("Current: ${item.data.format(item.data.currentValue)}")
+            Text("Current: ${formatter.format(item.data.tracker, item.data.currentValue)}")
         }
     }
 }
@@ -156,6 +159,8 @@ private fun Body(
     item: TrackerListItem,
     gradient: List<Color>
 ) {
+    val formatter: ValueRecordFormatter by inject()
+
     if (item.data.records.size > 1) {
         ChartWidget(
             data = item.data.records.map { it.value },
@@ -166,7 +171,7 @@ private fun Body(
     } else {
         Row(modifier = Modifier.height(100.dp).fillMaxWidth()) {
             Text(
-                text = item.data.format(item.data.currentValue),
+                text = formatter.format(item.data.tracker, item.data.currentValue),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.h2.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.gravity(Alignment.CenterVertically).fillMaxWidth()
@@ -182,6 +187,8 @@ private fun SimpleFooter(
     item: TrackerListItem,
     gradient: List<Color>
 ) {
+    val formatter: ValueRecordFormatter by inject()
+
     Row(verticalGravity = Alignment.CenterVertically, modifier = Modifier.padding(end = 16.dp)) {
         IconButton(onClick = onAddClicked) {
             Icon(asset = Icons.Default.Add)
@@ -193,7 +200,7 @@ private fun SimpleFooter(
         if (item.data.records.size > 1) {
             ProgressTextField(item.data.progress, color = gradient.last())
             Spacer(modifier = Modifier.width(8.dp))
-            Text(item.data.format(item.data.currentValue))
+            Text(formatter.format(item.data.tracker, item.data.currentValue))
         } else {
             Text("Start tracking now", style = MaterialTheme.typography.caption)
         }
@@ -202,6 +209,8 @@ private fun SimpleFooter(
 
 @Composable
 private fun SimpleBody(item: TrackerListItem, gradient: List<Color>) {
+    val formatter: ValueRecordFormatter by inject()
+
     Row(
         modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
         verticalGravity = Alignment.CenterVertically
@@ -223,7 +232,7 @@ private fun SimpleBody(item: TrackerListItem, gradient: List<Color>) {
             )
         } else {
             Text(
-                text = item.data.format(item.data.currentValue),
+                text = formatter.format(item.data.tracker, item.data.currentValue),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.h5.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.gravity(Alignment.CenterVertically).preferredWidth(100.dp)

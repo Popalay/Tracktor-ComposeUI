@@ -10,13 +10,17 @@ import androidx.ui.layout.Spacer
 import androidx.ui.layout.width
 import androidx.ui.material.MaterialTheme
 import androidx.ui.unit.dp
+import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.model.ValueRecord
 import com.popalay.tracktor.ui.widget.ProgressTextField
+import com.popalay.tracktor.utils.inject
 import com.popalay.tracktor.utils.toRelativeFormat
 
 @Composable
-fun RecordListItem(tracker: TrackerWithRecords, record: ValueRecord, modifier: Modifier = Modifier) {
+fun RecordListItem(trackerWithRecords: TrackerWithRecords, record: ValueRecord, modifier: Modifier = Modifier) {
+    val formatter: ValueRecordFormatter by inject()
+
     Row(
         modifier = modifier,
         verticalGravity = Alignment.CenterVertically
@@ -27,7 +31,7 @@ fun RecordListItem(tracker: TrackerWithRecords, record: ValueRecord, modifier: M
         )
         Spacer(modifier = Modifier.weight(1F))
 
-        val progress = tracker.progress(record.value)
+        val progress = trackerWithRecords.progress(record.value)
         ProgressTextField(
             progress,
             color = if (progress >= 0) Color.Green else Color.Red
@@ -35,7 +39,7 @@ fun RecordListItem(tracker: TrackerWithRecords, record: ValueRecord, modifier: M
 
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = tracker.format(record.value),
+            text = formatter.format(trackerWithRecords.tracker, record),
             style = MaterialTheme.typography.subtitle2
         )
     }

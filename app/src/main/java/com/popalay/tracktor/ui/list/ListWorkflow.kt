@@ -1,6 +1,7 @@
 package com.popalay.tracktor.ui.list
 
 import com.popalay.tracktor.data.TrackingRepository
+import com.popalay.tracktor.domain.worker.GetAllTrackersWorker
 import com.popalay.tracktor.model.MenuItem
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
@@ -9,7 +10,6 @@ import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.model.toListItem
 import com.popalay.tracktor.ui.featureflagslist.FeatureFlagsListWorkflow
 import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow
-import com.popalay.tracktor.worker.GetAllTrackersWorker
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow
