@@ -4,14 +4,10 @@ import androidx.compose.Composable
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
-import com.popalay.tracktor.model.TrackableUnit
-import com.popalay.tracktor.model.Tracker
-import com.popalay.tracktor.model.TrackerWithRecords
-import com.popalay.tracktor.model.ValueRecord
 import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow.Action
+import com.popalay.tracktor.utils.Faker
 import com.popalay.tracktor.utils.onBackPressed
 import com.squareup.workflow.ui.compose.composedViewFactory
-import java.time.LocalDateTime
 
 val TrackerDetailBinding = composedViewFactory<TrackerDetailWorkflow.Rendering> { rendering, _ ->
     onBackPressed { rendering.onAction(Action.BackClicked) }
@@ -20,20 +16,10 @@ val TrackerDetailBinding = composedViewFactory<TrackerDetailWorkflow.Rendering> 
 
 class TrackerDetailStatePreviewProvider : PreviewParameterProvider<TrackerDetailWorkflow.State> {
     override val values: Sequence<TrackerDetailWorkflow.State>
-        get() {
-            val records = listOf(
-                ValueRecord("valueId", "trackerId", 42.3, LocalDateTime.now()),
-                ValueRecord("valueId", "trackerId", 12.3, LocalDateTime.now()),
-                ValueRecord("valueId", "trackerId", 62.3, LocalDateTime.now()),
-                ValueRecord("valueId", "trackerId", 2.3, LocalDateTime.now())
-            )
-            val tracker = TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms, LocalDateTime.now()), records)
-
-            return sequenceOf(
-                TrackerDetailWorkflow.State(null, false),
-                TrackerDetailWorkflow.State(tracker, true)
-            )
-        }
+        get() = sequenceOf(
+            TrackerDetailWorkflow.State(null, false),
+            TrackerDetailWorkflow.State(Faker.fakeTrackerWithRecords(), true)
+        )
 }
 
 @Preview

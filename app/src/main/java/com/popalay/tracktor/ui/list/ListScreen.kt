@@ -16,17 +16,14 @@ import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
 import androidx.ui.unit.dp
-import com.popalay.tracktor.model.TrackableUnit
-import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.model.TrackerListItem
-import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.model.toListItem
 import com.popalay.tracktor.ui.dialog.ChooseUnitDialog
 import com.popalay.tracktor.ui.dialog.DeleteTrackerDialog
 import com.popalay.tracktor.ui.dialog.UpdateTrackedValueDialog
 import com.popalay.tracktor.ui.list.ListWorkflow.Action
+import com.popalay.tracktor.utils.Faker
 import com.squareup.workflow.ui.compose.composedViewFactory
-import java.time.LocalDateTime
 
 @OptIn(ExperimentalLayout::class)
 val ListBinding = composedViewFactory<ListWorkflow.Rendering> { rendering, _ ->
@@ -35,14 +32,7 @@ val ListBinding = composedViewFactory<ListWorkflow.Rendering> { rendering, _ ->
 
 class ListStatePreviewProvider : PreviewParameterProvider<ListWorkflow.State> {
     override val values: Sequence<ListWorkflow.State>
-        get() {
-            val items = listOf(
-                TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms, LocalDateTime.now()), emptyList()),
-                TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms, LocalDateTime.now()), emptyList()),
-                TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms, LocalDateTime.now()), emptyList())
-            ).map { it.toListItem() }
-            return sequenceOf(ListWorkflow.State(items))
-        }
+        get() = sequenceOf(ListWorkflow.State(List(5) { Faker.fakeTrackerWithRecords() }.map { it.toListItem() }))
 }
 
 @Preview

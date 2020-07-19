@@ -19,8 +19,8 @@ import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
 import androidx.ui.unit.dp
-import com.popalay.tracktor.model.FeatureFlagListItem
 import com.popalay.tracktor.ui.featureflagslist.FeatureFlagsListWorkflow.Action
+import com.popalay.tracktor.utils.Faker
 import com.popalay.tracktor.utils.onBackPressed
 import com.squareup.workflow.ui.compose.composedViewFactory
 
@@ -31,14 +31,7 @@ val FeatureFlagsListBinding = composedViewFactory<FeatureFlagsListWorkflow.Rende
 
 class FeatureFlagsListPreviewProvider : PreviewParameterProvider<FeatureFlagsListWorkflow.State> {
     override val values: Sequence<FeatureFlagsListWorkflow.State>
-        get() {
-            val items = listOf(
-                FeatureFlagListItem("id", "Feature toggle 1", true),
-                FeatureFlagListItem("id", "Feature toggle 2", false),
-                FeatureFlagListItem("id", "Feature toggle 1", true)
-            )
-            return sequenceOf(FeatureFlagsListWorkflow.State(items))
-        }
+        get() = sequenceOf(FeatureFlagsListWorkflow.State(List(5) { Faker.fakeFeatureFlag() }))
 }
 
 @Preview
