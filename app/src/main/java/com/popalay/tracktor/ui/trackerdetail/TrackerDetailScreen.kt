@@ -30,8 +30,8 @@ class TrackerDetailStatePreviewProvider : PreviewParameterProvider<TrackerDetail
             val tracker = TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms, LocalDateTime.now()), records)
 
             return sequenceOf(
-                TrackerDetailWorkflow.State(null, null),
-                TrackerDetailWorkflow.State(tracker, true to 0.0)
+                TrackerDetailWorkflow.State(null, false),
+                TrackerDetailWorkflow.State(tracker, true)
             )
         }
 }
@@ -47,7 +47,7 @@ fun TrackerDetailScreen(
     } else {
         TrackerDetailContentView(
             state.trackerWithRecords,
-            isAddRecordDialogShowing = state.isAddRecordDialogShowing != null,
+            isAddRecordDialogShowing = state.isAddRecordDialogShowing,
             onAction = onAction
         )
     }

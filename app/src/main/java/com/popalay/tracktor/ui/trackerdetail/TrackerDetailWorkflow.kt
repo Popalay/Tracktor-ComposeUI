@@ -8,6 +8,7 @@ import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow
 import com.squareup.workflow.Worker
 import com.squareup.workflow.WorkflowAction
+import com.squareup.workflow.applyTo
 
 class TrackerDetailWorkflow(
     private val trackingRepository: TrackingRepository
@@ -16,11 +17,13 @@ class TrackerDetailWorkflow(
     data class Props(val trackerId: String)
 
     data class State(
-        val trackerWithRecords: TrackerWithRecords?,
-        val isAddRecordDialogShowing: Pair<Boolean, Double>?
+        val trackerWithRecords: TrackerWithRecords? = null,
+        val isAddRecordDialogShowing: Boolean = false,
+        val currentAction: Action? = null
     )
 
     sealed class Action : WorkflowAction<State, Unit> {
+        data class SideEffectAction(val action: Action) : Action()
         data class TrackerUpdated(val tracker: TrackerWithRecords) : Action()
         data class NewRecordSubmitted(val value: Double) : Action()
         object BackClicked : Action()
@@ -29,11 +32,12 @@ class TrackerDetailWorkflow(
 
         override fun WorkflowAction.Updater<State, Unit>.apply() {
             nextState = when (val action = this@Action) {
+                is SideEffectAction -> action.action.applyTo(nextState.copy(currentAction = null)).first
                 is TrackerUpdated -> nextState.copy(trackerWithRecords = action.tracker)
-                is NewRecordSubmitted -> nextState.copy(isAddRecordDialogShowing = true to action.value)
                 BackClicked -> nextState.also { setOutput(Unit) }
-                AddRecordClicked -> nextState.copy(isAddRecordDialogShowing = false to 0.0)
-                TrackDialogDismissed -> nextState.copy(isAddRecordDialogShowing = null)
+                AddRecordClicked -> nextState.copy(isAddRecordDialogShowing = true)
+                TrackDialogDismissed -> nextState.copy(isAddRecordDialogShowing = false)
+                else -> nextState.copy(currentAction = this@Action)
             }
         }
     }
@@ -43,11 +47,7 @@ class TrackerDetailWorkflow(
         val onAction: (Action) -> Unit
     )
 
-    override fun initialState(props: Props, snapshot: Snapshot?): State =
-        State(
-            trackerWithRecords = null,
-            isAddRecordDialogShowing = null
-        )
+    override fun initialState(props: Props, snapshot: Snapshot?): State = State()
 
     override fun render(
         props: Props,
@@ -66,9 +66,11 @@ class TrackerDetailWorkflow(
     override fun snapshotState(state: State): Snapshot = Snapshot.EMPTY
 
     private fun runSideEffects(state: State, context: RenderContext<State, Unit>) {
-        if (state.isAddRecordDialogShowing?.first == true && state.trackerWithRecords != null) {
-            val worker = Worker.from { trackingRepository.saveRecord(state.trackerWithRecords.tracker, state.isAddRecordDialogShowing.second) }
-            context.runningWorker(worker) { Action.TrackDialogDismissed }
+        when (val action = state.currentAction) {
+            is Action.NewRecordSubmitted -> {
+                val worker = Worker.from { trackingRepository.saveRecord(requireNotNull(state.trackerWithRecords).tracker, action.value) }
+                context.runningWorker(worker) { Action.SideEffectAction(Action.TrackDialogDismissed) }
+            }
         }
     }
 }

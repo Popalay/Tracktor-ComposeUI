@@ -63,13 +63,13 @@ fun ListScreen(
                 state.itemInEditing != null -> {
                     UpdateTrackedValueDialog(
                         onCloseRequest = { onAction(Action.TrackDialogDismissed) },
-                        onSave = { onAction(Action.NewRecordSubmitted(state.itemInEditing.input, it)) }
+                        onSave = { onAction(Action.NewRecordSubmitted(state.itemInEditing, it)) }
                     )
                 }
                 state.itemInDeleting != null -> {
                     DeleteTrackerDialog(
                         onCloseRequest = { onAction(Action.DeleteDialogDismissed) },
-                        onSubmit = { onAction(Action.DeleteSubmitted(state.itemInDeleting.input)) }
+                        onSubmit = { onAction(Action.DeleteSubmitted(state.itemInDeleting)) }
                     )
                 }
                 state.itemInCreating != null -> {
