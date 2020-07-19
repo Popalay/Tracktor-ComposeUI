@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.popalay.tracktor.data.AppDatabase
 import com.popalay.tracktor.data.MIGRATION_1_2
+import com.popalay.tracktor.data.MIGRATION_2_3
 import com.popalay.tracktor.data.TrackerDao
 import com.popalay.tracktor.data.TrackingRepository
 import com.popalay.tracktor.data.featureflags.FeatureFlagsManager
@@ -14,6 +15,7 @@ import com.popalay.tracktor.data.featureflags.RealFeatureFlagsManager
 import com.popalay.tracktor.data.featureflags.RealSmallTrackerListItemFeatureFlag
 import com.popalay.tracktor.data.featureflags.SmallTrackerListItemFeatureFlag
 import com.popalay.tracktor.domain.formatter.NumberValueRecordFormatter
+import com.popalay.tracktor.domain.formatter.StringValueRecordFormatter
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatterFacade
 import com.popalay.tracktor.domain.worker.GetAllTrackersWorker
@@ -35,7 +37,7 @@ val coreModule = module {
 
 val domainModule = module {
     single { GetAllTrackersWorker(get()) }
-    single<Set<ValueRecordFormatter>> { setOf(NumberValueRecordFormatter()) }
+    single { setOf(NumberValueRecordFormatter(), StringValueRecordFormatter()) }
     single<ValueRecordFormatter> { ValueRecordFormatterFacade(get()) }
 }
 
@@ -43,6 +45,7 @@ val dataModule = module {
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database-name")
             .addMigrations(MIGRATION_1_2)
+            .addMigrations(MIGRATION_2_3)
             .addCallback(object : RoomDatabase.Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     Executors.newSingleThreadScheduledExecutor().execute {

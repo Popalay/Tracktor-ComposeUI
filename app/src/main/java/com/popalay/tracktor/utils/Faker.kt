@@ -19,8 +19,9 @@ object Faker {
         id: String = "valueId",
         trackerId: String = "trackerId",
         value: Double = 42.3,
+        stringValue: String = "value",
         date: LocalDateTime = LocalDateTime.now()
-    ): ValueRecord = ValueRecord(id, trackerId, value, date)
+    ): ValueRecord = ValueRecord(id, trackerId, value, stringValue, date)
 
     fun fakeTrackerWithRecords(
         tracker: Tracker = fakeTracker(),

@@ -40,7 +40,7 @@ class ListWorkflow(
     sealed class Action : WorkflowAction<State, Nothing> {
         data class SideEffectAction(val action: Action) : Action()
         data class UnitSubmitted(val unit: TrackableUnit) : Action()
-        data class NewRecordSubmitted(val tracker: Tracker, val value: Double) : Action()
+        data class NewRecordSubmitted(val tracker: Tracker, val value: String) : Action()
         data class ListUpdated(val list: List<TrackerWithRecords>) : Action()
         data class AddRecordClicked(val item: TrackerWithRecords) : Action()
         data class DeleteTrackerClicked(val item: TrackerWithRecords) : Action()
@@ -126,7 +126,11 @@ class ListWorkflow(
                 context.runningWorker(worker) { Action.SideEffectAction(Action.ChooseUnitDialogDismissed) }
             }
             is Action.NewRecordSubmitted -> {
-                val worker = Worker.from { trackingRepository.saveRecord(action.tracker, action.value) }
+                val worker = if (action.tracker.unit == TrackableUnit.Word) {
+                    Worker.from { trackingRepository.saveRecord(action.tracker, action.value) }
+                } else {
+                    Worker.from { trackingRepository.saveRecord(action.tracker, action.value.toDoubleOrNull() ?: 0.0) }
+                }
                 context.runningWorker(worker) { Action.SideEffectAction(Action.TrackDialogDismissed) }
             }
             is Action.DeleteSubmitted -> {

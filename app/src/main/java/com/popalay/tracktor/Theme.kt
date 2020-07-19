@@ -40,6 +40,7 @@ val gradients = mapOf(
     TrackableUnit.Kilograms to listOf(Color(0xFF64BFE1), Color(0xFFA091B7), Color(0xFFE0608A)),
     TrackableUnit.Quantity to listOf(Color(0xFF64BFE1), Color(0xFF45A190), Color(0xFF348F50)),
     TrackableUnit.Minutes to listOf(Color(0xFF64BFE1), Color(0xFF86A7E7), Color(0xFF8360C3)),
+    TrackableUnit.Word to listOf(Color(0xFF64BFE1), Color(0xFF959089), Color(0xFFFF4B1F)),
     TrackableUnit.None to listOf(Color.Black, Color.Black)
 )
 

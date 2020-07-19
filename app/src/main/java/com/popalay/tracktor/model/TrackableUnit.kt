@@ -5,4 +5,5 @@ enum class TrackableUnit(val displayName: String) {
     Quantity("Quantity"),
     Minutes("Minutes"),
     Kilograms("Kg"),
+    Word("Word"),
 }
