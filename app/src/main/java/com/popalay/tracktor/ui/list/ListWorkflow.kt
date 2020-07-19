@@ -15,16 +15,11 @@ import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow
 import com.squareup.workflow.Worker
 import com.squareup.workflow.WorkflowAction
+import com.squareup.workflow.applyTo
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import java.time.LocalDateTime
 import java.util.UUID
-
-data class DialogState<T, P>(
-    val input: T,
-    val output: P,
-    val isConsumed: Boolean = false
-)
 
 class ListWorkflow(
     private val trackingRepository: TrackingRepository,
@@ -34,14 +29,16 @@ class ListWorkflow(
     data class State(
         val items: List<TrackerListItem> = emptyList(),
         val menuItems: List<MenuItem> = listOf(MenuItem.FeatureFlagsMenuItem),
-        val itemInCreating: DialogState<Tracker, TrackableUnit>? = null,
-        val itemInEditing: DialogState<Tracker, Double>? = null,
-        val itemInDeleting: DialogState<Tracker, Tracker>? = null,
-        val trackerDetails: DialogState<Tracker, Unit>? = null,
-        val featureFlagsList: Boolean = false
+        val itemInCreating: Tracker? = null,
+        val itemInEditing: Tracker? = null,
+        val itemInDeleting: Tracker? = null,
+        val trackerDetails: Tracker? = null,
+        val featureFlagsList: Boolean = false,
+        val currentAction: Action? = null
     )
 
     sealed class Action : WorkflowAction<State, Nothing> {
+        data class SideEffectAction(val action: Action) : Action()
         data class UnitSubmitted(val unit: TrackableUnit) : Action()
         data class NewRecordSubmitted(val tracker: Tracker, val value: Double) : Action()
         data class ListUpdated(val list: List<TrackerWithRecords>) : Action()
@@ -58,22 +55,17 @@ class ListWorkflow(
 
         override fun WorkflowAction.Updater<State, Nothing>.apply() {
             nextState = when (val action = this@Action) {
-                is UnitSubmitted -> nextState.copy(itemInCreating = nextState.itemInCreating?.copy(output = action.unit, isConsumed = true))
-                is NewRecordSubmitted -> nextState.copy(itemInEditing = nextState.itemInEditing?.copy(output = action.value, isConsumed = true))
-                is DeleteSubmitted -> nextState.copy(itemInDeleting = nextState.itemInDeleting?.copy(isConsumed = true))
+                is SideEffectAction -> action.action.applyTo(nextState.copy(currentAction = null)).first
                 is ListUpdated -> nextState.copy(items = action.list.map { it.toListItem() })
-                is AddRecordClicked -> nextState.copy(itemInEditing = DialogState(action.item.tracker, 0.0))
-                is DeleteTrackerClicked -> nextState.copy(itemInDeleting = DialogState(action.item.tracker, action.item.tracker))
-                is TrackerClicked -> nextState.copy(trackerDetails = DialogState(action.item.tracker, Unit))
+                is AddRecordClicked -> nextState.copy(itemInEditing = action.item.tracker)
+                is DeleteTrackerClicked -> nextState.copy(itemInDeleting = action.item.tracker)
+                is TrackerClicked -> nextState.copy(trackerDetails = action.item.tracker)
                 is NewTrackerTitleSubmitted -> nextState.copy(
-                    itemInCreating = DialogState(
-                        Tracker(
-                            id = UUID.randomUUID().toString(),
-                            title = action.title,
-                            unit = TrackableUnit.None,
-                            date = LocalDateTime.now()
-                        ),
-                        TrackableUnit.None
+                    itemInCreating = Tracker(
+                        id = UUID.randomUUID().toString(),
+                        title = action.title,
+                        unit = TrackableUnit.None,
+                        date = LocalDateTime.now()
                     )
                 )
                 is MenuItemClicked -> handleMenuItem(nextState, action.menuItem)
@@ -81,6 +73,7 @@ class ListWorkflow(
                 DeleteDialogDismissed -> nextState.copy(itemInDeleting = null)
                 ChooseUnitDialogDismissed -> nextState.copy(itemInCreating = null)
                 Back -> nextState.copy(trackerDetails = null, featureFlagsList = false)
+                else -> nextState.copy(currentAction = this@Action)
             }
         }
 
@@ -95,13 +88,7 @@ class ListWorkflow(
         val onAction: (Action) -> Unit
     )
 
-    override fun initialState(props: Unit, snapshot: Snapshot?): State = State(
-        items = listOf(),
-        itemInEditing = null,
-        itemInDeleting = null,
-        itemInCreating = null,
-        trackerDetails = null
-    )
+    override fun initialState(props: Unit, snapshot: Snapshot?): State = State()
 
     override fun render(
         props: Unit,
@@ -114,8 +101,8 @@ class ListWorkflow(
         return when {
             state.trackerDetails != null -> context.renderChild(
                 get<TrackerDetailWorkflow>(),
-                TrackerDetailWorkflow.Props(state.trackerDetails.input.id),
-                state.trackerDetails.input.id,
+                TrackerDetailWorkflow.Props(state.trackerDetails.id),
+                state.trackerDetails.id,
                 handler = { Action.Back }
             )
             state.featureFlagsList -> context.renderChild(
@@ -133,17 +120,19 @@ class ListWorkflow(
     override fun snapshotState(state: State): Snapshot = Snapshot.EMPTY
 
     private fun runSideEffects(state: State, context: RenderContext<State, Nothing>) {
-        if (state.itemInCreating?.isConsumed == true) {
-            val worker = Worker.from { trackingRepository.saveTracker(state.itemInCreating.input.copy(unit = state.itemInCreating.output)) }
-            context.runningWorker(worker) { Action.ChooseUnitDialogDismissed }
-        }
-        if (state.itemInEditing?.isConsumed == true) {
-            val worker = Worker.from { trackingRepository.saveRecord(state.itemInEditing.input, state.itemInEditing.output) }
-            context.runningWorker(worker) { Action.TrackDialogDismissed }
-        }
-        if (state.itemInDeleting?.isConsumed == true) {
-            val worker = Worker.from { trackingRepository.deleteTracker(state.itemInDeleting.output) }
-            context.runningWorker(worker) { Action.DeleteDialogDismissed }
+        when (val action = state.currentAction) {
+            is Action.UnitSubmitted -> {
+                val worker = Worker.from { trackingRepository.saveTracker(requireNotNull(state.itemInCreating).copy(unit = action.unit)) }
+                context.runningWorker(worker) { Action.SideEffectAction(Action.ChooseUnitDialogDismissed) }
+            }
+            is Action.NewRecordSubmitted -> {
+                val worker = Worker.from { trackingRepository.saveRecord(action.tracker, action.value) }
+                context.runningWorker(worker) { Action.SideEffectAction(Action.TrackDialogDismissed) }
+            }
+            is Action.DeleteSubmitted -> {
+                val worker = Worker.from { trackingRepository.deleteTracker(action.item) }
+                context.runningWorker(worker) { Action.SideEffectAction(Action.DeleteDialogDismissed) }
+            }
         }
     }
 }
