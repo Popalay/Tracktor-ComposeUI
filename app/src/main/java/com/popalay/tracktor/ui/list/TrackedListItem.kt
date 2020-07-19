@@ -34,33 +34,19 @@ import androidx.ui.unit.dp
 import com.popalay.tracktor.data.featureflags.FeatureFlagsManager
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
 import com.popalay.tracktor.gradients
-import com.popalay.tracktor.model.TrackableUnit
-import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.model.TrackerListItem
-import com.popalay.tracktor.model.TrackerWithRecords
-import com.popalay.tracktor.model.ValueRecord
 import com.popalay.tracktor.ui.widget.ChartWidget
 import com.popalay.tracktor.ui.widget.ProgressTextField
 import com.popalay.tracktor.ui.widget.SimpleChartWidget
+import com.popalay.tracktor.utils.Faker
 import com.popalay.tracktor.utils.inject
-import java.time.LocalDateTime
 
 class TrackerListItemPreviewProvider : PreviewParameterProvider<TrackerListItem> {
     override val values: Sequence<TrackerListItem>
-        get() {
-            val records = listOf(
-                ValueRecord("valueId", "trackerId", 42.3, LocalDateTime.now()),
-                ValueRecord("valueId", "trackerId", 12.3, LocalDateTime.now()),
-                ValueRecord("valueId", "trackerId", 62.3, LocalDateTime.now()),
-                ValueRecord("valueId", "trackerId", 2.3, LocalDateTime.now())
-            )
-            val tracker = TrackerWithRecords(Tracker("id", "title", TrackableUnit.Kilograms, LocalDateTime.now()), records)
-
-            return sequenceOf(
-                TrackerListItem(tracker.copy(records = emptyList())),
-                TrackerListItem(tracker)
-            )
-        }
+        get() = sequenceOf(
+            TrackerListItem(Faker.fakeTrackerWithRecords().copy(records = emptyList())),
+            TrackerListItem(Faker.fakeTrackerWithRecords())
+        )
 }
 
 @Preview
