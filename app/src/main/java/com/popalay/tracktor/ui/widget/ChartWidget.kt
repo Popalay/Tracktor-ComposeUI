@@ -89,7 +89,7 @@ fun ChartWidget(
     labelRadius: Dp = ChartLabelRadius,
     topOffset: Dp = ChartLabelRadius,
     animate: Boolean = true,
-    onPointSelected: (Offset, Double) -> Unit = { _, _ -> },
+    onPointSelected: (Offset, Int) -> Unit = { _, _ -> },
     onPointUnSelected: () -> Unit = {}
 ) {
     Transition(
@@ -140,10 +140,10 @@ private fun DrawScope.drawTouchable(
     pointColor: Color,
     topOffset: Dp,
     onPointUnSelected: () -> Unit,
-    onPointSelected: (Offset, Double) -> Unit
+    onPointSelected: (Offset, Int) -> Unit
 ) {
     val touchedPoint = if (touchPosition == null) null else points.fastFirstOrNull { offset ->
-        (touchPosition - offset).let { abs(it.x) <= touchArea /*&& abs(it.y) <= touchArea */ }
+        (touchPosition - offset).let { abs(it.x) <= touchArea }
     }
 
     points.forEach {
@@ -158,7 +158,7 @@ private fun DrawScope.drawTouchable(
     if (touchedPoint == null) {
         onPointUnSelected()
     } else {
-        onPointSelected(touchedPoint, data.reversed()[points.reversed().indexOf(touchedPoint)])
+        onPointSelected(touchedPoint, points.indexOf(touchedPoint))
     }
 }
 

@@ -1,4 +1,4 @@
-package com.popalay.tracktor.worker
+package com.popalay.tracktor.domain.worker
 
 import com.popalay.tracktor.data.TrackingRepository
 import com.popalay.tracktor.model.TrackerWithRecords

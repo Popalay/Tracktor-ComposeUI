@@ -25,22 +25,25 @@ import androidx.ui.material.icons.filled.ArrowBack
 import androidx.ui.unit.IntOffset
 import androidx.ui.unit.IntSize
 import androidx.ui.unit.dp
+import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
 import com.popalay.tracktor.gradients
 import com.popalay.tracktor.model.TrackerWithRecords
+import com.popalay.tracktor.model.ValueRecord
 import com.popalay.tracktor.ui.widget.ChartWidget
+import com.popalay.tracktor.utils.inject
 
 @Composable
 fun ChartAppBar(
     tracker: TrackerWithRecords,
     onArrowClicked: () -> Unit = {}
 ) {
-    val selectedValue = state<Pair<Offset, Double>?> { null }
+    val selectedValue = state<Pair<Offset, Int>?> { null }
 
     TopAppBar(modifier = Modifier.preferredHeight(240.dp)) {
         if (selectedValue.value != null) {
-            val (offset, value) = selectedValue.value!!
+            val (offset, index) = requireNotNull(selectedValue.value)
 
-            CartValuePopup(offset, tracker, value)
+            ChartValuePopup(offset, tracker, tracker.records[index])
         }
 
         Column(modifier = Modifier.padding(bottom = 4.dp)) {
@@ -62,8 +65,8 @@ fun ChartAppBar(
                 gradient = gradient,
                 pointColor = Color.White,
                 touchable = true,
-                onPointSelected = { offset, value ->
-                    selectedValue.value = offset to value
+                onPointSelected = { offset, index ->
+                    selectedValue.value = offset to index
                 },
                 onPointUnSelected = {
                     selectedValue.value = null
@@ -74,7 +77,7 @@ fun ChartAppBar(
 }
 
 @Composable
-private fun CartValuePopup(offset: Offset, tracker: TrackerWithRecords, value: Double) {
+private fun ChartValuePopup(offset: Offset, trackerWithRecords: TrackerWithRecords, record: ValueRecord) {
     val positionProvider = remember(offset) {
         object : PopupPositionProvider {
             override fun calculatePosition(
@@ -111,11 +114,13 @@ private fun CartValuePopup(offset: Offset, tracker: TrackerWithRecords, value: D
     }
 
     Popup(positionProvider) {
+        val formatter: ValueRecordFormatter by inject()
+
         Card(color = Color.White) {
             Text(
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                 color = Color.Black,
-                text = tracker.format(value)
+                text = formatter.format(trackerWithRecords.tracker, record)
             )
         }
     }
