@@ -7,7 +7,6 @@ import androidx.compose.Composable
 import androidx.compose.state
 import androidx.ui.animation.Transition
 import androidx.ui.core.Modifier
-import androidx.ui.core.gesture.pressIndicatorGestureFilter
 import androidx.ui.foundation.Canvas
 import androidx.ui.geometry.Offset
 import androidx.ui.geometry.Size
@@ -22,13 +21,13 @@ import androidx.ui.material.MaterialTheme
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.Dp
 import androidx.ui.unit.dp
-import androidx.ui.util.fastFirstOrNull
 import com.popalay.tracktor.ui.widget.ChartAnimationState.STATE_END
 import com.popalay.tracktor.ui.widget.ChartAnimationState.STATE_START
+import com.popalay.tracktor.utils.dragGestureFilter
 import com.popalay.tracktor.utils.getSubPath
 import java.lang.Float.max
 import java.lang.Float.min
-import kotlin.math.abs
+import kotlin.math.absoluteValue
 
 enum class ChartAnimationState {
     STATE_START, STATE_END
@@ -101,18 +100,15 @@ fun ChartWidget(
         Canvas(
             modifier = modifier
                 .fillMaxWidth()
-                .let {
-                    if (touchable) {
-                        it.pressIndicatorGestureFilter(
-                            onStart = { touchPosition.value = it },
-                            onStop = { touchPosition.value = null },
-                            onCancel = { touchPosition.value = null }
-                        )
-                    } else it
-                }
+                .dragGestureFilter(
+                    onStart = { touchPosition.value = it },
+                    onDrag = { touchPosition.value = touchPosition.value?.plus(it);it },
+                    onStop = { touchPosition.value = null },
+                    onCancel = { touchPosition.value = null },
+                    canDrag = { touchable },
+                    startDragImmediately = true
+                )
         ) {
-            val touchArea = labelRadius.toPx() * 4
-
             val points = createPoints(data, size, labelRadius.toPx(), topOffset.toPx(), transitionState[amplifierKey])
             val (conPoints1, conPoints2) = createConnectionPoints(points)
 
@@ -125,7 +121,7 @@ fun ChartWidget(
             drawPath(borderPath, createBrush(gradient, size), 1.0F, Stroke(lineWidth.toPx()))
 
             if (touchable) {
-                drawTouchable(touchPosition.value, points, touchArea, labelRadius, pointColor, topOffset, onPointUnSelected, onPointSelected)
+                drawTouchable(touchPosition.value, points, labelRadius, pointColor, topOffset, onPointUnSelected, onPointSelected)
             }
         }
     }
@@ -134,16 +130,13 @@ fun ChartWidget(
 private fun DrawScope.drawTouchable(
     touchPosition: Offset?,
     points: List<Offset>,
-    touchArea: Float,
     labelRadius: Dp,
     pointColor: Color,
     topOffset: Dp,
     onPointUnSelected: () -> Unit,
     onPointSelected: (Offset, Int) -> Unit
 ) {
-    val touchedPoint = if (touchPosition == null) null else points.fastFirstOrNull { offset ->
-        (touchPosition - offset).let { abs(it.x) <= touchArea }
-    }
+    val touchedPoint = if (touchPosition == null) null else points.minBy { (it.x - touchPosition.x).absoluteValue }
 
     points.forEach {
         val center = Offset(max(min(it.x, size.width - labelRadius.toPx()), labelRadius.toPx()), it.y)
