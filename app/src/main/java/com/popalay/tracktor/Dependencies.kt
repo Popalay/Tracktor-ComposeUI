@@ -24,6 +24,7 @@ import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.ui.featureflagslist.FeatureFlagsListWorkflow
 import com.popalay.tracktor.ui.list.ListWorkflow
 import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow
+import com.squareup.moshi.Moshi
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import java.time.LocalDateTime
@@ -31,7 +32,7 @@ import java.util.concurrent.Executors
 
 val coreModule = module {
     single { AppWorkflow(get(), get(), get()) }
-    single { ListWorkflow(get(), get()) }
+    single { ListWorkflow(get(), get(), get()) }
     single { TrackerDetailWorkflow(get()) }
     single { FeatureFlagsListWorkflow(get()) }
 }
@@ -61,6 +62,8 @@ val dataModule = module {
     single { TrackingRepository(get(), get()) }
 
     single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
+
+    single { Moshi.Builder().build() }
 }
 
 val featureFlagsModule = module {

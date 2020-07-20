@@ -2,7 +2,6 @@ package com.popalay.tracktor.ui.list
 
 import androidx.compose.Composable
 import androidx.compose.onCommit
-import androidx.compose.state
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.clickable
 import androidx.ui.foundation.lazy.LazyColumnItems
@@ -16,7 +15,6 @@ import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
 import androidx.ui.unit.dp
-import com.popalay.tracktor.model.TrackerListItem
 import com.popalay.tracktor.model.toListItem
 import com.popalay.tracktor.ui.dialog.ChooseUnitDialog
 import com.popalay.tracktor.ui.dialog.DeleteTrackerDialog
@@ -43,9 +41,11 @@ fun ListScreen(
 ) {
     Scaffold(topBar = {
         CreateTrackerAppBar(
+            title = state.newTrackerTitle,
             menuItems = state.menuItems,
             onMenuItemClicked = { onAction(Action.MenuItemClicked(it)) },
-            onSubmit = { onAction(Action.NewTrackerTitleSubmitted(it)) }
+            onValueChanged = { onAction(Action.NewTrackerTitleChanged(it)) },
+            onSubmit = { onAction(Action.NewTrackerTitleSubmitted) }
         )
     }) {
         Column {
@@ -70,31 +70,29 @@ fun ListScreen(
                     )
                 }
             }
-            TrackerList(state.items, onAction)
+            TrackerList(state, onAction)
         }
     }
 }
 
 @Composable
 private fun TrackerList(
-    items: List<TrackerListItem>,
+    state: ListWorkflow.State,
     onAction: (Action) -> Unit
 ) {
-    val animated = state { false }
-
-    LazyColumnItems(items = items, itemContent = {
+    LazyColumnItems(items = state.items, itemContent = {
         Spacer(modifier = Modifier.height(8.dp))
         TrackerListItem(
-            it.copy(animate = !animated.value),
+            it.copy(animate = state.animate),
             Modifier.padding(horizontal = 16.dp).clickable(onClick = { onAction(Action.TrackerClicked(it.data)) }),
             onAddClicked = { onAction(Action.AddRecordClicked(it.data)) },
             onRemoveClicked = { onAction(Action.DeleteTrackerClicked(it.data)) }
         )
-        if (items.lastOrNull() == it) {
+        if (state.items.lastOrNull() == it) {
             Spacer(modifier = Modifier.height(8.dp))
         }
         onCommit {
-            animated.value = true
+            onAction(Action.AnimationProceeded)
         }
     })
 }

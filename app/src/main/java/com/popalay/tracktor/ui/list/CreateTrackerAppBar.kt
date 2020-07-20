@@ -33,7 +33,9 @@ import com.popalay.tracktor.model.MenuItem
 @Composable
 fun CreateTrackerAppBar(
     menuItems: List<MenuItem> = emptyList(),
-    onSubmit: (String) -> Unit = {},
+    title: String = "",
+    onValueChanged: (String) -> Unit = {},
+    onSubmit: () -> Unit = {},
     onMenuItemClicked: (MenuItem) -> Unit = {}
 ) {
     TopAppBar(modifier = Modifier.preferredHeight(160.dp)) {
@@ -46,7 +48,7 @@ fun CreateTrackerAppBar(
                     modifier = Modifier.gravity(Alignment.TopCenter)
                 )
             }
-            CreateTrackedValue(onSubmit = onSubmit)
+            CreateTrackedValue(title, onValueChanged, onSubmit)
         }
     }
 }

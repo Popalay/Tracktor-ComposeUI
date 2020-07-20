@@ -8,6 +8,10 @@ import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.model.TrackerListItem
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.model.toListItem
+import com.popalay.tracktor.utils.toData
+import com.popalay.tracktor.utils.toSnapshot
+import com.squareup.moshi.JsonClass
+import com.squareup.moshi.Moshi
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow
@@ -20,16 +24,22 @@ import java.util.UUID
 
 class ListWorkflow(
     private val trackingRepository: TrackingRepository,
-    private val getAllTrackersWorker: GetAllTrackersWorker
-) : StatefulWorkflow<Unit, ListWorkflow.State, ListWorkflow.Output, Any>(), KoinComponent {
+    private val getAllTrackersWorker: GetAllTrackersWorker,
+    private val moshi: Moshi
+) : StatefulWorkflow<ListWorkflow.Props, ListWorkflow.State, ListWorkflow.Output, Any>(), KoinComponent {
 
+    data class Props(val animate: Boolean)
+
+    @JsonClass(generateAdapter = true)
     data class State(
-        val items: List<TrackerListItem> = emptyList(),
-        val menuItems: List<MenuItem> = listOf(MenuItem.FeatureFlagsMenuItem),
-        val itemInCreating: Tracker? = null,
-        val itemInEditing: Tracker? = null,
-        val itemInDeleting: Tracker? = null,
-        val currentAction: Action? = null
+        @Transient val items: List<TrackerListItem> = emptyList(),
+        @Transient val menuItems: List<MenuItem> = listOf(MenuItem.FeatureFlagsMenuItem),
+        @Transient val itemInCreating: Tracker? = null,
+        @Transient val itemInEditing: Tracker? = null,
+        @Transient val itemInDeleting: Tracker? = null,
+        @Transient val currentAction: Action? = null,
+        val newTrackerTitle: String = "",
+        val animate: Boolean = true
     )
 
     data class Rendering(
@@ -50,12 +60,14 @@ class ListWorkflow(
         data class AddRecordClicked(val item: TrackerWithRecords) : Action()
         data class DeleteTrackerClicked(val item: TrackerWithRecords) : Action()
         data class DeleteSubmitted(val item: Tracker) : Action()
-        data class NewTrackerTitleSubmitted(val title: String) : Action()
         data class TrackerClicked(val item: TrackerWithRecords) : Action()
         data class MenuItemClicked(val menuItem: MenuItem) : Action()
+        data class NewTrackerTitleChanged(val title: String) : Action()
+        object NewTrackerTitleSubmitted : Action()
         object TrackDialogDismissed : Action()
         object DeleteDialogDismissed : Action()
         object ChooseUnitDialogDismissed : Action()
+        object AnimationProceeded : Action()
 
         override fun WorkflowAction.Updater<State, Output>.apply() {
             nextState = when (val action = this@Action) {
@@ -65,17 +77,20 @@ class ListWorkflow(
                 is DeleteTrackerClicked -> nextState.copy(itemInDeleting = action.item.tracker)
                 is TrackerClicked -> nextState.also { setOutput(Output.TrackerDetail(action.item.tracker.id)) }
                 is NewTrackerTitleSubmitted -> nextState.copy(
+                    newTrackerTitle = "",
                     itemInCreating = Tracker(
                         id = UUID.randomUUID().toString(),
-                        title = action.title,
+                        title = nextState.newTrackerTitle.trim(),
                         unit = TrackableUnit.None,
                         date = LocalDateTime.now()
                     )
                 )
                 is MenuItemClicked -> handleMenuItem(action.menuItem)
+                is NewTrackerTitleChanged -> nextState.copy(newTrackerTitle = action.title)
                 TrackDialogDismissed -> nextState.copy(itemInEditing = null)
                 DeleteDialogDismissed -> nextState.copy(itemInDeleting = null)
                 ChooseUnitDialogDismissed -> nextState.copy(itemInCreating = null)
+                AnimationProceeded -> nextState.copy(animate = false)
                 else -> nextState.copy(currentAction = this@Action)
             }
         }
@@ -86,10 +101,10 @@ class ListWorkflow(
             }
     }
 
-    override fun initialState(props: Unit, snapshot: Snapshot?): State = State()
+    override fun initialState(props: Props, snapshot: Snapshot?): State = snapshot?.toData(moshi) ?: State(animate = props.animate)
 
     override fun render(
-        props: Unit,
+        props: Props,
         state: State,
         context: RenderContext<State, Output>
     ): Any {
@@ -102,7 +117,7 @@ class ListWorkflow(
         )
     }
 
-    override fun snapshotState(state: State): Snapshot = Snapshot.EMPTY
+    override fun snapshotState(state: State): Snapshot = state.toSnapshot(moshi)
 
     private fun runSideEffects(state: State, context: RenderContext<State, Output>) {
         when (val action = state.currentAction) {

@@ -1,7 +1,6 @@
 package com.popalay.tracktor.ui.list
 
 import androidx.compose.Composable
-import androidx.compose.state
 import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.Icon
@@ -23,33 +22,32 @@ import androidx.ui.unit.dp
 
 @Preview
 @Composable
-fun CreateTrackedValue(onSubmit: (String) -> Unit = {}) {
-    val (currentState, updateState) = state { "" }
-
+fun CreateTrackedValue(
+    title: String = "",
+    onValueChange: (String) -> Unit = {},
+    onSubmit: () -> Unit = {}
+) {
     Row(
         modifier = Modifier.padding(InnerPadding(16.dp)),
         verticalGravity = Alignment.CenterVertically
     ) {
         FilledTextField(
-            value = currentState,
-            onValueChange = { updateState(it) },
+            value = title,
+            onValueChange = onValueChange,
             modifier = Modifier.weight(3F),
             label = { Text(text = "Create new tracker") },
             textStyle = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onPrimary),
             inactiveColor = MaterialTheme.colors.onPrimary,
             activeColor = MaterialTheme.colors.onPrimary
         )
-        if (currentState.isNotBlank()) {
+        if (title.isNotBlank()) {
             Spacer(modifier = Modifier.width(8.dp))
             Button(
                 text = { Icon(asset = Icons.Default.Done) },
                 modifier = Modifier.preferredSize(48.dp),
                 backgroundColor = MaterialTheme.colors.secondary,
                 shape = CircleShape,
-                onClick = {
-                    onSubmit(currentState.trim())
-                    updateState("")
-                }
+                onClick = onSubmit
             )
         }
     }

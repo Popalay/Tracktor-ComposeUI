@@ -17,7 +17,7 @@ class AppWorkflow(
 ) : StatefulWorkflow<Unit, AppWorkflow.State, Nothing, Any>() {
 
     sealed class State {
-        object TrackerList : State()
+        data class TrackerList(val animate: Boolean) : State()
         data class TrackerDetail(val trackerId: String) : State()
         object FeatureFlagList : State()
     }
@@ -34,19 +34,19 @@ class AppWorkflow(
                     ListWorkflow.Output.FeatureFlagList -> State.FeatureFlagList
                 }
                 is TrackerDetailOutput -> when (action.output) {
-                    TrackerDetailWorkflow.Output.Back -> State.TrackerList
+                    TrackerDetailWorkflow.Output.Back -> State.TrackerList(animate = false)
                 }
                 is FeatureFlagsListOutput -> when (action.output) {
-                    FeatureFlagsListWorkflow.Output.Back -> State.TrackerList
+                    FeatureFlagsListWorkflow.Output.Back -> State.TrackerList(animate = false)
                 }
             }
         }
     }
 
-    override fun initialState(props: Unit, snapshot: Snapshot?): State = snapshot?.toState() ?: State.TrackerList
+    override fun initialState(props: Unit, snapshot: Snapshot?): State = snapshot?.toState() ?: State.TrackerList(animate = true)
 
     override fun render(props: Unit, state: State, context: RenderContext<State, Nothing>): Any = when (state) {
-        State.TrackerList -> context.renderChild(listWorkflow) { Action.TrackerListOutput(it) }
+        is State.TrackerList -> context.renderChild(listWorkflow, ListWorkflow.Props(state.animate)) { Action.TrackerListOutput(it) }
         is State.TrackerDetail -> context.renderChild(
             trackerDetailWorkflow,
             TrackerDetailWorkflow.Props(state.trackerId)
@@ -57,7 +57,7 @@ class AppWorkflow(
     override fun snapshotState(state: State): Snapshot = state.toSnapshot()
 
     private fun State.toSnapshot() = when (this) {
-        State.TrackerList -> Snapshot.of("TrackerList")
+        is State.TrackerList -> Snapshot.of("TrackerList,$animate")
         is State.TrackerDetail -> Snapshot.of("TrackerDetail,$trackerId")
         State.FeatureFlagList -> Snapshot.Companion.of("FeatureFlagList")
     }
@@ -65,7 +65,7 @@ class AppWorkflow(
     private fun Snapshot.toState(): State? {
         val stringSnapshot = bytes.string(Charset.defaultCharset())
         return when {
-            stringSnapshot.startsWith("TrackerList") -> State.TrackerList
+            stringSnapshot.startsWith("TrackerList") -> State.TrackerList(stringSnapshot.split(",")[1].toBoolean())
             stringSnapshot.startsWith("TrackerDetail") -> State.TrackerDetail(stringSnapshot.split(",")[1])
             stringSnapshot.startsWith("FeatureFlagList") -> State.FeatureFlagList
             else -> null
