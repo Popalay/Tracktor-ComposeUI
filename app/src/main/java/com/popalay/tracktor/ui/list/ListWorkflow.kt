@@ -8,8 +8,6 @@ import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.model.TrackerListItem
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.model.toListItem
-import com.popalay.tracktor.ui.featureflagslist.FeatureFlagsListWorkflow
-import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow
@@ -17,14 +15,13 @@ import com.squareup.workflow.Worker
 import com.squareup.workflow.WorkflowAction
 import com.squareup.workflow.applyTo
 import org.koin.core.KoinComponent
-import org.koin.core.get
 import java.time.LocalDateTime
 import java.util.UUID
 
 class ListWorkflow(
     private val trackingRepository: TrackingRepository,
     private val getAllTrackersWorker: GetAllTrackersWorker
-) : StatefulWorkflow<Unit, ListWorkflow.State, Nothing, Any>(), KoinComponent {
+) : StatefulWorkflow<Unit, ListWorkflow.State, ListWorkflow.Output, Any>(), KoinComponent {
 
     data class State(
         val items: List<TrackerListItem> = emptyList(),
@@ -32,12 +29,20 @@ class ListWorkflow(
         val itemInCreating: Tracker? = null,
         val itemInEditing: Tracker? = null,
         val itemInDeleting: Tracker? = null,
-        val trackerDetails: Tracker? = null,
-        val featureFlagsList: Boolean = false,
         val currentAction: Action? = null
     )
 
-    sealed class Action : WorkflowAction<State, Nothing> {
+    data class Rendering(
+        val state: State,
+        val onAction: (Action) -> Unit
+    )
+
+    sealed class Output {
+        data class TrackerDetail(val trackerId: String) : Output()
+        object FeatureFlagList : Output()
+    }
+
+    sealed class Action : WorkflowAction<State, Output> {
         data class SideEffectAction(val action: Action) : Action()
         data class UnitSubmitted(val unit: TrackableUnit) : Action()
         data class NewRecordSubmitted(val tracker: Tracker, val value: String) : Action()
@@ -51,15 +56,14 @@ class ListWorkflow(
         object TrackDialogDismissed : Action()
         object DeleteDialogDismissed : Action()
         object ChooseUnitDialogDismissed : Action()
-        object Back : Action()
 
-        override fun WorkflowAction.Updater<State, Nothing>.apply() {
+        override fun WorkflowAction.Updater<State, Output>.apply() {
             nextState = when (val action = this@Action) {
                 is SideEffectAction -> action.action.applyTo(nextState.copy(currentAction = null)).first
                 is ListUpdated -> nextState.copy(items = action.list.map { it.toListItem() })
                 is AddRecordClicked -> nextState.copy(itemInEditing = action.item.tracker)
                 is DeleteTrackerClicked -> nextState.copy(itemInDeleting = action.item.tracker)
-                is TrackerClicked -> nextState.copy(trackerDetails = action.item.tracker)
+                is TrackerClicked -> nextState.also { setOutput(Output.TrackerDetail(action.item.tracker.id)) }
                 is NewTrackerTitleSubmitted -> nextState.copy(
                     itemInCreating = Tracker(
                         id = UUID.randomUUID().toString(),
@@ -68,58 +72,39 @@ class ListWorkflow(
                         date = LocalDateTime.now()
                     )
                 )
-                is MenuItemClicked -> handleMenuItem(nextState, action.menuItem)
+                is MenuItemClicked -> handleMenuItem(action.menuItem)
                 TrackDialogDismissed -> nextState.copy(itemInEditing = null)
                 DeleteDialogDismissed -> nextState.copy(itemInDeleting = null)
                 ChooseUnitDialogDismissed -> nextState.copy(itemInCreating = null)
-                Back -> nextState.copy(trackerDetails = null, featureFlagsList = false)
                 else -> nextState.copy(currentAction = this@Action)
             }
         }
 
-        private fun handleMenuItem(nextState: State, menuItem: MenuItem): State =
+        private fun WorkflowAction.Updater<State, Output>.handleMenuItem(menuItem: MenuItem): State =
             when (menuItem) {
-                MenuItem.FeatureFlagsMenuItem -> nextState.copy(featureFlagsList = true)
+                MenuItem.FeatureFlagsMenuItem -> nextState.also { setOutput(Output.FeatureFlagList) }
             }
     }
-
-    data class Rendering(
-        val state: State,
-        val onAction: (Action) -> Unit
-    )
 
     override fun initialState(props: Unit, snapshot: Snapshot?): State = State()
 
     override fun render(
         props: Unit,
         state: State,
-        context: RenderContext<State, Nothing>
+        context: RenderContext<State, Output>
     ): Any {
         context.runningWorker(getAllTrackersWorker) { Action.ListUpdated(it) }
         runSideEffects(state, context)
 
-        return when {
-            state.trackerDetails != null -> context.renderChild(
-                get<TrackerDetailWorkflow>(),
-                TrackerDetailWorkflow.Props(state.trackerDetails.id),
-                state.trackerDetails.id,
-                handler = { Action.Back }
-            )
-            state.featureFlagsList -> context.renderChild(
-                get<FeatureFlagsListWorkflow>(),
-                Unit,
-                handler = { Action.Back }
-            )
-            else -> Rendering(
-                state = state,
-                onAction = { context.actionSink.send(it) }
-            )
-        }
+        return Rendering(
+            state = state,
+            onAction = { context.actionSink.send(it) }
+        )
     }
 
     override fun snapshotState(state: State): Snapshot = Snapshot.EMPTY
 
-    private fun runSideEffects(state: State, context: RenderContext<State, Nothing>) {
+    private fun runSideEffects(state: State, context: RenderContext<State, Output>) {
         when (val action = state.currentAction) {
             is Action.UnitSubmitted -> {
                 val worker = Worker.from { trackingRepository.saveTracker(requireNotNull(state.itemInCreating).copy(unit = action.unit)) }
