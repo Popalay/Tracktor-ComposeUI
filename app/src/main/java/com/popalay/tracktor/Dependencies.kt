@@ -30,9 +30,10 @@ import java.time.LocalDateTime
 import java.util.concurrent.Executors
 
 val coreModule = module {
-    factory { ListWorkflow(get(), get()) }
-    factory { TrackerDetailWorkflow(get()) }
-    factory { FeatureFlagsListWorkflow(get()) }
+    single { AppWorkflow(get(), get(), get()) }
+    single { ListWorkflow(get(), get()) }
+    single { TrackerDetailWorkflow(get()) }
+    single { FeatureFlagsListWorkflow(get()) }
 }
 
 val domainModule = module {

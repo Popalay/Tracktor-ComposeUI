@@ -3,7 +3,7 @@
     package="com.popalay.tracktor">
 
     <application
-        android:name=".Application"
+        android:name=".DefaultApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"

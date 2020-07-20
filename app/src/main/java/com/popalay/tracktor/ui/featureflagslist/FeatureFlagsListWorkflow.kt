@@ -11,22 +11,26 @@ import com.squareup.workflow.WorkflowAction
 
 class FeatureFlagsListWorkflow(
     private val featureFlagsManager: FeatureFlagsManager
-) : StatefulWorkflow<Unit, FeatureFlagsListWorkflow.State, Unit, FeatureFlagsListWorkflow.Rendering>() {
+) : StatefulWorkflow<Unit, FeatureFlagsListWorkflow.State, FeatureFlagsListWorkflow.Output, FeatureFlagsListWorkflow.Rendering>() {
 
     data class State(
         val featureFlags: List<FeatureFlagListItem> = emptyList()
     )
 
-    sealed class Action : WorkflowAction<State, Unit> {
+    sealed class Output {
+        object Back : Output()
+    }
+
+    sealed class Action : WorkflowAction<State, Output> {
         data class FeatureFlagChanged(val item: FeatureFlagListItem, val isEnabled: Boolean) : Action()
         object BackClicked : Action()
 
-        override fun WorkflowAction.Updater<State, Unit>.apply() {
+        override fun WorkflowAction.Updater<State, Output>.apply() {
             nextState = when (val action = this@Action) {
                 is FeatureFlagChanged -> nextState.copy(
                     featureFlags = nextState.featureFlags.updateItem(action.item, action.item.copy(isEnabled = action.isEnabled))
                 )
-                BackClicked -> nextState.also { setOutput(Unit) }
+                BackClicked -> nextState.also { setOutput(Output.Back) }
             }
         }
     }
@@ -45,7 +49,7 @@ class FeatureFlagsListWorkflow(
     override fun render(
         props: Unit,
         state: State,
-        context: RenderContext<State, Unit>
+        context: RenderContext<State, Output>
     ): Rendering {
         runSideEffects(state)
 

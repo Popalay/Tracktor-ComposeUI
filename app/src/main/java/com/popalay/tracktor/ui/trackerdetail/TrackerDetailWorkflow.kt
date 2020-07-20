@@ -13,7 +13,7 @@ import com.squareup.workflow.applyTo
 
 class TrackerDetailWorkflow(
     private val trackingRepository: TrackingRepository
-) : StatefulWorkflow<TrackerDetailWorkflow.Props, TrackerDetailWorkflow.State, Unit, TrackerDetailWorkflow.Rendering>() {
+) : StatefulWorkflow<TrackerDetailWorkflow.Props, TrackerDetailWorkflow.State, TrackerDetailWorkflow.Output, TrackerDetailWorkflow.Rendering>() {
 
     data class Props(val trackerId: String)
 
@@ -23,7 +23,11 @@ class TrackerDetailWorkflow(
         val currentAction: Action? = null
     )
 
-    sealed class Action : WorkflowAction<State, Unit> {
+    sealed class Output {
+        object Back : Output()
+    }
+
+    sealed class Action : WorkflowAction<State, Output> {
         data class SideEffectAction(val action: Action) : Action()
         data class TrackerUpdated(val tracker: TrackerWithRecords) : Action()
         data class NewRecordSubmitted(val value: String) : Action()
@@ -31,11 +35,11 @@ class TrackerDetailWorkflow(
         object AddRecordClicked : Action()
         object TrackDialogDismissed : Action()
 
-        override fun WorkflowAction.Updater<State, Unit>.apply() {
+        override fun WorkflowAction.Updater<State, Output>.apply() {
             nextState = when (val action = this@Action) {
                 is SideEffectAction -> action.action.applyTo(nextState.copy(currentAction = null)).first
                 is TrackerUpdated -> nextState.copy(trackerWithRecords = action.tracker)
-                BackClicked -> nextState.also { setOutput(Unit) }
+                BackClicked -> nextState.also { setOutput(Output.Back) }
                 AddRecordClicked -> nextState.copy(isAddRecordDialogShowing = true)
                 TrackDialogDismissed -> nextState.copy(isAddRecordDialogShowing = false)
                 else -> nextState.copy(currentAction = this@Action)
@@ -53,7 +57,7 @@ class TrackerDetailWorkflow(
     override fun render(
         props: Props,
         state: State,
-        context: RenderContext<State, Unit>
+        context: RenderContext<State, Output>
     ): Rendering {
         context.runningWorker(GetTrackerByIdWorker(props.trackerId, trackingRepository)) { Action.TrackerUpdated(it) }
         runSideEffects(state, context)
@@ -66,7 +70,7 @@ class TrackerDetailWorkflow(
 
     override fun snapshotState(state: State): Snapshot = Snapshot.EMPTY
 
-    private fun runSideEffects(state: State, context: RenderContext<State, Unit>) {
+    private fun runSideEffects(state: State, context: RenderContext<State, Output>) {
         when (val action = state.currentAction) {
             is Action.NewRecordSubmitted -> {
                 val tracker = requireNotNull(state.trackerWithRecords).tracker
