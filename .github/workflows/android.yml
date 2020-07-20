@@ -52,7 +52,7 @@ jobs:
       - name: Detekt all
         uses: natiginfo/action-detekt-all@1.10.0-RC1
         with:
-          args: --fail-fast --config .github/detekt.yml --excludes **/workflow-kotlin-compose/**
+          args: --fail-fast --config .github/detekt.yml --excludes **/workflow-kotlin-compose/**;**JsonAdapter.**
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1

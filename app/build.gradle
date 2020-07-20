@@ -140,3 +140,9 @@ dependencies {
     implementation "org.koin:koin-core:$koin_version"
     implementation "org.koin:koin-android:$koin_version"
 }
+
+dependencies {
+    def moshi_version = "1.9.3"
+    implementation "com.squareup.moshi:moshi:$moshi_version"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
+}
