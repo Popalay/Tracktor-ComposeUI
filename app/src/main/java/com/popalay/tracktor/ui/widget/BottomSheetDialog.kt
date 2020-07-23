@@ -24,7 +24,7 @@ import androidx.ui.material.MaterialTheme
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 @Composable
-fun BottomSheetDialog(onCloseRequest: () -> Unit, children: @Composable() () -> Unit) {
+fun BottomSheetDialog(onCloseRequest: () -> Unit, children: @Composable () -> Unit) {
     val view = ViewAmbient.current
 
     @OptIn(ExperimentalComposeApi::class)
@@ -47,7 +47,7 @@ fun BottomSheetDialog(onCloseRequest: () -> Unit, children: @Composable() () -> 
     onCommit {
         dialog.setContent {
             MaterialTheme(colors = currentColors, typography = currentTypography) {
-                Box(backgroundColor = currentColors.background, modifier = Modifier.semantics { this.dialog = true }, children = children)
+                Box(backgroundColor = currentColors.background, modifier = Modifier.semantics { this.dialog() }, children = children)
             }
         }
     }
@@ -70,8 +70,8 @@ private class BottomSheetDialogWrapper(
         ViewTreeViewModelStoreOwner.set(frameLayout, ViewTreeViewModelStoreOwner.get(composeView))
     }
 
-    fun setContent(children: @Composable() () -> Unit) {
-        composition = frameLayout.setContent(recomposer, children)
+    fun setContent(children: @Composable () -> Unit) {
+        composition = frameLayout.setContent(recomposer, parentComposition = null, children)
     }
 
     fun disposeComposition() {

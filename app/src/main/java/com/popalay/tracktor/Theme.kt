@@ -45,7 +45,7 @@ val gradients = mapOf(
 )
 
 @Composable
-fun AppTheme(isDarkTheme: Boolean, content: @Composable() () -> Unit) =
+fun AppTheme(isDarkTheme: Boolean, content: @Composable () -> Unit) =
     MaterialTheme(
         colors = if (isDarkTheme) darkThemeColors else lightThemeColors,
         content = content

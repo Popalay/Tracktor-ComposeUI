@@ -7,7 +7,6 @@ import androidx.ui.core.Modifier
 import androidx.ui.foundation.Icon
 import androidx.ui.foundation.Image
 import androidx.ui.foundation.Text
-import androidx.ui.foundation.drawBackground
 import androidx.ui.layout.Arrangement
 import androidx.ui.layout.Column
 import androidx.ui.layout.Spacer
@@ -19,7 +18,6 @@ import androidx.ui.layout.preferredHeight
 import androidx.ui.material.DropdownMenu
 import androidx.ui.material.DropdownMenuItem
 import androidx.ui.material.IconButton
-import androidx.ui.material.MaterialTheme
 import androidx.ui.material.TopAppBar
 import androidx.ui.material.icons.Icons
 import androidx.ui.material.icons.filled.MoreVert
@@ -60,10 +58,8 @@ private fun StackScope.AppBarMenuButton(
 ) {
     val showDropDownMenu = state { false }
 
-    val colorOnBackground = MaterialTheme.colors.onBackground
     DropdownMenu(
         toggleModifier = Modifier.Companion.gravity(Alignment.CenterEnd),
-        dropdownModifier = Modifier.drawBackground(MaterialTheme.colors.background),
         toggle = {
             IconButton(onClick = { showDropDownMenu.value = !showDropDownMenu.value }) {
                 Icon(Icons.Default.MoreVert)
@@ -74,7 +70,7 @@ private fun StackScope.AppBarMenuButton(
     ) {
         menuItems.forEach {
             DropdownMenuItem(onClick = { onMenuItemClicked(it) }) {
-                Text(it.displayName, color = colorOnBackground)
+                Text(it.displayName)
             }
         }
     }

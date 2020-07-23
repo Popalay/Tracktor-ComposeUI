@@ -43,12 +43,11 @@ fun CreateTrackedValue(
         if (title.isNotBlank()) {
             Spacer(modifier = Modifier.width(8.dp))
             Button(
-                text = { Icon(asset = Icons.Default.Done) },
                 modifier = Modifier.preferredSize(48.dp),
                 backgroundColor = MaterialTheme.colors.secondary,
                 shape = CircleShape,
                 onClick = onSubmit
-            )
+            ) { Icon(asset = Icons.Default.Done) }
         }
     }
 }

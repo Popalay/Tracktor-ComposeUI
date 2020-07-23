@@ -15,16 +15,14 @@ fun DeleteTrackerDialog(
         title = { Text(text = "Delete") },
         text = { Text(text = "Are you sure to delete this tracker?") },
         confirmButton = {
-            Button(
-                text = { Text(text = "Yes") },
-                onClick = { onSubmit() }
-            )
+            Button(onClick = { onSubmit() }) {
+                Text(text = "Yes")
+            }
         },
         dismissButton = {
-            Button(
-                text = { Text(text = "Cancel") },
-                onClick = onCloseRequest
-            )
+            Button(onClick = onCloseRequest) {
+                Text(text = "Cancel")
+            }
         }
     )
 }

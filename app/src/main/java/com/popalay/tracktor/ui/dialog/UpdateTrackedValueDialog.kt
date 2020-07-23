@@ -42,10 +42,9 @@ fun UpdateTrackedValueDialog(
         },
         confirmButton = {
             Button(
-                text = { Text(text = "Save") },
                 enabled = validator(newValue.value),
                 onClick = { onSave(newValue.value.trim()) }
-            )
+            ) { Text(text = "Save") }
         }
     )
 }

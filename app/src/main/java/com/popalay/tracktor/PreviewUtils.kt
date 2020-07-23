@@ -6,7 +6,7 @@ import androidx.ui.material.Surface
 @Composable
 internal fun ThemedPreview(
     isDarkTheme: Boolean = false,
-    children: @Composable() () -> Unit
+    children: @Composable () -> Unit
 ) {
     AppTheme(isDarkTheme = isDarkTheme) {
         Surface {
