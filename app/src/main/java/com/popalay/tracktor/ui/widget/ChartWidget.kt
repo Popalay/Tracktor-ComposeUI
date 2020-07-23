@@ -3,9 +3,10 @@ package com.popalay.tracktor.ui.widget
 import androidx.animation.FastOutSlowInEasing
 import androidx.animation.FloatPropKey
 import androidx.animation.transitionDefinition
+import androidx.animation.tween
 import androidx.compose.Composable
 import androidx.compose.state
-import androidx.ui.animation.Transition
+import androidx.ui.animation.transition
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.Canvas
 import androidx.ui.geometry.Offset
@@ -43,10 +44,10 @@ private val definition = transitionDefinition {
         this[amplifierKey] = 1F
     }
     transition(fromState = STATE_START, toState = STATE_END) {
-        amplifierKey using tween {
-            duration = 1500
+        amplifierKey using tween(
+            durationMillis = 1500,
             easing = FastOutSlowInEasing
-        }
+        )
     }
 }
 
@@ -58,22 +59,21 @@ fun SimpleChartWidget(
     lineWidth: Dp = ChartLineWidth,
     animate: Boolean = true
 ) {
-    Transition(
+    val transitionState = transition(
         definition = definition,
-        initState = if (animate) STATE_START else STATE_END,
-        toState = STATE_END
-    ) { transitionState ->
-        Canvas(modifier) {
-            val points = createPoints(data, size, 0F, 0F, 1F)
-            val (conPoints1, conPoints2) = createConnectionPoints(points)
+        toState = STATE_END,
+        initState = if (animate) STATE_START else STATE_END
+    )
+    Canvas(modifier) {
+        val points = createPoints(data, size, 0F, 0F, 1F)
+        val (conPoints1, conPoints2) = createConnectionPoints(points)
 
-            if (points.isEmpty() || conPoints1.isEmpty() || conPoints2.isEmpty()) return@Canvas
+        if (points.isEmpty() || conPoints1.isEmpty() || conPoints2.isEmpty()) return@Canvas
 
-            val borderPath = createBorderPath(points, conPoints1, conPoints2)
+        val borderPath = createBorderPath(points, conPoints1, conPoints2)
 
-            val partPath = borderPath.getSubPath(0F, transitionState[amplifierKey])
-            drawPath(partPath, createBrush(gradient, size), 1.0F, Stroke(lineWidth.toPx()))
-        }
+        val partPath = borderPath.getSubPath(0F, transitionState[amplifierKey])
+        drawPath(partPath, createBrush(gradient, size), 1.0F, Stroke(lineWidth.toPx()))
     }
 }
 
@@ -91,38 +91,37 @@ fun ChartWidget(
     onPointSelected: (Offset, Int) -> Unit = { _, _ -> },
     onPointUnSelected: () -> Unit = {}
 ) {
-    Transition(
+    val transitionState = transition(
         definition = definition,
         initState = if (animate) STATE_START else STATE_END,
         toState = STATE_END
-    ) { transitionState ->
-        val touchPosition = state<Offset?> { null }
-        Canvas(
-            modifier = modifier
-                .fillMaxWidth()
-                .dragGestureFilter(
-                    onStart = { touchPosition.value = it },
-                    onDrag = { touchPosition.value = touchPosition.value?.plus(it);it },
-                    onStop = { touchPosition.value = null },
-                    onCancel = { touchPosition.value = null },
-                    canDrag = { touchable },
-                    startDragImmediately = true
-                )
-        ) {
-            val points = createPoints(data, size, labelRadius.toPx(), topOffset.toPx(), transitionState[amplifierKey])
-            val (conPoints1, conPoints2) = createConnectionPoints(points)
+    )
+    val touchPosition = state<Offset?> { null }
+    Canvas(
+        modifier = modifier
+            .fillMaxWidth()
+            .dragGestureFilter(
+                onStart = { touchPosition.value = it },
+                onDrag = { touchPosition.value = touchPosition.value?.plus(it);it },
+                onStop = { touchPosition.value = null },
+                onCancel = { touchPosition.value = null },
+                canDrag = { touchable },
+                startDragImmediately = true
+            )
+    ) {
+        val points = createPoints(data, size, labelRadius.toPx(), topOffset.toPx(), transitionState[amplifierKey])
+        val (conPoints1, conPoints2) = createConnectionPoints(points)
 
-            if (points.isEmpty() || conPoints1.isEmpty() || conPoints2.isEmpty()) return@Canvas
+        if (points.isEmpty() || conPoints1.isEmpty() || conPoints2.isEmpty()) return@Canvas
 
-            val borderPath = createBorderPath(points, conPoints1, conPoints2)
-            val fillPath = createFillPath(borderPath, size)
+        val borderPath = createBorderPath(points, conPoints1, conPoints2)
+        val fillPath = createFillPath(borderPath, size)
 
-            drawPath(fillPath, createBrush(gradient, size), 0.5F)
-            drawPath(borderPath, createBrush(gradient, size), 1.0F, Stroke(lineWidth.toPx()))
+        drawPath(fillPath, createBrush(gradient, size), 0.5F)
+        drawPath(borderPath, createBrush(gradient, size), 1.0F, Stroke(lineWidth.toPx()))
 
-            if (touchable) {
-                drawTouchable(touchPosition.value, points, labelRadius, pointColor, topOffset, onPointUnSelected, onPointSelected)
-            }
+        if (touchable) {
+            drawTouchable(touchPosition.value, points, labelRadius, pointColor, topOffset, onPointUnSelected, onPointSelected)
         }
     }
 }
@@ -136,7 +135,7 @@ private fun DrawScope.drawTouchable(
     onPointUnSelected: () -> Unit,
     onPointSelected: (Offset, Int) -> Unit
 ) {
-    val touchedPoint = if (touchPosition == null) null else points.minBy { (it.x - touchPosition.x).absoluteValue }
+    val touchedPoint = if (touchPosition == null) null else points.minByOrNull { (it.x - touchPosition.x).absoluteValue }
 
     points.forEach {
         val center = Offset(max(min(it.x, size.width - labelRadius.toPx()), labelRadius.toPx()), it.y)
@@ -164,9 +163,9 @@ private fun createPoints(
     val bottomY = size.height
     val xDiff = size.width / (data.size - 1)
 
-    val minData = data.min() ?: 0.0
+    val minData = data.minOrNull() ?: 0.0
     val optimizedData = data.map { it - minData }
-    val maxData = optimizedData.max()?.toFloat() ?: 0F
+    val maxData = optimizedData.maxOrNull()?.toFloat() ?: 0F
 
     val yMax = max(bottomY - (maxData / maxData * bottomY), labelRadiusPx + topOffsetPx)
     val animatedYMax = min(yMax / amplifier, size.height)

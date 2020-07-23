@@ -1,7 +1,7 @@
 package com.popalay.tracktor.ui.list
 
 import androidx.compose.Composable
-import androidx.compose.onCommit
+import androidx.compose.onActive
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.clickable
 import androidx.ui.foundation.lazy.LazyColumnItems
@@ -91,7 +91,7 @@ private fun TrackerList(
         if (state.items.lastOrNull() == it) {
             Spacer(modifier = Modifier.height(8.dp))
         }
-        onCommit {
+        onActive {
             onAction(Action.AnimationProceeded)
         }
     })

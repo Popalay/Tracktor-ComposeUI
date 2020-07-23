@@ -22,9 +22,11 @@ import androidx.ui.material.MaterialTheme
 import androidx.ui.material.TopAppBar
 import androidx.ui.material.icons.Icons
 import androidx.ui.material.icons.filled.ArrowBack
+import androidx.ui.unit.IntBounds
 import androidx.ui.unit.IntOffset
 import androidx.ui.unit.IntSize
 import androidx.ui.unit.dp
+import androidx.ui.unit.toSize
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
 import com.popalay.tracktor.gradients
 import com.popalay.tracktor.model.TrackerWithRecords
@@ -81,24 +83,17 @@ private fun ChartValuePopup(offset: Offset, trackerWithRecords: TrackerWithRecor
     val positionProvider = remember(offset) {
         object : PopupPositionProvider {
             override fun calculatePosition(
-                parentLayoutPosition: IntOffset,
-                parentLayoutSize: IntSize,
+                parentLayoutBounds: IntBounds,
                 layoutDirection: LayoutDirection,
                 popupSize: IntSize
             ): IntOffset {
                 var popupGlobalPosition = IntOffset(0, 0)
                 val intOffset = IntOffset(offset.x.toInt() - popupSize.width / 2, offset.y.toInt())
 
-                val parentAlignmentPoint = Alignment.TopStart.align(
-                    IntSize(parentLayoutSize.width, parentLayoutSize.height),
-                    layoutDirection
-                )
-                val relativePopupPos = Alignment.TopStart.align(
-                    IntSize(popupSize.width, popupSize.height),
-                    layoutDirection
-                )
+                val parentAlignmentPoint = Alignment.TopStart.align(parentLayoutBounds.toSize(), layoutDirection)
+                val relativePopupPos = Alignment.TopStart.align(popupSize, layoutDirection)
 
-                popupGlobalPosition += IntOffset(parentLayoutPosition.x, parentLayoutPosition.y)
+                popupGlobalPosition += IntOffset(parentLayoutBounds.left, parentLayoutBounds.top)
                 popupGlobalPosition += parentAlignmentPoint
                 popupGlobalPosition -= IntOffset(relativePopupPos.x, relativePopupPos.y)
 
