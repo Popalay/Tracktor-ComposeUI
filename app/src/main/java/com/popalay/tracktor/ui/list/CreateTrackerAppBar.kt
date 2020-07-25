@@ -2,6 +2,7 @@ package com.popalay.tracktor.ui.list
 
 import androidx.compose.Composable
 import androidx.compose.state
+import androidx.ui.animation.animate
 import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.Icon
@@ -37,10 +38,11 @@ fun CreateTrackerAppBar(
     onSubmit: () -> Unit = {},
     onMenuItemClicked: (MenuItem) -> Unit = {}
 ) {
-    val insets = WindowInsetsAmbient.current
-    TopAppBar(modifier = Modifier.preferredHeight(160.dp)) {
+    val animatedHeight = animate(WindowInsetsAmbient.current.top)
+
+    TopAppBar(modifier = Modifier.preferredHeight(animatedHeight + 160.dp)) {
         Column(verticalArrangement = Arrangement.SpaceAround) {
-            Spacer(modifier = Modifier.height(insets.top + 16.dp))
+            Spacer(modifier = Modifier.height(animatedHeight + 16.dp))
             Stack(modifier = Modifier.fillMaxWidth()) {
                 AppBarMenuButton(menuItems, onMenuItemClicked)
                 Image(
