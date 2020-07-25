@@ -25,6 +25,7 @@ import androidx.ui.res.vectorResource
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
 import com.popalay.tracktor.R
+import com.popalay.tracktor.WindowInsetsAmbient
 import com.popalay.tracktor.model.MenuItem
 
 @Preview
@@ -36,9 +37,10 @@ fun CreateTrackerAppBar(
     onSubmit: () -> Unit = {},
     onMenuItemClicked: (MenuItem) -> Unit = {}
 ) {
+    val insets = WindowInsetsAmbient.current
     TopAppBar(modifier = Modifier.preferredHeight(160.dp)) {
         Column(verticalArrangement = Arrangement.SpaceAround) {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(insets.top + 16.dp))
             Stack(modifier = Modifier.fillMaxWidth()) {
                 AppBarMenuButton(menuItems, onMenuItemClicked)
                 Image(

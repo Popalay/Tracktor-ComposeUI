@@ -11,6 +11,8 @@ import androidx.ui.foundation.Icon
 import androidx.ui.foundation.lazy.LazyColumnItems
 import androidx.ui.geometry.Offset
 import androidx.ui.layout.Column
+import androidx.ui.layout.Spacer
+import androidx.ui.layout.height
 import androidx.ui.layout.offset
 import androidx.ui.layout.padding
 import androidx.ui.material.Divider
@@ -19,6 +21,7 @@ import androidx.ui.material.Scaffold
 import androidx.ui.material.icons.Icons
 import androidx.ui.material.icons.filled.Add
 import androidx.ui.unit.dp
+import com.popalay.tracktor.WindowInsetsAmbient
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.ui.dialog.UpdateTrackedValueDialog
 
@@ -28,8 +31,9 @@ fun TrackerDetailContentView(
     isAddRecordDialogShowing: Boolean = false,
     onAction: (TrackerDetailWorkflow.Action) -> Unit
 ) {
+    val insets = WindowInsetsAmbient.current
     val isScrolled = state { false }
-    val fabOffset = animate(if (isScrolled.value) 72.dp else 0.dp)
+    val fabOffset = animate(if (isScrolled.value) 72.dp + insets.bottom else -insets.bottom)
 
     val dragObserver = remember {
         object : DragObserver {
@@ -47,7 +51,8 @@ fun TrackerDetailContentView(
         topBar = {
             ChartAppBar(
                 trackerWithRecords,
-                onArrowClicked = { onAction(TrackerDetailWorkflow.Action.BackClicked) })
+                onArrowClicked = { onAction(TrackerDetailWorkflow.Action.BackClicked) }
+            )
         },
         floatingActionButtonPosition = Scaffold.FabPosition.Center,
         floatingActionButton = {
@@ -83,6 +88,8 @@ private fun RecordsList(trackerWithRecords: TrackerWithRecords, dragObserver: Dr
         )
         if (items.lastOrNull() != it) {
             Divider(modifier = Modifier.padding(horizontal = 16.dp))
+        } else {
+            Spacer(modifier = Modifier.height(WindowInsetsAmbient.current.bottom))
         }
     })
 }
