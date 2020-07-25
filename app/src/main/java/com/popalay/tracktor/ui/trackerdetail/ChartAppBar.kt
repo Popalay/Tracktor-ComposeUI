@@ -40,6 +40,7 @@ fun ChartAppBar(
 ) {
     val selectedValue = state<Pair<Offset, Int>?> { null }
 
+    val insets = WindowInsetsAmbient.current
     TopAppBar(
         title = {
             Text(
@@ -53,8 +54,8 @@ fun ChartAppBar(
                 Icon(Icons.Default.ArrowBack)
             }
         },
-        modifier = Modifier.preferredHeight(240.dp),
-        contentModifier = Modifier.padding(bottom = 4.dp, top = WindowInsetsAmbient.current.top)
+        modifier = Modifier.preferredHeight(insets.top + 240.dp),
+        contentModifier = Modifier.padding(bottom = 4.dp, top = insets.top)
     ) {
         val gradient = gradients.getValue(tracker.tracker.unit)
         ChartWidget(
