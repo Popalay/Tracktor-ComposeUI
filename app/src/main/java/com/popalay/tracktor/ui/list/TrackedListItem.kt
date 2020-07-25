@@ -141,7 +141,7 @@ private fun Header(item: TrackerListItem, gradient: List<Color>) {
         verticalGravity = Alignment.CenterVertically
     ) {
         Text(item.data.tracker.title, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1F))
-        ProgressTextField(item.data.progress, color = gradient.last())
+        ProgressTextField(item.data.progress(), color = gradient.last())
     }
 }
 
@@ -189,7 +189,7 @@ private fun SimpleFooter(
         }
         Spacer(modifier = Modifier.weight(1F))
         if (item.data.records.size > 1) {
-            ProgressTextField(item.data.progress, color = gradient.last())
+            ProgressTextField(item.data.progress(), color = gradient.last())
             Spacer(modifier = Modifier.width(8.dp))
             Text(formatter.format(item.data.tracker, item.data.currentValue))
         } else {
