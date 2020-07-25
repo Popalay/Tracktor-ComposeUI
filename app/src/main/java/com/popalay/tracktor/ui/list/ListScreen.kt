@@ -3,8 +3,10 @@ package com.popalay.tracktor.ui.list
 import androidx.compose.Composable
 import androidx.compose.onActive
 import androidx.ui.core.Modifier
+import androidx.ui.core.clip
 import androidx.ui.foundation.clickable
 import androidx.ui.foundation.lazy.LazyColumnItems
+import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.layout.Column
 import androidx.ui.layout.ExperimentalLayout
 import androidx.ui.layout.Spacer
@@ -15,6 +17,7 @@ import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
 import androidx.ui.unit.dp
+import com.popalay.tracktor.WindowInsetsAmbient
 import com.popalay.tracktor.model.toListItem
 import com.popalay.tracktor.ui.dialog.ChooseUnitDialog
 import com.popalay.tracktor.ui.dialog.DeleteTrackerDialog
@@ -84,12 +87,15 @@ private fun TrackerList(
         Spacer(modifier = Modifier.height(8.dp))
         TrackerListItem(
             it.copy(animate = state.animate),
-            Modifier.padding(horizontal = 16.dp).clickable(onClick = { onAction(Action.TrackerClicked(it.data)) }),
+            modifier = Modifier.padding(horizontal = 16.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .clickable(onClick = { onAction(Action.TrackerClicked(it.data)) }),
             onAddClicked = { onAction(Action.AddRecordClicked(it.data)) },
             onRemoveClicked = { onAction(Action.DeleteTrackerClicked(it.data)) }
         )
         if (state.items.lastOrNull() == it) {
-            Spacer(modifier = Modifier.height(8.dp))
+            val insets = WindowInsetsAmbient.current
+            Spacer(modifier = Modifier.height(insets.bottom + 8.dp))
         }
         onActive {
             onAction(Action.AnimationProceeded)

@@ -12,14 +12,11 @@ import androidx.ui.foundation.Icon
 import androidx.ui.foundation.Text
 import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Color
-import androidx.ui.layout.Column
-import androidx.ui.layout.Row
 import androidx.ui.layout.padding
 import androidx.ui.layout.preferredHeight
 import androidx.ui.material.Card
 import androidx.ui.material.IconButton
 import androidx.ui.material.MaterialTheme
-import androidx.ui.material.TopAppBar
 import androidx.ui.material.icons.Icons
 import androidx.ui.material.icons.filled.ArrowBack
 import androidx.ui.unit.IntBounds
@@ -27,11 +24,13 @@ import androidx.ui.unit.IntOffset
 import androidx.ui.unit.IntSize
 import androidx.ui.unit.dp
 import androidx.ui.unit.toSize
+import com.popalay.tracktor.WindowInsetsAmbient
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
 import com.popalay.tracktor.gradients
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.model.ValueRecord
 import com.popalay.tracktor.ui.widget.ChartWidget
+import com.popalay.tracktor.ui.widget.TopAppBar
 import com.popalay.tracktor.utils.inject
 
 @Composable
@@ -41,39 +40,41 @@ fun ChartAppBar(
 ) {
     val selectedValue = state<Pair<Offset, Int>?> { null }
 
-    TopAppBar(modifier = Modifier.preferredHeight(240.dp)) {
+    TopAppBar(
+        title = {
+            Text(
+                tracker.tracker.title,
+                modifier = Modifier.gravity(Alignment.CenterVertically),
+                style = MaterialTheme.typography.subtitle1
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = onArrowClicked) {
+                Icon(Icons.Default.ArrowBack)
+            }
+        },
+        modifier = Modifier.preferredHeight(240.dp),
+        contentModifier = Modifier.padding(bottom = 4.dp, top = WindowInsetsAmbient.current.top)
+    ) {
+        val gradient = gradients.getValue(tracker.tracker.unit)
+        ChartWidget(
+            modifier = Modifier.preferredHeight(200.dp),
+            data = tracker.records.map { it.value },
+            gradient = gradient,
+            pointColor = Color.White,
+            touchable = true,
+            onPointSelected = { offset, index ->
+                selectedValue.value = offset to index
+            },
+            onPointUnSelected = {
+                selectedValue.value = null
+            }
+        )
+
         if (selectedValue.value != null) {
             val (offset, index) = requireNotNull(selectedValue.value)
 
             ChartValuePopup(offset, tracker, tracker.records[index])
-        }
-
-        Column(modifier = Modifier.padding(bottom = 4.dp)) {
-            Row {
-                IconButton(onClick = onArrowClicked) {
-                    Icon(Icons.Default.ArrowBack)
-                }
-                Text(
-                    tracker.tracker.title,
-                    modifier = Modifier.gravity(Alignment.CenterVertically),
-                    style = MaterialTheme.typography.subtitle1
-                )
-            }
-
-            val gradient = gradients.getValue(tracker.tracker.unit)
-            ChartWidget(
-                modifier = Modifier.preferredHeight(200.dp),
-                data = tracker.records.map { it.value },
-                gradient = gradient,
-                pointColor = Color.White,
-                touchable = true,
-                onPointSelected = { offset, index ->
-                    selectedValue.value = offset to index
-                },
-                onPointUnSelected = {
-                    selectedValue.value = null
-                }
-            )
         }
     }
 }
