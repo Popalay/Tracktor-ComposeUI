@@ -47,7 +47,8 @@ fun TrackerDetailContentView(
         topBar = {
             ChartAppBar(
                 trackerWithRecords,
-                onArrowClicked = { onAction(TrackerDetailWorkflow.Action.BackClicked) })
+                onArrowClicked = { onAction(TrackerDetailWorkflow.Action.BackClicked) }
+            )
         },
         floatingActionButtonPosition = Scaffold.FabPosition.Center,
         floatingActionButton = {

@@ -31,7 +31,8 @@ fun RecordListItem(trackerWithRecords: TrackerWithRecords, record: ValueRecord, 
         )
         Spacer(modifier = Modifier.weight(1F))
 
-        val progress = trackerWithRecords.progress(record.value)
+        val previousRecord = trackerWithRecords.records.getOrNull(trackerWithRecords.records.indexOf(record) - 1)
+        val progress = trackerWithRecords.progress(previousRecord?.value, record.value)
         ProgressTextField(
             progress,
             color = if (progress >= 0) Color.Green else Color.Red
