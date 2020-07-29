@@ -101,7 +101,7 @@ private fun TitleInput(
 ) {
     FilledTextField(
         value = state.title,
-        label = { Text("What's would you like to track?") },
+        label = { Text("What would you like to track?") },
         onValueChange = { onAction(Action.TitleChanged(it)) },
         activeColor = MaterialTheme.colors.onSurface,
         backgroundColor = MaterialTheme.colors.surface,
