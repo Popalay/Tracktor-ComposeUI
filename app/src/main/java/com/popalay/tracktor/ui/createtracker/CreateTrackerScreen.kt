@@ -88,7 +88,7 @@ private fun TopAppBar(
 @Composable
 private fun Title() {
     Text(
-        text = "Lets track!",
+        text = "Let's track!",
         style = MaterialTheme.typography.h3,
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
     )
