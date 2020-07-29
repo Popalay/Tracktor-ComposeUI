@@ -1,18 +1,11 @@
 package com.popalay.tracktor.ui.trackerdetail
 
 import androidx.compose.Composable
-import androidx.compose.remember
-import androidx.compose.state
-import androidx.ui.animation.animate
 import androidx.ui.core.Modifier
-import androidx.ui.core.gesture.DragObserver
-import androidx.ui.core.gesture.dragGestureFilter
 import androidx.ui.foundation.Icon
 import androidx.ui.foundation.lazy.LazyColumnItems
-import androidx.ui.geometry.Offset
 import androidx.ui.layout.Column
-import androidx.ui.layout.Spacer
-import androidx.ui.layout.height
+import androidx.ui.layout.InnerPadding
 import androidx.ui.layout.offset
 import androidx.ui.layout.padding
 import androidx.ui.material.Divider
@@ -32,21 +25,6 @@ fun TrackerDetailContentView(
     onAction: (TrackerDetailWorkflow.Action) -> Unit
 ) {
     val insets = WindowInsetsAmbient.current
-    val isScrolled = state { false }
-    val fabOffset = animate(if (isScrolled.value) 72.dp + insets.bottom else -insets.bottom)
-
-    val dragObserver = remember {
-        object : DragObserver {
-            override fun onStart(downPosition: Offset) {
-                isScrolled.value = true
-            }
-
-            override fun onStop(velocity: Offset) {
-                isScrolled.value = false
-            }
-        }
-    }
-
     Scaffold(
         topBar = {
             ChartAppBar(
@@ -58,7 +36,7 @@ fun TrackerDetailContentView(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { onAction(TrackerDetailWorkflow.Action.AddRecordClicked) },
-                modifier = Modifier.offset(y = fabOffset)
+                modifier = Modifier.offset(y = -insets.bottom)
             ) {
                 Icon(Icons.Default.Add)
             }
@@ -72,24 +50,22 @@ fun TrackerDetailContentView(
                     onSave = { onAction(TrackerDetailWorkflow.Action.NewRecordSubmitted(it)) }
                 )
             }
-            RecordsList(trackerWithRecords, dragObserver)
+            RecordsList(trackerWithRecords)
         }
     }
 }
 
 @Composable
-private fun RecordsList(trackerWithRecords: TrackerWithRecords, dragObserver: DragObserver) {
+private fun RecordsList(trackerWithRecords: TrackerWithRecords) {
     val items = trackerWithRecords.records.reversed()
-    LazyColumnItems(items = items, modifier = Modifier.dragGestureFilter(dragObserver), itemContent = {
-        RecordListItem(
-            trackerWithRecords,
-            it,
-            Modifier.padding(16.dp)
-        )
+    val insets = WindowInsetsAmbient.current
+    LazyColumnItems(
+        items = items,
+        contentPadding = InnerPadding(16.dp).copy(bottom = insets.bottom + 16.dp)
+    ) {
+        RecordListItem(trackerWithRecords, it)
         if (items.lastOrNull() != it) {
-            Divider(modifier = Modifier.padding(horizontal = 16.dp))
-        } else {
-            Spacer(modifier = Modifier.height(WindowInsetsAmbient.current.bottom))
+            Divider(modifier = Modifier.padding(vertical = 16.dp))
         }
-    })
+    }
 }

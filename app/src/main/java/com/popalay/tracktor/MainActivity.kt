@@ -6,7 +6,9 @@ import androidx.compose.Providers
 import androidx.compose.ambientOf
 import androidx.compose.state
 import androidx.compose.structuralEqualityPolicy
+import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
+import androidx.ui.core.ContextAmbient
 import androidx.ui.core.setContent
 import androidx.ui.layout.InnerPadding
 import androidx.ui.unit.Density
@@ -20,23 +22,25 @@ class MainActivity : AppCompatActivity() {
         setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
 
-        setContent {
-            val paddingState = state { InnerPadding() }
+        val view = window.decorView
+        view.setEdgeToEdgeSystemUiFlags()
 
-            val view = window.decorView
-            view.setEdgeToEdgeSystemUiFlags()
+        setContent {
+            val insetsState = state { ViewCompat.getRootWindowInsets(view)?.systemWindowInsets ?: Insets.NONE }
+
             ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-                paddingState.value = with(Density(view.context)) {
-                    InnerPadding(
-                        insets.systemWindowInsets.left.toDp(),
-                        insets.systemWindowInsets.top.toDp(),
-                        insets.systemWindowInsets.right.toDp(),
-                        insets.systemWindowInsets.bottom.toDp()
-                    )
-                }
+                insetsState.value = insets.systemGestureInsets
                 insets
             }
-            Providers(WindowInsetsAmbient provides paddingState.value) {
+            val padding = with(Density(ContextAmbient.current)) {
+                InnerPadding(
+                    insetsState.value.left.toDp(),
+                    insetsState.value.top.toDp(),
+                    insetsState.value.right.toDp(),
+                    insetsState.value.bottom.toDp()
+                )
+            }
+            Providers(WindowInsetsAmbient provides padding) {
                 App()
             }
         }

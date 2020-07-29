@@ -19,8 +19,6 @@ import com.squareup.workflow.Worker
 import com.squareup.workflow.WorkflowAction
 import com.squareup.workflow.applyTo
 import org.koin.core.KoinComponent
-import java.time.LocalDateTime
-import java.util.UUID
 
 class ListWorkflow(
     private val trackingRepository: TrackingRepository,
@@ -34,11 +32,9 @@ class ListWorkflow(
     data class State(
         @Transient val items: List<TrackerListItem> = emptyList(),
         @Transient val menuItems: List<MenuItem> = listOf(MenuItem.FeatureFlagsMenuItem),
-        @Transient val itemInCreating: Tracker? = null,
         @Transient val itemInEditing: Tracker? = null,
         @Transient val itemInDeleting: Tracker? = null,
         @Transient val currentAction: Action? = null,
-        val newTrackerTitle: String = "",
         val animate: Boolean = true
     )
 
@@ -50,11 +46,11 @@ class ListWorkflow(
     sealed class Output {
         data class TrackerDetail(val trackerId: String) : Output()
         object FeatureFlagList : Output()
+        object CreateTracker : Output()
     }
 
     sealed class Action : WorkflowAction<State, Output> {
         data class SideEffectAction(val action: Action) : Action()
-        data class UnitSubmitted(val unit: TrackableUnit) : Action()
         data class NewRecordSubmitted(val tracker: Tracker, val value: String) : Action()
         data class ListUpdated(val list: List<TrackerWithRecords>) : Action()
         data class AddRecordClicked(val item: TrackerWithRecords) : Action()
@@ -62,11 +58,9 @@ class ListWorkflow(
         data class DeleteSubmitted(val item: Tracker) : Action()
         data class TrackerClicked(val item: TrackerWithRecords) : Action()
         data class MenuItemClicked(val menuItem: MenuItem) : Action()
-        data class NewTrackerTitleChanged(val title: String) : Action()
-        object NewTrackerTitleSubmitted : Action()
         object TrackDialogDismissed : Action()
         object DeleteDialogDismissed : Action()
-        object ChooseUnitDialogDismissed : Action()
+        object CreateTrackerClicked : Action()
         object AnimationProceeded : Action()
 
         override fun WorkflowAction.Updater<State, Output>.apply() {
@@ -76,20 +70,10 @@ class ListWorkflow(
                 is AddRecordClicked -> nextState.copy(itemInEditing = action.item.tracker)
                 is DeleteTrackerClicked -> nextState.copy(itemInDeleting = action.item.tracker)
                 is TrackerClicked -> nextState.also { setOutput(Output.TrackerDetail(action.item.tracker.id)) }
-                is NewTrackerTitleSubmitted -> nextState.copy(
-                    newTrackerTitle = "",
-                    itemInCreating = Tracker(
-                        id = UUID.randomUUID().toString(),
-                        title = nextState.newTrackerTitle.trim(),
-                        unit = TrackableUnit.None,
-                        date = LocalDateTime.now()
-                    )
-                )
                 is MenuItemClicked -> handleMenuItem(action.menuItem)
-                is NewTrackerTitleChanged -> nextState.copy(newTrackerTitle = action.title)
+                CreateTrackerClicked -> nextState.also { setOutput(Output.CreateTracker) }
                 TrackDialogDismissed -> nextState.copy(itemInEditing = null)
                 DeleteDialogDismissed -> nextState.copy(itemInDeleting = null)
-                ChooseUnitDialogDismissed -> nextState.copy(itemInCreating = null)
                 AnimationProceeded -> nextState.copy(animate = false)
                 else -> nextState.copy(currentAction = this@Action)
             }
@@ -121,10 +105,6 @@ class ListWorkflow(
 
     private fun runSideEffects(state: State, context: RenderContext<State, Output>) {
         when (val action = state.currentAction) {
-            is Action.UnitSubmitted -> {
-                val worker = Worker.from { trackingRepository.saveTracker(requireNotNull(state.itemInCreating).copy(unit = action.unit)) }
-                context.runningWorker(worker) { Action.SideEffectAction(Action.ChooseUnitDialogDismissed) }
-            }
             is Action.NewRecordSubmitted -> {
                 val worker = if (action.tracker.unit == TrackableUnit.Word) {
                     Worker.from { trackingRepository.saveRecord(action.tracker, action.value) }

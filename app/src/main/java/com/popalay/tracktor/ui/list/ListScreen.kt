@@ -3,23 +3,25 @@ package com.popalay.tracktor.ui.list
 import androidx.compose.Composable
 import androidx.compose.onActive
 import androidx.ui.core.Modifier
-import androidx.ui.core.clip
+import androidx.ui.foundation.Icon
 import androidx.ui.foundation.clickable
 import androidx.ui.foundation.lazy.LazyColumnItems
-import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.layout.Column
 import androidx.ui.layout.ExperimentalLayout
+import androidx.ui.layout.InnerPadding
 import androidx.ui.layout.Spacer
 import androidx.ui.layout.height
-import androidx.ui.layout.padding
+import androidx.ui.layout.offset
+import androidx.ui.material.FloatingActionButton
 import androidx.ui.material.Scaffold
+import androidx.ui.material.icons.Icons
+import androidx.ui.material.icons.filled.Add
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
 import androidx.ui.unit.dp
 import com.popalay.tracktor.WindowInsetsAmbient
 import com.popalay.tracktor.model.toListItem
-import com.popalay.tracktor.ui.dialog.ChooseUnitDialog
 import com.popalay.tracktor.ui.dialog.DeleteTrackerDialog
 import com.popalay.tracktor.ui.dialog.UpdateTrackedValueDialog
 import com.popalay.tracktor.ui.list.ListWorkflow.Action
@@ -42,15 +44,23 @@ fun ListScreen(
     @PreviewParameter(ListStatePreviewProvider::class) state: ListWorkflow.State,
     onAction: (Action) -> Unit = {}
 ) {
-    Scaffold(topBar = {
-        CreateTrackerAppBar(
-            title = state.newTrackerTitle,
-            menuItems = state.menuItems,
-            onMenuItemClicked = { onAction(Action.MenuItemClicked(it)) },
-            onValueChanged = { onAction(Action.NewTrackerTitleChanged(it)) },
-            onSubmit = { onAction(Action.NewTrackerTitleSubmitted) }
-        )
-    }) {
+    Scaffold(
+        topBar = {
+            CreateTrackerAppBar(
+                menuItems = state.menuItems,
+                onMenuItemClicked = { onAction(Action.MenuItemClicked(it)) }
+            )
+        },
+        floatingActionButtonPosition = Scaffold.FabPosition.Center,
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { onAction(Action.CreateTrackerClicked) },
+                modifier = Modifier.offset(y = -WindowInsetsAmbient.current.bottom)
+            ) {
+                Icon(Icons.Default.Add)
+            }
+        }
+    ) {
         Column {
             when {
                 state.itemInEditing != null -> {
@@ -66,12 +76,6 @@ fun ListScreen(
                         onSubmit = { onAction(Action.DeleteSubmitted(state.itemInDeleting)) }
                     )
                 }
-                state.itemInCreating != null -> {
-                    ChooseUnitDialog(
-                        onCloseRequest = { onAction(Action.ChooseUnitDialogDismissed) },
-                        onSubmit = { onAction(Action.UnitSubmitted(it)) }
-                    )
-                }
             }
             TrackerList(state, onAction)
         }
@@ -81,24 +85,25 @@ fun ListScreen(
 @Composable
 private fun TrackerList(
     state: ListWorkflow.State,
-    onAction: (Action) -> Unit
+    onAction: (Action) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    LazyColumnItems(items = state.items, itemContent = {
-        Spacer(modifier = Modifier.height(8.dp))
+    val insets = WindowInsetsAmbient.current
+    LazyColumnItems(
+        items = state.items, modifier,
+        contentPadding = InnerPadding(16.dp).copy(bottom = insets.bottom + 16.dp)
+    ) {
         TrackerListItem(
             it.copy(animate = state.animate),
-            modifier = Modifier.padding(horizontal = 16.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .clickable(onClick = { onAction(Action.TrackerClicked(it.data)) }),
+            modifier = Modifier.clickable(onClick = { onAction(Action.TrackerClicked(it.data)) }),
             onAddClicked = { onAction(Action.AddRecordClicked(it.data)) },
             onRemoveClicked = { onAction(Action.DeleteTrackerClicked(it.data)) }
         )
-        if (state.items.lastOrNull() == it) {
-            val insets = WindowInsetsAmbient.current
-            Spacer(modifier = Modifier.height(insets.bottom + 8.dp))
+        if (it != state.items.last()) {
+            Spacer(modifier = Modifier.height(8.dp))
         }
         onActive {
             onAction(Action.AnimationProceeded)
         }
-    })
+    }
 }
