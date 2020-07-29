@@ -28,7 +28,7 @@ android {
         minSdkVersion buildConfig.minSdk
         targetSdkVersion buildConfig.targetSdk
         versionCode appVersionCode
-        versionName "1.4"
+        versionName "1.5"
 
         resConfigs "en"
 
