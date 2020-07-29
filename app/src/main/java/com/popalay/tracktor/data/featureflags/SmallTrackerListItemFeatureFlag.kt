@@ -17,7 +17,7 @@ class RealSmallTrackerListItemFeatureFlag(
 ) : SmallTrackerListItemFeatureFlag {
 
     override fun isSmallTrackerListItemEnabled(): Boolean =
-        sharedPreferences.getBoolean(KEY_SMALL_TRACKER_LIST_ITEM, false)
+        sharedPreferences.getBoolean(KEY_SMALL_TRACKER_LIST_ITEM, true)
 
     override fun setSmallTrackerListItemEnabled(value: Boolean) {
         sharedPreferences.edit().putBoolean(KEY_SMALL_TRACKER_LIST_ITEM, value).apply()

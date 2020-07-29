@@ -8,13 +8,9 @@ import androidx.ui.core.Modifier
 import androidx.ui.foundation.Icon
 import androidx.ui.foundation.Image
 import androidx.ui.foundation.Text
-import androidx.ui.layout.Arrangement
-import androidx.ui.layout.Column
+import androidx.ui.layout.RowScope
 import androidx.ui.layout.Spacer
-import androidx.ui.layout.Stack
-import androidx.ui.layout.StackScope
-import androidx.ui.layout.fillMaxWidth
-import androidx.ui.layout.height
+import androidx.ui.layout.padding
 import androidx.ui.layout.preferredHeight
 import androidx.ui.material.DropdownMenu
 import androidx.ui.material.DropdownMenuItem
@@ -33,37 +29,33 @@ import com.popalay.tracktor.model.MenuItem
 @Composable
 fun CreateTrackerAppBar(
     menuItems: List<MenuItem> = emptyList(),
-    title: String = "",
-    onValueChanged: (String) -> Unit = {},
-    onSubmit: () -> Unit = {},
     onMenuItemClicked: (MenuItem) -> Unit = {}
 ) {
     val animatedHeight = animate(WindowInsetsAmbient.current.top)
 
-    TopAppBar(modifier = Modifier.preferredHeight(animatedHeight + 160.dp)) {
-        Column(verticalArrangement = Arrangement.SpaceAround) {
-            Spacer(modifier = Modifier.height(animatedHeight + 16.dp))
-            Stack(modifier = Modifier.fillMaxWidth()) {
-                AppBarMenuButton(menuItems, onMenuItemClicked)
-                Image(
-                    vectorResource(R.drawable.ic_logo_text),
-                    modifier = Modifier.gravity(Alignment.TopCenter)
-                )
-            }
-            CreateTrackedValue(title, onValueChanged, onSubmit)
-        }
+    TopAppBar(modifier = Modifier.preferredHeight(animatedHeight + 72.dp)) {
+        Image(
+            vectorResource(R.drawable.ic_logo_text),
+            modifier = Modifier
+                .gravity(Alignment.CenterVertically)
+                .padding(start = 16.dp, top = WindowInsetsAmbient.current.top)
+        )
+        Spacer(modifier = Modifier.weight(1F))
+        AppBarMenuButton(menuItems, onMenuItemClicked)
     }
 }
 
 @Composable
-private fun StackScope.AppBarMenuButton(
+private fun RowScope.AppBarMenuButton(
     menuItems: List<MenuItem>,
     onMenuItemClicked: (MenuItem) -> Unit
 ) {
     val showDropDownMenu = state { false }
 
     DropdownMenu(
-        toggleModifier = Modifier.Companion.gravity(Alignment.CenterEnd),
+        toggleModifier = Modifier
+            .gravity(Alignment.CenterVertically)
+            .padding(top = WindowInsetsAmbient.current.top),
         toggle = {
             IconButton(onClick = { showDropDownMenu.value = !showDropDownMenu.value }) {
                 Icon(Icons.Default.MoreVert)

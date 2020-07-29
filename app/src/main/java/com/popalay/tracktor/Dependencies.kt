@@ -21,6 +21,7 @@ import com.popalay.tracktor.domain.formatter.ValueRecordFormatterFacade
 import com.popalay.tracktor.domain.worker.GetAllTrackersWorker
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
+import com.popalay.tracktor.ui.createtracker.CreateTrackerWorkflow
 import com.popalay.tracktor.ui.featureflagslist.FeatureFlagsListWorkflow
 import com.popalay.tracktor.ui.list.ListWorkflow
 import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow
@@ -31,10 +32,11 @@ import java.time.LocalDateTime
 import java.util.concurrent.Executors
 
 val coreModule = module {
-    single { AppWorkflow(get(), get(), get()) }
+    single { AppWorkflow(get(), get(), get(), get()) }
     single { ListWorkflow(get(), get(), get()) }
     single { TrackerDetailWorkflow(get()) }
     single { FeatureFlagsListWorkflow(get()) }
+    single { CreateTrackerWorkflow(get(), get()) }
 }
 
 val domainModule = module {

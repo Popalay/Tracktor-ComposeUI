@@ -8,6 +8,7 @@ import androidx.ui.foundation.Box
 import androidx.ui.foundation.Icon
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.shape.corner.CornerSize
+import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.graphics.Color
 import androidx.ui.layout.Arrangement
 import androidx.ui.layout.Column
@@ -79,7 +80,7 @@ fun SimpleTrackerListItem(
     val gradient = remember(item) { gradients.getValue(item.data.tracker.unit) }
     Card(
         modifier = modifier,
-        shape = MaterialTheme.shapes.medium.copy(CornerSize(16.dp))
+        shape = RoundedCornerShape(16.dp)
     ) {
         Column(
             modifier = Modifier.preferredHeight(120.dp),
