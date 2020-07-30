@@ -36,7 +36,7 @@ import androidx.ui.tooling.preview.PreviewParameterProvider
 import androidx.ui.unit.dp
 import com.popalay.tracktor.data.featureflags.FeatureFlagsManager
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
-import com.popalay.tracktor.gradients
+import com.popalay.tracktor.gradient
 import com.popalay.tracktor.model.TrackerListItem
 import com.popalay.tracktor.ui.widget.ChartWidget
 import com.popalay.tracktor.ui.widget.ProgressTextField
@@ -77,7 +77,7 @@ fun SimpleTrackerListItem(
     onAddClicked: () -> Unit = {},
     onRemoveClicked: () -> Unit = {}
 ) {
-    val gradient = remember(item) { gradients.getValue(item.data.tracker.unit) }
+    val gradient = remember(item) { item.data.tracker.compatibleUnit.gradient }
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp)
@@ -100,7 +100,7 @@ fun DetailedTrackerListItem(
     onAddClicked: () -> Unit = {},
     onRemoveClicked: () -> Unit = {}
 ) {
-    val gradient = remember(item) { gradients.getValue(item.data.tracker.unit) }
+    val gradient = remember(item) { item.data.tracker.compatibleUnit.gradient }
     Card(
         modifier = modifier,
         shape = MaterialTheme.shapes.medium.copy(CornerSize(16.dp))

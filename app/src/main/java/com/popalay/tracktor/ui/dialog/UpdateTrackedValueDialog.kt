@@ -8,6 +8,7 @@ import androidx.ui.input.KeyboardType
 import androidx.ui.material.AlertDialog
 import androidx.ui.material.Button
 import androidx.ui.material.FilledTextField
+import androidx.ui.material.MaterialTheme
 import com.popalay.tracktor.model.TrackableUnit
 
 @Composable
@@ -35,8 +36,9 @@ fun UpdateTrackedValueDialog(
         text = {
             FilledTextField(
                 value = newValue.value,
-                label = { Text(text = "Value") },
+                label = { Text(text = unit.displayName) },
                 keyboardType = keyboardType,
+                activeColor = MaterialTheme.colors.onSurface,
                 onValueChange = { newValue.value = it }
             )
         },

@@ -8,6 +8,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.popalay.tracktor.data.AppDatabase
 import com.popalay.tracktor.data.MIGRATION_1_2
 import com.popalay.tracktor.data.MIGRATION_2_3
+import com.popalay.tracktor.data.MIGRATION_3_4
 import com.popalay.tracktor.data.TrackerDao
 import com.popalay.tracktor.data.TrackingRepository
 import com.popalay.tracktor.data.featureflags.FeatureFlagsManager
@@ -15,10 +16,11 @@ import com.popalay.tracktor.data.featureflags.RealFeatureFlagsManager
 import com.popalay.tracktor.data.featureflags.RealSmallTrackerListItemFeatureFlag
 import com.popalay.tracktor.data.featureflags.SmallTrackerListItemFeatureFlag
 import com.popalay.tracktor.domain.formatter.NumberValueRecordFormatter
-import com.popalay.tracktor.domain.formatter.StringValueRecordFormatter
+import com.popalay.tracktor.domain.formatter.TextValueRecordFormatter
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatterFacade
 import com.popalay.tracktor.domain.worker.GetAllTrackersWorker
+import com.popalay.tracktor.domain.worker.GetAllUnitsWorker
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.ui.createtracker.CreateTrackerWorkflow
@@ -36,24 +38,24 @@ val coreModule = module {
     single { ListWorkflow(get(), get(), get()) }
     single { TrackerDetailWorkflow(get()) }
     single { FeatureFlagsListWorkflow(get()) }
-    single { CreateTrackerWorkflow(get(), get()) }
+    single { CreateTrackerWorkflow(get(), get(), get()) }
 }
 
 val domainModule = module {
     single { GetAllTrackersWorker(get()) }
-    single { setOf(NumberValueRecordFormatter(), StringValueRecordFormatter()) }
+    single { GetAllUnitsWorker() }
+    single { setOf(NumberValueRecordFormatter(), TextValueRecordFormatter()) }
     single<ValueRecordFormatter> { ValueRecordFormatterFacade(get()) }
 }
 
 val dataModule = module {
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database-name")
-            .addMigrations(MIGRATION_1_2)
-            .addMigrations(MIGRATION_2_3)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
             .addCallback(object : RoomDatabase.Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     Executors.newSingleThreadScheduledExecutor().execute {
-                        get<TrackerDao>().insertSync(Tracker("id", "title", TrackableUnit.Kilograms, LocalDateTime.now()))
+                        get<TrackerDao>().insertSync(Tracker("id", "title", TrackableUnit.Weight, LocalDateTime.now()))
                     }
                 }
             }).build()
