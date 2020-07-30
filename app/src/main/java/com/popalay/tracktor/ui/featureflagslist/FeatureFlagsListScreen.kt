@@ -1,7 +1,6 @@
 package com.popalay.tracktor.ui.featureflagslist
 
 import androidx.compose.Composable
-import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.Icon
 import androidx.ui.foundation.Text
@@ -13,7 +12,6 @@ import androidx.ui.layout.padding
 import androidx.ui.layout.preferredHeight
 import androidx.ui.material.Checkbox
 import androidx.ui.material.IconButton
-import androidx.ui.material.MaterialTheme
 import androidx.ui.material.Scaffold
 import androidx.ui.material.icons.Icons
 import androidx.ui.material.icons.filled.ArrowBack
@@ -48,13 +46,7 @@ fun FeatureFlagsListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text(
-                        "Feature toggles",
-                        modifier = Modifier.gravity(Alignment.CenterVertically),
-                        style = MaterialTheme.typography.subtitle1
-                    )
-                },
+                title = { Text("Feature toggles") },
                 navigationIcon = {
                     IconButton(onClick = { onAction(Action.BackClicked) }) {
                         Icon(Icons.Default.ArrowBack)

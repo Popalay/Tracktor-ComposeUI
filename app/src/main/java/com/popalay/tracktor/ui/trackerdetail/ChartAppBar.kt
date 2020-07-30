@@ -16,7 +16,6 @@ import androidx.ui.layout.padding
 import androidx.ui.layout.preferredHeight
 import androidx.ui.material.Card
 import androidx.ui.material.IconButton
-import androidx.ui.material.MaterialTheme
 import androidx.ui.material.icons.Icons
 import androidx.ui.material.icons.filled.ArrowBack
 import androidx.ui.unit.IntBounds
@@ -42,18 +41,12 @@ fun ChartAppBar(
 
     val insets = WindowInsetsAmbient.current
     TopAppBar(
-        title = {
-            Text(
-                tracker.tracker.title,
-                modifier = Modifier.gravity(Alignment.CenterVertically),
-                style = MaterialTheme.typography.subtitle1
-            )
-        },
         navigationIcon = {
             IconButton(onClick = onArrowClicked) {
                 Icon(Icons.Default.ArrowBack)
             }
         },
+        title = { Text(tracker.tracker.title) },
         modifier = Modifier.preferredHeight(insets.top + 240.dp),
         contentModifier = Modifier.padding(bottom = 4.dp, top = insets.top)
     ) {
