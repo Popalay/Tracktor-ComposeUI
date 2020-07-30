@@ -104,7 +104,7 @@ class CreateTrackerWorkflow(
     override fun snapshotState(state: State): Snapshot = state.toSnapshot(moshi)
 
     private fun runSideEffects(state: State, context: RenderContext<State, Output>) {
-        when (val action = state.currentAction) {
+        when (state.currentAction) {
             is Action.SaveClicked -> {
                 val worker = Worker.from {
                     val tracker = Tracker(
