@@ -2,6 +2,7 @@ package com.popalay.tracktor.domain.formatter
 
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
+import com.popalay.tracktor.model.UnitValueType
 import com.popalay.tracktor.model.ValueRecord
 
 interface ValueRecordFormatter {
@@ -15,28 +16,22 @@ class ValueRecordFormatterFacade(
     override fun isForUnit(unit: TrackableUnit): Boolean = formatters.any { it.isForUnit(unit) }
 
     override fun format(tracker: Tracker, record: ValueRecord?): String =
-        formatters.first { it.isForUnit(tracker.unit) }.format(tracker, record)
+        formatters.first { it.isForUnit(tracker.compatibleUnit) }.format(tracker, record)
 }
 
 class NumberValueRecordFormatter : ValueRecordFormatter {
-    override fun isForUnit(unit: TrackableUnit): Boolean = unit == TrackableUnit.None ||
-            unit == TrackableUnit.Quantity || unit == TrackableUnit.Minutes || unit == TrackableUnit.Kilograms
+    override fun isForUnit(unit: TrackableUnit): Boolean =
+        unit.valueType == UnitValueType.DOUBLE || unit.valueType == UnitValueType.INTEGER
 
     override fun format(tracker: Tracker, record: ValueRecord?): String {
         val value = record?.value ?: 0.0
         val roundedValue: Number = if (value == value.toInt().toDouble()) value.toInt() else value
-        return when (tracker.unit) {
-            TrackableUnit.None -> ""
-            TrackableUnit.Quantity -> roundedValue.toInt().toString()
-            TrackableUnit.Minutes -> roundedValue.let { "$it\"" }
-            TrackableUnit.Kilograms -> roundedValue.let { "$it kg" }
-            else -> throw IllegalArgumentException("Unit ${tracker.unit} is not supported")
-        }
+        return "$roundedValue${tracker.compatibleUnit.symbol}"
     }
 }
 
-class StringValueRecordFormatter : ValueRecordFormatter {
-    override fun isForUnit(unit: TrackableUnit): Boolean = unit == TrackableUnit.Word
+class TextValueRecordFormatter : ValueRecordFormatter {
+    override fun isForUnit(unit: TrackableUnit): Boolean = unit.valueType == UnitValueType.TEXT
 
     override fun format(tracker: Tracker, record: ValueRecord?): String = record?.stringValue ?: "~"
 }

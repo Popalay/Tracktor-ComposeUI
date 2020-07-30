@@ -11,7 +11,7 @@ object Faker {
     fun fakeTracker(
         id: String = "trackerId",
         title: String = "title",
-        unit: TrackableUnit = TrackableUnit.Kilograms,
+        unit: TrackableUnit = TrackableUnit.Weight,
         date: LocalDateTime = LocalDateTime.now()
     ): Tracker = Tracker(id, title, unit, date)
 

@@ -2,8 +2,10 @@ package com.popalay.tracktor.ui.createtracker
 
 import androidx.ui.input.KeyboardType
 import com.popalay.tracktor.data.TrackingRepository
+import com.popalay.tracktor.domain.worker.GetAllUnitsWorker
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
+import com.popalay.tracktor.model.UnitValueType
 import com.popalay.tracktor.utils.toData
 import com.popalay.tracktor.utils.toSnapshot
 import com.squareup.moshi.JsonClass
@@ -19,6 +21,7 @@ import java.util.UUID
 
 class CreateTrackerWorkflow(
     private val trackingRepository: TrackingRepository,
+    private val getAllUnitsWorker: GetAllUnitsWorker,
     private val moshi: Moshi
 ) : StatefulWorkflow<Unit, CreateTrackerWorkflow.State, CreateTrackerWorkflow.Output, CreateTrackerWorkflow.Rendering>() {
 
@@ -31,6 +34,10 @@ class CreateTrackerWorkflow(
         val initialValueKeyboardType: KeyboardType = KeyboardType.Number,
         val isUnitsVisible: Boolean = false,
         val isInitialValueVisible: Boolean = false,
+        val isCustomUnitCreating: Boolean = false,
+        val customUnit: TrackableUnit = TrackableUnit.None,
+        val isCustomUnitValueTypeDropdownShown: Boolean = false,
+        val isCustomUnitValid: Boolean = false,
         @Transient val currentAction: Action? = null
     ) {
         val isValidToSave: Boolean
@@ -48,9 +55,18 @@ class CreateTrackerWorkflow(
         data class TitleChanged(val title: String) : Action()
         data class UnitSelected(val unit: TrackableUnit) : Action()
         data class ValueChanged(val value: String) : Action()
+        data class UnitsUpdated(val units: List<TrackableUnit>) : Action()
+        data class CustomUnitChanged(val customUnit: TrackableUnit) : Action()
+        data class CustomUnitValueTypeSelected(val valueType: UnitValueType) : Action()
+        data class CustomUnitNameChanged(val name: String) : Action()
+        data class CustomUnitSymbolChanged(val symbol: String) : Action()
+        object CustomUnitCreated : Action()
         object SaveClicked : Action()
         object TrackerSaved : Action()
         object BackClicked : Action()
+        object AddCustomUnitClicked : Action()
+        object CustomUnitValueTypeClicked : Action()
+        object CustomUnitValueTypeDropdownDismissed : Action()
 
         override fun WorkflowAction.Updater<State, Output>.apply() {
             nextState = when (val action = this@Action) {
@@ -68,16 +84,52 @@ class CreateTrackerWorkflow(
                 is UnitSelected -> nextState.copy(
                     selectedUnit = action.unit,
                     initialValueKeyboardType = if (action.unit == TrackableUnit.Word) KeyboardType.Text else KeyboardType.Number,
-                    isInitialValueVisible = nextState.title.isNotBlank() && action.unit != TrackableUnit.None
+                    isInitialValueVisible = nextState.title.isNotBlank() && action.unit != TrackableUnit.None,
+                    isCustomUnitCreating = false,
+                    customUnit = TrackableUnit.None
                 )
-                is ValueChanged -> nextState.copy(
-                    initialValue = action.value
+                is ValueChanged -> nextState.copy(initialValue = action.value)
+                is UnitsUpdated -> nextState.copy(units = action.units)
+                CustomUnitCreated -> nextState.copy(
+                    units = nextState.units.plus(
+                        nextState.customUnit.copy(name = nextState.customUnit.name.trim(), symbol = nextState.customUnit.symbol.trim())
+                    ),
+                    isCustomUnitValid = false,
+                    isCustomUnitCreating = false,
+                    customUnit = TrackableUnit.None
                 )
+                is CustomUnitChanged -> nextState.copy(customUnit = action.customUnit)
+                is CustomUnitValueTypeSelected -> {
+                    val customUnit = nextState.customUnit.copy(valueType = action.valueType)
+                    nextState.copy(
+                        customUnit = customUnit,
+                        isCustomUnitValid = customUnit.isValid(),
+                        isCustomUnitValueTypeDropdownShown = false
+                    )
+                }
+                is CustomUnitNameChanged -> {
+                    val customUnit = nextState.customUnit.copy(name = action.name)
+                    nextState.copy(customUnit = customUnit, isCustomUnitValid = customUnit.isValid())
+                }
+                is CustomUnitSymbolChanged -> {
+                    val customUnit = nextState.customUnit.copy(symbol = action.symbol)
+                    nextState.copy(customUnit = customUnit, isCustomUnitValid = customUnit.isValid())
+                }
+                AddCustomUnitClicked -> nextState.copy(
+                    isCustomUnitCreating = true,
+                    selectedUnit = TrackableUnit.None,
+                    initialValue = "",
+                    isInitialValueVisible = false
+                )
+                CustomUnitValueTypeClicked -> nextState.copy(isCustomUnitValueTypeDropdownShown = !nextState.isCustomUnitValueTypeDropdownShown)
+                CustomUnitValueTypeDropdownDismissed -> nextState.copy(isCustomUnitValueTypeDropdownShown = false)
                 TrackerSaved -> nextState.also { setOutput(Output.Back) }
                 BackClicked -> nextState.also { setOutput(Output.Back) }
                 else -> nextState.copy(currentAction = this@Action)
             }
         }
+
+        private fun TrackableUnit.isValid() = name.isNotBlank() && symbol.isNotBlank() && valueType != UnitValueType.NONE
     }
 
     data class Rendering(
@@ -85,14 +137,14 @@ class CreateTrackerWorkflow(
         val onAction: (Action) -> Unit
     )
 
-    override fun initialState(props: Unit, snapshot: Snapshot?): State = snapshot?.toData(moshi)
-        ?: State(units = TrackableUnit.values().drop(1))
+    override fun initialState(props: Unit, snapshot: Snapshot?): State = snapshot?.toData(moshi) ?: State()
 
     override fun render(
         props: Unit,
         state: State,
         context: RenderContext<State, Output>
     ): Rendering {
+        context.runningWorker(getAllUnitsWorker) { Action.UnitsUpdated(it) }
         runSideEffects(state, context)
 
         return Rendering(

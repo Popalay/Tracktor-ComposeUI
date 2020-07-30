@@ -25,7 +25,7 @@ import androidx.ui.unit.dp
 import androidx.ui.unit.toSize
 import com.popalay.tracktor.WindowInsetsAmbient
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
-import com.popalay.tracktor.gradients
+import com.popalay.tracktor.gradient
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.model.ValueRecord
 import com.popalay.tracktor.ui.widget.ChartWidget
@@ -50,7 +50,7 @@ fun ChartAppBar(
         modifier = Modifier.preferredHeight(insets.top + 240.dp),
         contentModifier = Modifier.padding(bottom = 4.dp, top = insets.top)
     ) {
-        val gradient = gradients.getValue(tracker.tracker.unit)
+        val gradient = remember(tracker) { tracker.tracker.compatibleUnit.gradient }
         ChartWidget(
             modifier = Modifier.preferredHeight(200.dp),
             data = tracker.records.map { it.value },

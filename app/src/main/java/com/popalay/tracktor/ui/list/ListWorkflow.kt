@@ -106,7 +106,7 @@ class ListWorkflow(
     private fun runSideEffects(state: State, context: RenderContext<State, Output>) {
         when (val action = state.currentAction) {
             is Action.NewRecordSubmitted -> {
-                val worker = if (action.tracker.unit == TrackableUnit.Word) {
+                val worker = if (action.tracker.compatibleUnit == TrackableUnit.Word) {
                     Worker.from { trackingRepository.saveRecord(action.tracker, action.value) }
                 } else {
                     Worker.from { trackingRepository.saveRecord(action.tracker, action.value.toDoubleOrNull() ?: 0.0) }

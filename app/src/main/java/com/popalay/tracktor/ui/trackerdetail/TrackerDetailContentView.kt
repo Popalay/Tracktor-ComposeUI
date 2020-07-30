@@ -45,7 +45,7 @@ fun TrackerDetailContentView(
         Column {
             if (isAddRecordDialogShowing) {
                 UpdateTrackedValueDialog(
-                    unit = trackerWithRecords.tracker.unit,
+                    unit = trackerWithRecords.tracker.compatibleUnit,
                     onCloseRequest = { onAction(TrackerDetailWorkflow.Action.TrackDialogDismissed) },
                     onSave = { onAction(TrackerDetailWorkflow.Action.NewRecordSubmitted(it)) }
                 )

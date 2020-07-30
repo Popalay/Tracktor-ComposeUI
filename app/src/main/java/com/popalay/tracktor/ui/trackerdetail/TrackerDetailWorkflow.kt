@@ -74,7 +74,7 @@ class TrackerDetailWorkflow(
         when (val action = state.currentAction) {
             is Action.NewRecordSubmitted -> {
                 val tracker = requireNotNull(state.trackerWithRecords).tracker
-                val worker = if (tracker.unit == TrackableUnit.Word) {
+                val worker = if (tracker.compatibleUnit == TrackableUnit.Word) {
                     Worker.from { trackingRepository.saveRecord(tracker, action.value) }
                 } else {
                     Worker.from { trackingRepository.saveRecord(tracker, action.value.toDoubleOrNull() ?: 0.0) }

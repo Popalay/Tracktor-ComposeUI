@@ -1,5 +1,6 @@
 package com.popalay.tracktor.model
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.time.LocalDateTime
@@ -8,6 +9,15 @@ import java.time.LocalDateTime
 data class Tracker(
     @PrimaryKey val id: String,
     val title: String,
-    val unit: TrackableUnit,
+    @Embedded val unit: TrackableUnit,
     val date: LocalDateTime
-)
+) {
+    val compatibleUnit: TrackableUnit
+        get() = when (unit.name) {
+            "Quantity" -> TrackableUnit.Quantity
+            "Minutes" -> TrackableUnit.Time
+            "Kilograms" -> TrackableUnit.Weight
+            "Word" -> TrackableUnit.Word
+            else -> unit
+        }
+}
