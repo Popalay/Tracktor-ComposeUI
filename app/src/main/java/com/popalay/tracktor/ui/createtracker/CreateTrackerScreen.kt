@@ -1,18 +1,17 @@
 package com.popalay.tracktor.ui.createtracker
 
 import androidx.compose.Composable
-import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.core.ViewAmbient
 import androidx.ui.foundation.Icon
 import androidx.ui.foundation.Text
+import androidx.ui.foundation.contentColor
 import androidx.ui.layout.Column
-import androidx.ui.layout.Row
-import androidx.ui.layout.Spacer
 import androidx.ui.layout.fillMaxWidth
-import androidx.ui.layout.height
 import androidx.ui.layout.padding
+import androidx.ui.layout.preferredHeight
 import androidx.ui.material.Divider
+import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.FilledTextField
 import androidx.ui.material.IconButton
 import androidx.ui.material.MaterialTheme
@@ -28,6 +27,8 @@ import com.popalay.tracktor.WindowInsetsAmbient
 import com.popalay.tracktor.ui.createtracker.CreateTrackerWorkflow.Action
 import com.popalay.tracktor.ui.widget.Chip
 import com.popalay.tracktor.ui.widget.ChipGroup
+import com.popalay.tracktor.ui.widget.DefaultTopAppBarHeight
+import com.popalay.tracktor.ui.widget.TopAppBar
 import com.popalay.tracktor.utils.onBackPressed
 import com.squareup.workflow.ui.compose.composedViewFactory
 
@@ -47,13 +48,8 @@ fun CreateTrackerScreen(
     @PreviewParameter(CreateTrackerStatePreviewProvider::class) state: CreateTrackerWorkflow.State,
     onAction: (Action) -> Unit = {}
 ) {
-    Scaffold {
-        Column {
-            Spacer(modifier = Modifier.height(WindowInsetsAmbient.current.top))
-            TopAppBar(onAction, state)
-
-            Title()
-            Spacer(modifier = Modifier.height(16.dp))
+    Scaffold(topBar = { CreateTrackerAppBar(onAction, state) }) {
+        Column(modifier = Modifier.padding(top = 16.dp)) {
             TitleInput(state, onAction)
             if (state.isUnitsVisible) {
                 UnitSelector(state, onAction)
@@ -66,31 +62,30 @@ fun CreateTrackerScreen(
 }
 
 @Composable
-private fun TopAppBar(
+private fun CreateTrackerAppBar(
     onAction: (Action) -> Unit,
     state: CreateTrackerWorkflow.State
 ) {
-    Row(verticalGravity = Alignment.CenterVertically) {
-        IconButton(onClick = { onAction(Action.BackClicked) }) {
-            Icon(Icons.Default.ArrowBack)
-        }
-        Spacer(modifier = Modifier.weight(1F))
-        TextButton(
-            enabled = state.isValidToSave,
-            contentColor = MaterialTheme.colors.secondary,
-            onClick = { onAction(Action.SaveClicked) }
-        ) {
-            Text(text = "SAVE")
-        }
-    }
-}
-
-@Composable
-private fun Title() {
-    Text(
-        text = "Let's track!",
-        style = MaterialTheme.typography.h3,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+    val insets = WindowInsetsAmbient.current
+    TopAppBar(
+        navigationIcon = {
+            IconButton(onClick = { onAction(Action.BackClicked) }) {
+                Icon(Icons.Default.ArrowBack)
+            }
+        },
+        title = { Text(text = "Let's track") },
+        actions = {
+            TextButton(
+                enabled = state.isValidToSave,
+                contentColor = contentColor(),
+                disabledContentColor = EmphasisAmbient.current.disabled.applyEmphasis(contentColor()),
+                onClick = { onAction(Action.SaveClicked) }
+            ) {
+                Text(text = "SAVE")
+            }
+        },
+        modifier = Modifier.preferredHeight(insets.top + DefaultTopAppBarHeight),
+        contentModifier = Modifier.padding(top = insets.top)
     )
 }
 

@@ -1,7 +1,6 @@
 package com.popalay.tracktor.ui.trackerdetail
 
 import androidx.compose.Composable
-import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.Icon
 import androidx.ui.foundation.Text
@@ -26,12 +25,7 @@ fun TrackerDetailLoadingView(onArrowClicked: () -> Unit = {}) {
                         Icon(Icons.Default.ArrowBack)
                     }
                 },
-                title = {
-                    Text(
-                        text = "Loading...",
-                        modifier = Modifier.gravity(Alignment.CenterVertically),
-                    )
-                },
+                title = { Text(text = "Loading...") },
                 modifier = Modifier.preferredHeight(insets.top + DefaultTopAppBarHeight),
                 contentModifier = Modifier.padding(top = insets.top)
             )
