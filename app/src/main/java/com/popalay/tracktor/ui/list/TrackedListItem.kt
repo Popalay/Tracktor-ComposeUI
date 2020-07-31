@@ -87,7 +87,7 @@ fun SimpleTrackerListItem(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             SimpleBody(item, gradient)
-            SimpleFooter(onAddClicked, onRemoveClicked, item, gradient)
+            SimpleFooter(onAddClicked, onRemoveClicked, item)
         }
     }
 }
@@ -106,7 +106,7 @@ fun DetailedTrackerListItem(
         shape = MaterialTheme.shapes.medium.copy(CornerSize(16.dp))
     ) {
         Column {
-            Header(item, gradient)
+            Header(item)
             Body(item, gradient)
             Footer(item, onAddClicked, onRemoveClicked)
         }
@@ -136,13 +136,13 @@ private fun Footer(
 }
 
 @Composable
-private fun Header(item: TrackerListItem, gradient: List<Color>) {
+private fun Header(item: TrackerListItem) {
     Row(
         modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
         verticalGravity = Alignment.CenterVertically
     ) {
         Text(item.data.tracker.title, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1F))
-        ProgressTextField(item.data.progress(), color = gradient.last())
+        ProgressTextField(item.data.progress())
     }
 }
 
@@ -176,8 +176,7 @@ private fun Body(
 private fun SimpleFooter(
     onAddClicked: () -> Unit,
     onRemoveClicked: () -> Unit,
-    item: TrackerListItem,
-    gradient: List<Color>
+    item: TrackerListItem
 ) {
     val formatter: ValueRecordFormatter by inject()
 
@@ -190,7 +189,7 @@ private fun SimpleFooter(
         }
         Spacer(modifier = Modifier.weight(1F))
         if (item.data.records.size > 1) {
-            ProgressTextField(item.data.progress(), color = gradient.last())
+            ProgressTextField(item.data.progress())
             Spacer(modifier = Modifier.width(8.dp))
             Text(formatter.format(item.data.tracker, item.data.currentValue))
         } else {
