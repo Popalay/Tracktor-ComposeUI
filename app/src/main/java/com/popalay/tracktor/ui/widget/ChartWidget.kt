@@ -2,6 +2,7 @@ package com.popalay.tracktor.ui.widget
 
 import androidx.animation.FastOutSlowInEasing
 import androidx.animation.FloatPropKey
+import androidx.animation.spring
 import androidx.animation.transitionDefinition
 import androidx.animation.tween
 import androidx.compose.Composable
@@ -19,7 +20,6 @@ import androidx.ui.graphics.drawscope.Stroke
 import androidx.ui.layout.fillMaxWidth
 import androidx.ui.layout.preferredHeight
 import androidx.ui.material.MaterialTheme
-import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.Dp
 import androidx.ui.unit.dp
 import com.popalay.tracktor.ui.widget.ChartAnimationState.STATE_END
@@ -36,7 +36,7 @@ enum class ChartAnimationState {
 
 private val amplifierKey = FloatPropKey()
 
-private val definition = transitionDefinition {
+private val tweenDefinition = transitionDefinition {
     state(STATE_START) {
         this[amplifierKey] = 0F
     }
@@ -51,6 +51,21 @@ private val definition = transitionDefinition {
     }
 }
 
+private val springDefinition = transitionDefinition {
+    state(STATE_START) {
+        this[amplifierKey] = 0F
+    }
+    state(STATE_END) {
+        this[amplifierKey] = 1F
+    }
+    transition(fromState = STATE_START, toState = STATE_END) {
+        amplifierKey using spring(
+            dampingRatio = 0.7F,
+            stiffness = 80F
+        )
+    }
+}
+
 @Composable
 fun SimpleChartWidget(
     data: List<Double>,
@@ -60,12 +75,12 @@ fun SimpleChartWidget(
     animate: Boolean = true
 ) {
     val transitionState = transition(
-        definition = definition,
+        definition = tweenDefinition,
         toState = STATE_END,
         initState = if (animate) STATE_START else STATE_END
     )
     Canvas(modifier) {
-        val points = createPoints(data, size, 0F, 0F, 1F)
+        val points = createPoints(data, size)
         val (conPoints1, conPoints2) = createConnectionPoints(points)
 
         if (points.isEmpty() || conPoints1.isEmpty() || conPoints2.isEmpty()) return@Canvas
@@ -92,7 +107,7 @@ fun ChartWidget(
     onPointUnSelected: () -> Unit = {}
 ) {
     val transitionState = transition(
-        definition = definition,
+        definition = springDefinition,
         initState = if (animate) STATE_START else STATE_END,
         toState = STATE_END
     )
@@ -109,7 +124,9 @@ fun ChartWidget(
                 startDragImmediately = true
             )
     ) {
-        val points = createPoints(data, size, labelRadius.toPx(), topOffset.toPx(), transitionState[amplifierKey])
+        val amplifier = transitionState[amplifierKey]
+        val shift = Offset(0F, size.height * (1 - amplifier))
+        val points = createPoints(data, size, labelRadius.toPx(), topOffset.toPx()).map { it + shift }
         val (conPoints1, conPoints2) = createConnectionPoints(points)
 
         if (points.isEmpty() || conPoints1.isEmpty() || conPoints2.isEmpty()) return@Canvas
@@ -156,9 +173,8 @@ private fun DrawScope.drawTouchable(
 private fun createPoints(
     data: List<Double>,
     size: Size,
-    labelRadiusPx: Float,
-    topOffsetPx: Float,
-    amplifier: Float
+    labelRadiusPx: Float = 0F,
+    topOffsetPx: Float = 0F
 ): List<Offset> {
     val bottomY = size.height
     val xDiff = size.width / (data.size - 1)
@@ -167,13 +183,13 @@ private fun createPoints(
     val optimizedData = data.map { it - minData }
     val maxData = optimizedData.maxOrNull()?.toFloat() ?: 0F
 
-    val yMax = max(bottomY - (maxData / maxData * bottomY), labelRadiusPx + topOffsetPx)
-    val animatedYMax = min(yMax / amplifier, size.height)
-
     return optimizedData.mapIndexed { index, item ->
-        val y = max(bottomY - (item.toFloat() / maxData * bottomY), labelRadiusPx + topOffsetPx)
-        val animatedY = min(y / amplifier, size.height)
-        Offset(xDiff * index, min(animatedY, max(animatedYMax, y)))
+        val y = max(bottomY - item.toFloat() / maxData * bottomY, labelRadiusPx + topOffsetPx)
+        Offset(xDiff * index, y)
+    }.let { offsets ->
+        if (optimizedData.all { it == 0.0 }) {
+            offsets.map { it.copy(y = bottomY / 2) }
+        } else offsets
     }
 }
 
@@ -226,13 +242,3 @@ private fun createBrush(gradient: List<Color>, size: Size) = HorizontalGradient(
 private val ChartDefaultHeight = 100.dp
 private val ChartLabelRadius = 4.dp
 private val ChartLineWidth = 2.dp
-
-@Preview
-@Composable
-fun PlotPreview() {
-    ChartWidget(
-        data = listOf(20.0, 12.0, 30.0, 2.0),
-        gradient = listOf(Color(0xFF64BFE1), Color(0xFFA091B7), Color(0xFFE0608A)),
-        touchable = true
-    )
-}

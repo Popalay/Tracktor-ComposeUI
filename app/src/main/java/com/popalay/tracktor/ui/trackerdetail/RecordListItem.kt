@@ -12,7 +12,6 @@ import androidx.ui.unit.dp
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.model.ValueRecord
-import com.popalay.tracktor.success
 import com.popalay.tracktor.ui.widget.ProgressTextField
 import com.popalay.tracktor.utils.inject
 import com.popalay.tracktor.utils.toRelativeFormat
@@ -33,10 +32,7 @@ fun RecordListItem(trackerWithRecords: TrackerWithRecords, record: ValueRecord, 
 
         val previousRecord = trackerWithRecords.records.getOrNull(trackerWithRecords.records.indexOf(record) - 1)
         val progress = trackerWithRecords.progress(previousRecord?.value, record.value)
-        ProgressTextField(
-            progress,
-            color = if (progress >= 0) MaterialTheme.colors.success else MaterialTheme.colors.error
-        )
+        ProgressTextField(progress)
 
         Spacer(modifier = Modifier.width(8.dp))
         Text(

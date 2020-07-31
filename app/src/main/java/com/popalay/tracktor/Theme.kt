@@ -7,6 +7,7 @@ import androidx.ui.material.MaterialTheme
 import androidx.ui.material.darkColorPalette
 import androidx.ui.material.lightColorPalette
 import com.popalay.tracktor.model.TrackableUnit
+import kotlin.math.absoluteValue
 
 val lightThemeColors = lightColorPalette(
     primary = Color(0xFF1F1F1F),
@@ -38,15 +39,29 @@ val darkThemeColors = darkColorPalette(
 
 val ColorPalette.success get() = Color(0xFF348F50)
 
-val gradients = mapOf(
-    TrackableUnit.Weight to listOf(Color(0xFF64BFE1), Color(0xFFA091B7), Color(0xFFE0608A)),
-    TrackableUnit.Quantity to listOf(Color(0xFF64BFE1), Color(0xFF45A190), Color(0xFF348F50)),
-    TrackableUnit.Time to listOf(Color(0xFF64BFE1), Color(0xFF86A7E7), Color(0xFF8360C3)),
-    TrackableUnit.Word to listOf(Color(0xFF64BFE1), Color(0xFF959089), Color(0xFFFF4B1F)),
-    TrackableUnit.None to listOf(Color.Black, Color.Black)
+val gradientColors = listOf(
+    Color(0xFFE0608A),
+    Color(0xFF348F50),
+    Color(0xFF8360C3),
+    Color(0xFFF9BB2F),
+    Color(0xFF0254D5),
+    Color(0xFFEFFCAE),
+    Color(0xFFC679D0),
+    Color(0xFFF5A470),
+    Color(0xFFD64B5E),
+    Color(0xFF4B4576),
+    Color(0xFF88FAE8),
+    Color(0xFFFF4B1F)
 )
 
-val TrackableUnit.gradient: List<Color> get() = gradients.getOrDefault(this, listOf(Color.Black, Color.Black))
+val TrackableUnit.gradient: List<Color>
+    get() {
+        val colorIndex = hashCode().absoluteValue % gradientColors.size
+        val initialColor = Color(0xFF64BFE1)
+        val mediumColor = gradientColors.reversed()[colorIndex]
+        val lastColor = gradientColors[colorIndex]
+        return listOf(initialColor, mediumColor, lastColor)
+    }
 
 @Composable
 fun AppTheme(isDarkTheme: Boolean, content: @Composable () -> Unit) =
