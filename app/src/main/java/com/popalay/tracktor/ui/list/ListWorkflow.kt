@@ -65,7 +65,10 @@ class ListWorkflow(
 
         override fun WorkflowAction.Updater<State, Output>.apply() {
             nextState = when (val action = this@Action) {
-                is SideEffectAction -> action.action.applyTo(nextState.copy(currentAction = null)).first
+                is SideEffectAction -> action.action.applyTo(nextState.copy(currentAction = null)).let { result ->
+                    result.second?.also { setOutput(it) }
+                    result.first
+                }
                 is ListUpdated -> nextState.copy(items = action.list.map { it.toListItem() })
                 is AddRecordClicked -> nextState.copy(itemInEditing = action.item.tracker)
                 is DeleteTrackerClicked -> nextState.copy(itemInDeleting = action.item.tracker)
