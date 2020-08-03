@@ -39,28 +39,25 @@ val darkThemeColors = darkColorPalette(
 
 val ColorPalette.success get() = Color(0xFF348F50)
 
-val gradientColors = listOf(
-    Color(0xFFE0608A),
-    Color(0xFF348F50),
-    Color(0xFF8360C3),
-    Color(0xFFF9BB2F),
-    Color(0xFF0254D5),
-    Color(0xFFEFFCAE),
-    Color(0xFFC679D0),
-    Color(0xFFF5A470),
-    Color(0xFFD64B5E),
-    Color(0xFF4B4576),
-    Color(0xFF88FAE8),
-    Color(0xFFFF4B1F)
+private val gradients = listOf(
+    listOf(Color(0xFF64BFE1), Color(0xFFA091B7), Color(0xFFE0608A)),
+    listOf(Color(0xFF64BFE1), Color(0xFF45A190), Color(0xFF348F50)),
+    listOf(Color(0xFF64BFE1), Color(0xFF86A7E7), Color(0xFF8360C3)),
+    listOf(Color(0xFF64BFE1), Color(0xFF959089), Color(0xFFFF4B1F)),
+    listOf(Color(0xFF7F7FD5), Color(0xFF86A8E7), Color(0xFF91EAE4)),
+    listOf(Color(0xFFFEAC5E), Color(0xFFC779D0), Color(0xFF4BC0C8)),
+    listOf(Color(0xFF8A2387), Color(0xFFE94057), Color(0xFFF27121)),
+    listOf(Color(0xFFdd3e54), Color(0xFF6be585)),
+    listOf(Color(0xFFfc00ff), Color(0xFF00dbde)),
+    listOf(Color(0xFF5f2c82), Color(0xFF49a09d)),
+    listOf(Color(0xFF24C6DC), Color(0xFF514A9D)),
+    listOf(Color(0xFF314755), Color(0xFF26a0da))
 )
 
 val TrackableUnit.gradient: List<Color>
     get() {
-        val colorIndex = hashCode().absoluteValue % gradientColors.size
-        val initialColor = Color(0xFF64BFE1)
-        val mediumColor = gradientColors.reversed()[colorIndex]
-        val lastColor = gradientColors[colorIndex]
-        return listOf(initialColor, mediumColor, lastColor)
+        val gradientIndex = hashCode().absoluteValue % gradients.size
+        return gradients[gradientIndex]
     }
 
 @Composable
