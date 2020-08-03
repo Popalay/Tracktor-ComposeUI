@@ -28,7 +28,7 @@ class CreateTrackerWorkflow(
     @JsonClass(generateAdapter = true)
     data class State(
         val title: String = "",
-        val units: List<TrackableUnit> = emptyList(),
+        @Transient val units: List<TrackableUnit> = emptyList(),
         val selectedUnit: TrackableUnit = TrackableUnit.None,
         val initialValue: String = "",
         val initialValueKeyboardType: KeyboardType = KeyboardType.Number,

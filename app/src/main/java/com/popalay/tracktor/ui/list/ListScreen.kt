@@ -2,18 +2,25 @@ package com.popalay.tracktor.ui.list
 
 import androidx.compose.Composable
 import androidx.compose.onActive
+import androidx.compose.state
+import androidx.ui.animation.animate
+import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.Icon
+import androidx.ui.foundation.Text
 import androidx.ui.foundation.clickable
 import androidx.ui.foundation.lazy.LazyColumnItems
 import androidx.ui.layout.Column
 import androidx.ui.layout.ExperimentalLayout
 import androidx.ui.layout.InnerPadding
 import androidx.ui.layout.Spacer
+import androidx.ui.layout.Stack
 import androidx.ui.layout.height
 import androidx.ui.layout.offset
 import androidx.ui.material.FloatingActionButton
 import androidx.ui.material.Scaffold
+import androidx.ui.material.Snackbar
+import androidx.ui.material.TextButton
 import androidx.ui.material.icons.Icons
 import androidx.ui.material.icons.filled.Add
 import androidx.ui.tooling.preview.Preview
@@ -21,8 +28,8 @@ import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
 import androidx.ui.unit.dp
 import com.popalay.tracktor.WindowInsetsAmbient
+import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.model.toListItem
-import com.popalay.tracktor.ui.dialog.DeleteTrackerDialog
 import com.popalay.tracktor.ui.dialog.UpdateTrackedValueDialog
 import com.popalay.tracktor.ui.list.ListWorkflow.Action
 import com.popalay.tracktor.utils.Faker
@@ -53,15 +60,18 @@ fun ListScreen(
         },
         floatingActionButtonPosition = Scaffold.FabPosition.Center,
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onAction(Action.CreateTrackerClicked) },
-                modifier = Modifier.offset(y = -WindowInsetsAmbient.current.bottom)
-            ) {
-                Icon(Icons.Default.Add)
+            Column(horizontalGravity = Alignment.CenterHorizontally) {
+                FloatingActionButton(
+                    onClick = { onAction(Action.CreateTrackerClicked) },
+                    modifier = Modifier.offset(y = -WindowInsetsAmbient.current.bottom)
+                ) {
+                    Icon(Icons.Default.Add)
+                }
+                UndoDeletingSnackbar(state.itemInDeleting, onAction)
             }
         }
     ) {
-        Column {
+        Stack {
             when {
                 state.itemInEditing != null -> {
                     UpdateTrackedValueDialog(
@@ -70,15 +80,28 @@ fun ListScreen(
                         onSave = { onAction(Action.NewRecordSubmitted(state.itemInEditing, it)) }
                     )
                 }
-                state.itemInDeleting != null -> {
-                    DeleteTrackerDialog(
-                        onCloseRequest = { onAction(Action.DeleteDialogDismissed) },
-                        onSubmit = { onAction(Action.DeleteSubmitted(state.itemInDeleting)) }
-                    )
-                }
             }
             TrackerList(state, onAction)
         }
+    }
+}
+
+@Composable
+private fun UndoDeletingSnackbar(itemInDeleting: TrackerWithRecords?, onAction: (Action) -> Unit) {
+    val snackbarVisibility = state { true }
+    val snackbarOffset = animate(if (itemInDeleting == null) 72.dp else 0.dp) {
+        snackbarVisibility.value = itemInDeleting != null
+    }
+    if (snackbarVisibility.value) {
+        Snackbar(
+            text = { Text(text = "${itemInDeleting?.tracker?.title} was removed") },
+            action = {
+                TextButton(onClick = { onAction(Action.UndoDeletingClicked) }) {
+                    Text(text = "UNDO")
+                }
+            },
+            modifier = Modifier.offset(y = snackbarOffset)
+        )
     }
 }
 

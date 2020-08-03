@@ -9,6 +9,7 @@ import com.popalay.tracktor.data.AppDatabase
 import com.popalay.tracktor.data.MIGRATION_1_2
 import com.popalay.tracktor.data.MIGRATION_2_3
 import com.popalay.tracktor.data.MIGRATION_3_4
+import com.popalay.tracktor.data.MIGRATION_4_5
 import com.popalay.tracktor.data.TrackerDao
 import com.popalay.tracktor.data.TrackingRepository
 import com.popalay.tracktor.data.featureflags.FeatureFlagsManager
@@ -51,7 +52,7 @@ val domainModule = module {
 val dataModule = module {
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database-name")
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
             .addCallback(object : RoomDatabase.Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     Executors.newSingleThreadScheduledExecutor().execute {
