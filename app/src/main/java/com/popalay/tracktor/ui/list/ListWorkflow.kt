@@ -17,7 +17,6 @@ import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow
 import com.squareup.workflow.Worker
 import com.squareup.workflow.WorkflowAction
-import com.squareup.workflow.action
 import com.squareup.workflow.applyTo
 import org.koin.core.KoinComponent
 
@@ -30,7 +29,10 @@ class ListWorkflow(
         private const val DELETING_UNDO_TIMEOUT_MILLIS = 2500L
     }
 
-    data class Props(val animate: Boolean)
+    data class Props(
+        val animate: Boolean,
+        val itemInDeleting: TrackerWithRecords? = null
+    )
 
     @JsonClass(generateAdapter = true)
     data class State(
@@ -67,6 +69,7 @@ class ListWorkflow(
         object AnimationProceeded : Action()
         object UndoAvailabilityEnded : Action()
         object UndoDeletingClicked : Action()
+        object UndoPerformed : Action()
 
         override fun WorkflowAction.Updater<State, Output>.apply() {
             nextState = when (val action = this@Action) {
@@ -83,6 +86,7 @@ class ListWorkflow(
                 TrackDialogDismissed -> nextState.copy(itemInEditing = null)
                 AnimationProceeded -> nextState.copy(animate = false)
                 UndoAvailabilityEnded -> nextState.copy(itemInDeleting = null)
+                UndoPerformed -> nextState.copy(itemInDeleting = null)
                 else -> nextState.copy(currentAction = this@Action)
             }
         }
@@ -93,7 +97,8 @@ class ListWorkflow(
             }
     }
 
-    override fun initialState(props: Props, snapshot: Snapshot?): State = snapshot?.toData(moshi) ?: State(animate = props.animate)
+    override fun initialState(props: Props, snapshot: Snapshot?): State =
+        snapshot?.toData(moshi) ?: State(animate = props.animate, itemInDeleting = props.itemInDeleting)
 
     override fun render(
         props: Props,
@@ -128,7 +133,7 @@ class ListWorkflow(
             is Action.UndoDeletingClicked -> {
                 if (state.itemInDeleting == null) return
                 val worker = Worker.from { trackingRepository.restoreTracker(state.itemInDeleting) }
-                context.runningWorker(worker) { action { nextState.copy(itemInDeleting = null) } }
+                context.runningWorker(worker) { Action.SideEffectAction(Action.UndoPerformed) }
             }
         }
         if (state.itemInDeleting != null) {

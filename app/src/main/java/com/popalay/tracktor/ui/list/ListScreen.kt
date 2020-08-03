@@ -94,7 +94,7 @@ private fun UndoDeletingSnackbar(itemInDeleting: TrackerWithRecords?, onAction: 
     }
     if (snackbarVisibility.value) {
         Snackbar(
-            text = { Text(text = "${itemInDeleting?.tracker?.title} was removed") },
+            text = { Text(text = itemInDeleting?.tracker?.title?.let { "$it was removed" } ?: "") },
             action = {
                 TextButton(onClick = { onAction(Action.UndoDeletingClicked) }) {
                     Text(text = "UNDO")
