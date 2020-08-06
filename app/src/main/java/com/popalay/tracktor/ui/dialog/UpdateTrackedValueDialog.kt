@@ -1,14 +1,14 @@
 package com.popalay.tracktor.ui.dialog
 
-import androidx.compose.Composable
-import androidx.compose.remember
-import androidx.compose.state
-import androidx.ui.foundation.Text
-import androidx.ui.input.KeyboardType
-import androidx.ui.material.AlertDialog
-import androidx.ui.material.Button
-import androidx.ui.material.FilledTextField
-import androidx.ui.material.MaterialTheme
+import androidx.compose.foundation.Text
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.state
+import androidx.compose.ui.text.input.KeyboardType
 import com.popalay.tracktor.model.TrackableUnit
 
 @Composable
@@ -34,7 +34,7 @@ fun UpdateTrackedValueDialog(
         onCloseRequest = onCloseRequest,
         title = { Text(text = "Track") },
         text = {
-            FilledTextField(
+            TextField(
                 value = newValue.value,
                 label = { Text(text = unit.displayName) },
                 keyboardType = keyboardType,

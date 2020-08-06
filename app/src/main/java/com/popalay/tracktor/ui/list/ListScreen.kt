@@ -1,32 +1,32 @@
 package com.popalay.tracktor.ui.list
 
-import androidx.compose.Composable
-import androidx.compose.onActive
-import androidx.compose.state
-import androidx.ui.animation.animate
-import androidx.ui.core.Alignment
-import androidx.ui.core.Modifier
-import androidx.ui.foundation.Icon
-import androidx.ui.foundation.Text
-import androidx.ui.foundation.clickable
-import androidx.ui.foundation.lazy.LazyColumnItems
-import androidx.ui.layout.Column
-import androidx.ui.layout.ExperimentalLayout
-import androidx.ui.layout.InnerPadding
-import androidx.ui.layout.Spacer
-import androidx.ui.layout.Stack
-import androidx.ui.layout.height
-import androidx.ui.layout.offset
-import androidx.ui.material.FloatingActionButton
-import androidx.ui.material.Scaffold
-import androidx.ui.material.Snackbar
-import androidx.ui.material.TextButton
-import androidx.ui.material.icons.Icons
-import androidx.ui.material.icons.filled.Add
+import androidx.compose.animation.animate
+import androidx.compose.foundation.Icon
+import androidx.compose.foundation.Text
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayout
+import androidx.compose.foundation.layout.InnerPadding
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Stack
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.lazy.LazyColumnForIndexed
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Snackbar
+import androidx.compose.material.TextButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.onActive
+import androidx.compose.runtime.state
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
-import androidx.ui.unit.dp
 import com.popalay.tracktor.WindowInsetsAmbient
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.model.toListItem
@@ -112,17 +112,17 @@ private fun TrackerList(
     modifier: Modifier = Modifier
 ) {
     val insets = WindowInsetsAmbient.current
-    LazyColumnItems(
+    LazyColumnForIndexed(
         items = state.items, modifier,
         contentPadding = InnerPadding(16.dp).copy(bottom = insets.bottom + 16.dp)
-    ) {
+    ) { index, item ->
         TrackerListItem(
-            it.copy(animate = state.animate),
-            modifier = Modifier.clickable(onClick = { onAction(Action.TrackerClicked(it.data)) }),
-            onAddClicked = { onAction(Action.AddRecordClicked(it.data)) },
-            onRemoveClicked = { onAction(Action.DeleteTrackerClicked(it.data)) }
+            item.copy(animate = state.animate),
+            modifier = Modifier.clickable(onClick = { onAction(Action.TrackerClicked(item.data)) }),
+            onAddClicked = { onAction(Action.AddRecordClicked(item.data)) },
+            onRemoveClicked = { onAction(Action.DeleteTrackerClicked(item.data)) }
         )
-        if (it != state.items.last()) {
+        if (index != state.items.lastIndex) {
             Spacer(modifier = Modifier.height(8.dp))
         }
         onActive {

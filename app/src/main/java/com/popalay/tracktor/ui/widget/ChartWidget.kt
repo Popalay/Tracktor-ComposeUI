@@ -1,27 +1,27 @@
 package com.popalay.tracktor.ui.widget
 
-import androidx.animation.FastOutSlowInEasing
-import androidx.animation.FloatPropKey
-import androidx.animation.spring
-import androidx.animation.transitionDefinition
-import androidx.animation.tween
-import androidx.compose.Composable
-import androidx.compose.state
-import androidx.ui.animation.transition
-import androidx.ui.core.Modifier
-import androidx.ui.foundation.Canvas
-import androidx.ui.geometry.Offset
-import androidx.ui.geometry.Size
-import androidx.ui.graphics.Color
-import androidx.ui.graphics.HorizontalGradient
-import androidx.ui.graphics.Path
-import androidx.ui.graphics.drawscope.DrawScope
-import androidx.ui.graphics.drawscope.Stroke
-import androidx.ui.layout.fillMaxWidth
-import androidx.ui.layout.preferredHeight
-import androidx.ui.material.MaterialTheme
-import androidx.ui.unit.Dp
-import androidx.ui.unit.dp
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.FloatPropKey
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.transitionDefinition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.transition
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.preferredHeight
+import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.state
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.HorizontalGradient
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.popalay.tracktor.ui.widget.ChartAnimationState.STATE_END
 import com.popalay.tracktor.ui.widget.ChartAnimationState.STATE_START
 import com.popalay.tracktor.utils.dragGestureFilter
@@ -36,7 +36,7 @@ enum class ChartAnimationState {
 
 private val amplifierKey = FloatPropKey()
 
-private val tweenDefinition = transitionDefinition {
+private val tweenDefinition = transitionDefinition<ChartAnimationState> {
     state(STATE_START) {
         this[amplifierKey] = 0F
     }
@@ -51,7 +51,7 @@ private val tweenDefinition = transitionDefinition {
     }
 }
 
-private val springDefinition = transitionDefinition {
+private val springDefinition = transitionDefinition<ChartAnimationState> {
     state(STATE_START) {
         this[amplifierKey] = 0F
     }

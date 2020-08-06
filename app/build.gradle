@@ -17,7 +17,7 @@ println("Is CI environment: " + ci)
 def room_version = "2.2.5"
 def koin_version = "2.1.6"
 def moshi_version = "1.9.3"
-def compose_version = "0.1.0-dev15"
+def compose_version = "0.1.0-dev16"
 def workflow_version = "1.0.0-alpha.1"
 def workflow_compose_version = "0.30.0"
 
@@ -59,17 +59,9 @@ android {
         }
 
         lintOptions {
-            // Disable lintVital. Not needed since lint is run on CI
             checkReleaseBuilds false
-            // Allow lint to check dependencies
             checkDependencies true
-            // Ignore any tests
             ignoreTestSources true
-
-            // Lint doesn't seem to handle Kotlin int types + string format very well
-            disable 'StringFormatMatches'
-            // Seems to be broken in 4.0.0-alpha09 https://issuetracker.google.com/issues/148172219
-            disable 'Instantiatable'
         }
 
         javaCompileOptions {
@@ -98,7 +90,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerVersion "1.4.0-dev-withExperimentalGoogleExtensions-20200720"
+        kotlinCompilerVersion "1.4.0-rc"
         kotlinCompilerExtensionVersion compose_version
     }
 }
@@ -112,7 +104,7 @@ tasks.withType(KotlinCompile).configureEach {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.google.android.material:material:1.2.0'
     implementation "androidx.preference:preference-ktx:1.1.1"
     implementation "dev.chrisbanes:insetter-ktx:0.3.1"
 }
@@ -136,12 +128,12 @@ dependencies {
     } else {
         implementation('com.squareup.workflow:core-compose') {
             version {
-                branch = 'dev15'
+                branch = 'main'
             }
         }
         implementation('com.squareup.workflow:compose-tooling') {
             version {
-                branch = 'dev15'
+                branch = 'main'
             }
         }
     }

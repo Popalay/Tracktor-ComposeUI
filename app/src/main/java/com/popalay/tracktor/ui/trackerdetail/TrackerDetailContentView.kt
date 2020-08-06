@@ -1,19 +1,19 @@
 package com.popalay.tracktor.ui.trackerdetail
 
-import androidx.compose.Composable
-import androidx.ui.core.Modifier
-import androidx.ui.foundation.Icon
-import androidx.ui.foundation.lazy.LazyColumnItems
-import androidx.ui.layout.Column
-import androidx.ui.layout.InnerPadding
-import androidx.ui.layout.offset
-import androidx.ui.layout.padding
-import androidx.ui.material.Divider
-import androidx.ui.material.FloatingActionButton
-import androidx.ui.material.Scaffold
-import androidx.ui.material.icons.Icons
-import androidx.ui.material.icons.filled.Add
-import androidx.ui.unit.dp
+import androidx.compose.foundation.Icon
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.InnerPadding
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumnForIndexed
+import androidx.compose.material.Divider
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.popalay.tracktor.WindowInsetsAmbient
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.ui.dialog.UpdateTrackedValueDialog
@@ -61,12 +61,12 @@ fun TrackerDetailContentView(
 private fun RecordsList(trackerWithRecords: TrackerWithRecords) {
     val items = trackerWithRecords.records.reversed()
     val insets = WindowInsetsAmbient.current
-    LazyColumnItems(
+    LazyColumnForIndexed(
         items = items,
         contentPadding = InnerPadding(16.dp).copy(bottom = insets.bottom + 16.dp)
-    ) {
-        RecordListItem(trackerWithRecords, it)
-        if (items.lastOrNull() != it) {
+    ) { index, item ->
+        RecordListItem(trackerWithRecords, item)
+        if (items.lastIndex != index) {
             Divider(modifier = Modifier.padding(vertical = 16.dp))
         }
     }

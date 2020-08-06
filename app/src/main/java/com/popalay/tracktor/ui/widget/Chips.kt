@@ -1,25 +1,25 @@
 package com.popalay.tracktor.ui.widget
 
-import androidx.compose.Composable
-import androidx.compose.Providers
-import androidx.ui.animation.animate
-import androidx.ui.core.Alignment
-import androidx.ui.core.Modifier
-import androidx.ui.core.clip
-import androidx.ui.foundation.Border
-import androidx.ui.foundation.Box
-import androidx.ui.foundation.ContentColorAmbient
-import androidx.ui.foundation.clickable
-import androidx.ui.foundation.shape.corner.CircleShape
-import androidx.ui.graphics.Color
-import androidx.ui.graphics.Shape
-import androidx.ui.layout.ExperimentalLayout
-import androidx.ui.layout.FlowRow
-import androidx.ui.layout.MainAxisAlignment
-import androidx.ui.layout.SizeMode
-import androidx.ui.material.EmphasisAmbient
-import androidx.ui.material.MaterialTheme
-import androidx.ui.unit.dp
+import androidx.compose.animation.animate
+import androidx.compose.foundation.Border
+import androidx.compose.foundation.Box
+import androidx.compose.foundation.ContentColorAmbient
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.ExperimentalLayout
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.MainAxisAlignment
+import androidx.compose.foundation.layout.SizeMode
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.EmphasisAmbient
+import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Providers
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalLayout::class)
 @Composable
