@@ -26,9 +26,9 @@ import com.popalay.tracktor.ui.widget.ChartAnimationState.STATE_END
 import com.popalay.tracktor.ui.widget.ChartAnimationState.STATE_START
 import com.popalay.tracktor.utils.dragGestureFilter
 import com.popalay.tracktor.utils.getSubPath
-import java.lang.Float.max
-import java.lang.Float.min
 import kotlin.math.absoluteValue
+import kotlin.math.max
+import kotlin.math.min
 
 enum class ChartAnimationState {
     STATE_START, STATE_END
@@ -177,10 +177,11 @@ private fun createPoints(
     topOffsetPx: Float = 0F
 ): List<Offset> {
     val bottomY = size.height
-    val xDiff = size.width / (data.size - 1)
+    val xDiff = size.width / max(data.size - 1, 1)
 
     val minData = data.minOrNull() ?: 0.0
-    val optimizedData = data.map { it - minData }
+    val optimizedData = data.let { if (it.size == 1) emptyList() else it }
+        .map { it - minData }.ifEmpty { listOf(0.0, 0.0) }
     val maxData = optimizedData.maxOrNull()?.toFloat() ?: 0F
 
     return optimizedData.mapIndexed { index, item ->

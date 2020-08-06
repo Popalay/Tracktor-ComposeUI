@@ -14,8 +14,6 @@ import com.popalay.tracktor.data.TrackerDao
 import com.popalay.tracktor.data.TrackingRepository
 import com.popalay.tracktor.data.featureflags.FeatureFlagsManager
 import com.popalay.tracktor.data.featureflags.RealFeatureFlagsManager
-import com.popalay.tracktor.data.featureflags.RealSmallTrackerListItemFeatureFlag
-import com.popalay.tracktor.data.featureflags.SmallTrackerListItemFeatureFlag
 import com.popalay.tracktor.domain.formatter.NumberValueRecordFormatter
 import com.popalay.tracktor.domain.formatter.TextValueRecordFormatter
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
@@ -72,8 +70,7 @@ val dataModule = module {
 }
 
 val featureFlagsModule = module {
-    single<SmallTrackerListItemFeatureFlag> { RealSmallTrackerListItemFeatureFlag(get()) }
-    single<FeatureFlagsManager> { RealFeatureFlagsManager(get()) }
+    single<FeatureFlagsManager> { RealFeatureFlagsManager() }
 }
 
 val modules = listOf(

@@ -1,7 +1,6 @@
 package com.popalay.tracktor.ui.featureflagslist
 
 import com.popalay.tracktor.data.featureflags.FeatureFlagsManager
-import com.popalay.tracktor.data.featureflags.SmallTrackerListItemFeatureFlag.Companion.KEY_SMALL_TRACKER_LIST_ITEM
 import com.popalay.tracktor.model.FeatureFlagListItem
 import com.popalay.tracktor.utils.updateItem
 import com.squareup.workflow.RenderContext
@@ -41,9 +40,7 @@ class FeatureFlagsListWorkflow(
     )
 
     override fun initialState(props: Unit, snapshot: Snapshot?): State = State(
-        listOf(
-            FeatureFlagListItem(KEY_SMALL_TRACKER_LIST_ITEM, "Small tracker list item", featureFlagsManager.isSmallTrackerListItemEnabled())
-        )
+        emptyList()
     )
 
     override fun render(
@@ -63,9 +60,9 @@ class FeatureFlagsListWorkflow(
 
     private fun runSideEffects(state: State) {
         state.featureFlags.forEach {
-            if (it.id == KEY_SMALL_TRACKER_LIST_ITEM && it.isEnabled != featureFlagsManager.isSmallTrackerListItemEnabled()) {
+/*            if (it.id == KEY_SMALL_TRACKER_LIST_ITEM && it.isEnabled != featureFlagsManager.isSmallTrackerListItemEnabled()) {
                 featureFlagsManager.setSmallTrackerListItemEnabled(it.isEnabled)
-            }
+            }*/
         }
     }
 }

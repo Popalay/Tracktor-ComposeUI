@@ -51,13 +51,13 @@ jobs:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
 
-      - name: Build with Gradle
-        run: ./gradlew assembleRelease bundleRelease -Ptracktor.versioncode=$BUILD_NUMBER --scan --stacktrace
-
       - name: Detekt all
         uses: natiginfo/action-detekt-all@1.10.0-RC1
         with:
           args: --fail-fast --config .github/detekt.yml --excludes **/workflow-kotlin-compose/**;**JsonAdapter.**
+
+      - name: Build with Gradle
+        run: ./gradlew assembleRelease bundleRelease -Ptracktor.versioncode=$BUILD_NUMBER --scan --stacktrace
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1

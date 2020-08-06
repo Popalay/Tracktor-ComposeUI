@@ -69,9 +69,7 @@ fun ChartAppBar(
             gradient = gradient,
             pointColor = Color.White,
             touchable = true,
-            onPointSelected = { offset, index ->
-                selectedValue.value = offset to index
-            },
+            onPointSelected = { offset, index -> selectedValue.value = offset to index % tracker.records.size },
             onPointUnSelected = {
                 selectedValue.value = null
             }
