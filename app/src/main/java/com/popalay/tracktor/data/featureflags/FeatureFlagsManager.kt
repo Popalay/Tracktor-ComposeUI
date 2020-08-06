@@ -1,7 +1,5 @@
 package com.popalay.tracktor.data.featureflags
 
-interface FeatureFlagsManager : SmallTrackerListItemFeatureFlag
+interface FeatureFlagsManager
 
-class RealFeatureFlagsManager(
-    smallTrackerListItemFeatureFlag: SmallTrackerListItemFeatureFlag
-) : FeatureFlagsManager, SmallTrackerListItemFeatureFlag by smallTrackerListItemFeatureFlag
+class RealFeatureFlagsManager : FeatureFlagsManager
