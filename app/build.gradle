@@ -17,7 +17,7 @@ println("Is CI environment: " + ci)
 def room_version = "2.2.5"
 def koin_version = "2.1.6"
 def moshi_version = "1.9.3"
-def compose_version = "0.1.0-dev15"
+def compose_version = "0.1.0-dev16"
 def workflow_version = "1.0.0-alpha.1"
 def workflow_compose_version = "0.30.0"
 
