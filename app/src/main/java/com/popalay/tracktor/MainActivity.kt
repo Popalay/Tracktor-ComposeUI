@@ -23,12 +23,13 @@ class MainActivity : AppCompatActivity() {
 
         val view = window.decorView
         view.setEdgeToEdgeSystemUiFlags()
+        view.rootWindowInsets
 
         setContent {
             val insetsState = state { ViewCompat.getRootWindowInsets(view)?.systemWindowInsets ?: Insets.NONE }
 
             ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-                insetsState.value = insets.systemGestureInsets
+                insetsState.value = insets.systemWindowInsets
                 insets
             }
             val padding = with(Density(ContextAmbient.current)) {

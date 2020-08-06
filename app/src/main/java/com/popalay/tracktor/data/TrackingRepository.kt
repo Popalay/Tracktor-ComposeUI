@@ -44,8 +44,14 @@ class TrackingRepository(
 
     suspend fun deleteTracker(tracker: Tracker) = trackerDao.delete(tracker)
 
+    suspend fun deleteRecord(record: ValueRecord) = recordDao.delete(record)
+
     suspend fun restoreTracker(trackerWithRecords: TrackerWithRecords) {
         trackerDao.insert(trackerWithRecords.tracker)
         recordDao.insertAll(trackerWithRecords.records)
+    }
+
+    suspend fun restoreRecord(record: ValueRecord) {
+        recordDao.insert(record)
     }
 }

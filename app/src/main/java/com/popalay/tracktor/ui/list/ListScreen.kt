@@ -1,8 +1,6 @@
 package com.popalay.tracktor.ui.list
 
-import androidx.compose.animation.animate
 import androidx.compose.foundation.Icon
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayout
@@ -14,13 +12,10 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.lazy.LazyColumnForIndexed
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Snackbar
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.onActive
-import androidx.compose.runtime.state
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,10 +23,10 @@ import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
 import com.popalay.tracktor.WindowInsetsAmbient
-import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.model.toListItem
 import com.popalay.tracktor.ui.dialog.UpdateTrackedValueDialog
 import com.popalay.tracktor.ui.list.ListWorkflow.Action
+import com.popalay.tracktor.ui.widget.AnimatedSnackbar
 import com.popalay.tracktor.utils.Faker
 import com.squareup.workflow.ui.compose.composedViewFactory
 
@@ -67,7 +62,12 @@ fun ListScreen(
                 ) {
                     Icon(Icons.Default.Add)
                 }
-                UndoDeletingSnackbar(state.itemInDeleting, onAction)
+                AnimatedSnackbar(
+                    message = state.itemInDeleting?.tracker?.title?.let { "$it was removed" } ?: "",
+                    actionText = "UNDO",
+                    shouldDisplay = state.itemInDeleting != null,
+                    onActionClick = { onAction(Action.UndoDeletingClicked) }
+                )
             }
         }
     ) {
@@ -83,25 +83,6 @@ fun ListScreen(
             }
             TrackerList(state, onAction)
         }
-    }
-}
-
-@Composable
-private fun UndoDeletingSnackbar(itemInDeleting: TrackerWithRecords?, onAction: (Action) -> Unit) {
-    val snackbarVisibility = state { true }
-    val snackbarOffset = animate(if (itemInDeleting == null) 72.dp else 0.dp) {
-        snackbarVisibility.value = itemInDeleting != null
-    }
-    if (snackbarVisibility.value) {
-        Snackbar(
-            text = { Text(text = itemInDeleting?.tracker?.title?.let { "$it was removed" } ?: "") },
-            action = {
-                TextButton(onClick = { onAction(Action.UndoDeletingClicked) }) {
-                    Text(text = "UNDO")
-                }
-            },
-            modifier = Modifier.offset(y = snackbarOffset)
-        )
     }
 }
 
