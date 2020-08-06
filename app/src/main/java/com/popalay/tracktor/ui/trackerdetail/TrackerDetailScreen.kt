@@ -10,7 +10,7 @@ import com.popalay.tracktor.utils.onBackPressed
 import com.squareup.workflow.ui.compose.composedViewFactory
 
 val TrackerDetailBinding = composedViewFactory<TrackerDetailWorkflow.Rendering> { rendering, _ ->
-    onBackPressed { rendering.onAction(Action.BackClicked) }
+    onBackPressed { rendering.onAction(Action.CloseScreen) }
     TrackerDetailScreen(rendering.state, rendering.onAction)
 }
 
@@ -29,7 +29,7 @@ fun TrackerDetailScreen(
     onAction: (Action) -> Unit = {}
 ) {
     if (state.trackerWithRecords == null) {
-        TrackerDetailLoadingView(onArrowClicked = { onAction(Action.BackClicked) })
+        TrackerDetailLoadingView(onArrowClicked = { onAction(Action.CloseScreen) })
     } else {
         TrackerDetailContentView(
             state.trackerWithRecords,

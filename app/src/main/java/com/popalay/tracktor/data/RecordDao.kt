@@ -10,6 +10,9 @@ interface RecordDao {
     @Insert
     suspend fun insert(value: ValueRecord)
 
+    @Insert
+    suspend fun insertAll(value: List<ValueRecord>)
+
     @Query("SELECT * FROM ValueRecord WHERE trackerId=:trackerId")
     suspend fun getAllByTrackerId(trackerId: String): List<ValueRecord>
 }

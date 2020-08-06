@@ -18,6 +18,8 @@ import androidx.ui.material.Card
 import androidx.ui.material.IconButton
 import androidx.ui.material.icons.Icons
 import androidx.ui.material.icons.filled.ArrowBack
+import androidx.ui.material.icons.filled.DeleteForever
+import androidx.ui.material.icons.filled.Undo
 import androidx.ui.unit.IntBounds
 import androidx.ui.unit.IntOffset
 import androidx.ui.unit.IntSize
@@ -35,7 +37,9 @@ import com.popalay.tracktor.utils.inject
 @Composable
 fun ChartAppBar(
     tracker: TrackerWithRecords,
-    onArrowClicked: () -> Unit = {}
+    onArrowClicked: () -> Unit = {},
+    onUndoClicked: () -> Unit = {},
+    onDeleteClicked: () -> Unit = {}
 ) {
     val selectedValue = state<Pair<Offset, Int>?> { null }
 
@@ -47,6 +51,14 @@ fun ChartAppBar(
             }
         },
         title = { Text(tracker.tracker.title) },
+        actions = {
+            IconButton(onClick = onUndoClicked) {
+                Icon(Icons.Default.Undo)
+            }
+            IconButton(onClick = onDeleteClicked) {
+                Icon(Icons.Default.DeleteForever)
+            }
+        },
         modifier = Modifier.preferredHeight(insets.top + 240.dp),
         contentModifier = Modifier.padding(bottom = 4.dp, top = insets.top)
     ) {

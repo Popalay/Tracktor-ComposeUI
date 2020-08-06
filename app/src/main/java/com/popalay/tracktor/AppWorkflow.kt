@@ -1,5 +1,6 @@
 package com.popalay.tracktor
 
+import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.ui.createtracker.CreateTrackerWorkflow
 import com.popalay.tracktor.ui.featureflagslist.FeatureFlagsListWorkflow
 import com.popalay.tracktor.ui.list.ListWorkflow
@@ -19,7 +20,7 @@ class AppWorkflow(
 ) : StatefulWorkflow<Unit, AppWorkflow.State, Nothing, Any>() {
 
     sealed class State {
-        data class TrackerList(val animate: Boolean) : State()
+        data class TrackerList(val animate: Boolean, val itemInDeleting: TrackerWithRecords? = null) : State()
         data class TrackerDetail(val trackerId: String) : State()
         object FeatureFlagList : State()
         object CreateTracker : State()
@@ -38,8 +39,9 @@ class AppWorkflow(
                     ListWorkflow.Output.FeatureFlagList -> State.FeatureFlagList
                     ListWorkflow.Output.CreateTracker -> State.CreateTracker
                 }
-                is TrackerDetailOutput -> when (action.output) {
+                is TrackerDetailOutput -> when (val output = action.output) {
                     TrackerDetailWorkflow.Output.Back -> State.TrackerList(animate = false)
+                    is TrackerDetailWorkflow.Output.TrackerDeleted -> State.TrackerList(animate = false, itemInDeleting = output.item)
                 }
                 is FeatureFlagsListOutput -> when (action.output) {
                     FeatureFlagsListWorkflow.Output.Back -> State.TrackerList(animate = false)
@@ -54,7 +56,10 @@ class AppWorkflow(
     override fun initialState(props: Unit, snapshot: Snapshot?): State = snapshot?.toState() ?: State.TrackerList(animate = true)
 
     override fun render(props: Unit, state: State, context: RenderContext<State, Nothing>): Any = when (state) {
-        is State.TrackerList -> context.renderChild(listWorkflow, ListWorkflow.Props(state.animate)) { Action.TrackerListOutput(it) }
+        is State.TrackerList -> context.renderChild(
+            listWorkflow,
+            ListWorkflow.Props(state.animate, state.itemInDeleting)
+        ) { Action.TrackerListOutput(it) }
         is State.TrackerDetail -> context.renderChild(
             trackerDetailWorkflow,
             TrackerDetailWorkflow.Props(state.trackerId)

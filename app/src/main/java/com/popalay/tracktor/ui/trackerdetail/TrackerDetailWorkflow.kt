@@ -25,21 +25,29 @@ class TrackerDetailWorkflow(
 
     sealed class Output {
         object Back : Output()
+        data class TrackerDeleted(val item: TrackerWithRecords) : Output()
     }
 
     sealed class Action : WorkflowAction<State, Output> {
         data class SideEffectAction(val action: Action) : Action()
-        data class TrackerUpdated(val tracker: TrackerWithRecords) : Action()
+        data class TrackerUpdated(val trackerWithRecords: TrackerWithRecords) : Action()
+        data class DeleteSubmitted(val trackerWithRecords: TrackerWithRecords) : Action()
         data class NewRecordSubmitted(val value: String) : Action()
-        object BackClicked : Action()
+        object RemoveLastRecordClicked : Action()
+        object DeleteTrackerClicked : Action()
+        object CloseScreen : Action()
         object AddRecordClicked : Action()
         object TrackDialogDismissed : Action()
 
         override fun WorkflowAction.Updater<State, Output>.apply() {
             nextState = when (val action = this@Action) {
-                is SideEffectAction -> action.action.applyTo(nextState.copy(currentAction = null)).first
-                is TrackerUpdated -> nextState.copy(trackerWithRecords = action.tracker)
-                BackClicked -> nextState.also { setOutput(Output.Back) }
+                is SideEffectAction -> action.action.applyTo(nextState.copy(currentAction = null)).let { result ->
+                    result.second?.also { setOutput(it) }
+                    result.first
+                }
+                is TrackerUpdated -> nextState.copy(trackerWithRecords = action.trackerWithRecords)
+                is DeleteSubmitted -> nextState.also { setOutput(Output.TrackerDeleted(action.trackerWithRecords)) }
+                CloseScreen -> nextState.also { setOutput(Output.Back) }
                 AddRecordClicked -> nextState.copy(isAddRecordDialogShowing = true)
                 TrackDialogDismissed -> nextState.copy(isAddRecordDialogShowing = false)
                 else -> nextState.copy(currentAction = this@Action)
@@ -80,6 +88,11 @@ class TrackerDetailWorkflow(
                     Worker.from { trackingRepository.saveRecord(tracker, action.value.toDoubleOrNull() ?: 0.0) }
                 }
                 context.runningWorker(worker) { Action.SideEffectAction(Action.TrackDialogDismissed) }
+            }
+            is Action.DeleteTrackerClicked -> {
+                if (state.trackerWithRecords?.tracker == null) return
+                val worker = Worker.from { trackingRepository.deleteTracker(state.trackerWithRecords.tracker) }
+                context.runningWorker(worker) { Action.SideEffectAction(Action.DeleteSubmitted(state.trackerWithRecords)) }
             }
         }
     }
