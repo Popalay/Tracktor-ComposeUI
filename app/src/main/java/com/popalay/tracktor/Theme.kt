@@ -1,15 +1,15 @@
 package com.popalay.tracktor
 
-import androidx.compose.Composable
-import androidx.ui.graphics.Color
-import androidx.ui.material.ColorPalette
-import androidx.ui.material.MaterialTheme
-import androidx.ui.material.darkColorPalette
-import androidx.ui.material.lightColorPalette
+import androidx.compose.material.Colors
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.darkColors
+import androidx.compose.material.lightColors
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import com.popalay.tracktor.model.TrackableUnit
 import kotlin.math.absoluteValue
 
-val lightThemeColors = lightColorPalette(
+val lightThemeColors = lightColors(
     primary = Color(0xFF1F1F1F),
     primaryVariant = Color(0xFF404040),
     secondary = Color.Black,
@@ -23,7 +23,7 @@ val lightThemeColors = lightColorPalette(
     onError = Color.White
 )
 
-val darkThemeColors = darkColorPalette(
+val darkThemeColors = darkColors(
     primary = Color(0xFF1F1F1F),
     primaryVariant = Color(0xFF404040),
     secondary = Color.White,
@@ -37,7 +37,7 @@ val darkThemeColors = darkColorPalette(
     onError = Color.Black
 )
 
-val ColorPalette.success get() = Color(0xFF348F50)
+val Colors.success get() = Color(0xFF348F50)
 
 private val gradients = listOf(
     listOf(Color(0xFF64BFE1), Color(0xFFA091B7), Color(0xFFE0608A)),

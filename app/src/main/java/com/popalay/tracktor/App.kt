@@ -1,7 +1,7 @@
 package com.popalay.tracktor
 
-import androidx.compose.Composable
-import androidx.ui.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
 import com.popalay.tracktor.ui.createtracker.CreateTrackerBinding
 import com.popalay.tracktor.ui.featureflagslist.FeatureFlagsListBinding
 import com.popalay.tracktor.ui.list.ListBinding

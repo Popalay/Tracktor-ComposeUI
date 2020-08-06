@@ -1,6 +1,6 @@
 package com.popalay.tracktor.ui.createtracker
 
-import androidx.ui.input.KeyboardType
+import androidx.compose.ui.text.input.KeyboardType
 import com.popalay.tracktor.data.TrackingRepository
 import com.popalay.tracktor.domain.worker.GetAllUnitsWorker
 import com.popalay.tracktor.model.TrackableUnit

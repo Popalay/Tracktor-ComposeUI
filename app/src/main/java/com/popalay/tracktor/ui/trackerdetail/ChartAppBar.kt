@@ -1,30 +1,30 @@
 package com.popalay.tracktor.ui.trackerdetail
 
-import androidx.compose.Composable
-import androidx.compose.remember
-import androidx.compose.state
-import androidx.ui.core.Alignment
-import androidx.ui.core.LayoutDirection
-import androidx.ui.core.Modifier
-import androidx.ui.core.Popup
-import androidx.ui.core.PopupPositionProvider
-import androidx.ui.foundation.Icon
-import androidx.ui.foundation.Text
-import androidx.ui.geometry.Offset
-import androidx.ui.graphics.Color
-import androidx.ui.layout.padding
-import androidx.ui.layout.preferredHeight
-import androidx.ui.material.Card
-import androidx.ui.material.IconButton
-import androidx.ui.material.icons.Icons
-import androidx.ui.material.icons.filled.ArrowBack
-import androidx.ui.material.icons.filled.DeleteForever
-import androidx.ui.material.icons.filled.Undo
-import androidx.ui.unit.IntBounds
-import androidx.ui.unit.IntOffset
-import androidx.ui.unit.IntSize
-import androidx.ui.unit.dp
-import androidx.ui.unit.toSize
+import androidx.compose.foundation.Icon
+import androidx.compose.foundation.Text
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.preferredHeight
+import androidx.compose.material.Card
+import androidx.compose.material.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material.icons.filled.Undo
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.state
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.IntBounds
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupPositionProvider
 import com.popalay.tracktor.WindowInsetsAmbient
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
 import com.popalay.tracktor.gradient
@@ -90,17 +90,18 @@ private fun ChartValuePopup(offset: Offset, trackerWithRecords: TrackerWithRecor
     val positionProvider = remember(offset) {
         object : PopupPositionProvider {
             override fun calculatePosition(
-                parentLayoutBounds: IntBounds,
+                parentGlobalBounds: IntBounds,
+                windowGlobalBounds: IntBounds,
                 layoutDirection: LayoutDirection,
-                popupSize: IntSize
+                popupContentSize: IntSize
             ): IntOffset {
                 var popupGlobalPosition = IntOffset(0, 0)
-                val intOffset = IntOffset(offset.x.toInt() - popupSize.width / 2, offset.y.toInt())
+                val intOffset = IntOffset(offset.x.toInt() - popupContentSize.width / 2, offset.y.toInt())
 
-                val parentAlignmentPoint = Alignment.TopStart.align(parentLayoutBounds.toSize(), layoutDirection)
-                val relativePopupPos = Alignment.TopStart.align(popupSize, layoutDirection)
+                val parentAlignmentPoint = Alignment.TopStart.align(parentGlobalBounds.toSize(), layoutDirection)
+                val relativePopupPos = Alignment.TopStart.align(popupContentSize, layoutDirection)
 
-                popupGlobalPosition += IntOffset(parentLayoutBounds.left, parentLayoutBounds.top)
+                popupGlobalPosition += IntOffset(parentGlobalBounds.left, parentGlobalBounds.top)
                 popupGlobalPosition += parentAlignmentPoint
                 popupGlobalPosition -= IntOffset(relativePopupPos.x, relativePopupPos.y)
 

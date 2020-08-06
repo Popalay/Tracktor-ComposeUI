@@ -1,18 +1,18 @@
 package com.popalay.tracktor.ui.widget
 
-import androidx.compose.Composable
-import androidx.compose.Providers
-import androidx.ui.core.Alignment
-import androidx.ui.core.Modifier
-import androidx.ui.foundation.ContentColorAmbient
-import androidx.ui.foundation.ProvideTextStyle
-import androidx.ui.layout.Column
-import androidx.ui.layout.ColumnScope
-import androidx.ui.layout.Row
-import androidx.ui.layout.RowScope
-import androidx.ui.layout.Spacer
-import androidx.ui.material.MaterialTheme
-import androidx.ui.unit.dp
+import androidx.compose.foundation.ContentColorAmbient
+import androidx.compose.foundation.ProvideTextStyle
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Providers
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 
 val DefaultTopAppBarHeight = 56.dp
 
@@ -25,7 +25,7 @@ fun TopAppBar(
     contentModifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit = {}
 ) {
-    androidx.ui.material.TopAppBar(modifier = modifier) {
+    androidx.compose.material.TopAppBar(modifier = modifier) {
         Column(modifier = contentModifier) {
             Row(verticalGravity = Alignment.CenterVertically) {
                 Providers(ContentColorAmbient provides MaterialTheme.colors.onPrimary) {

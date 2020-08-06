@@ -1,39 +1,39 @@
 package com.popalay.tracktor.ui.createtracker
 
-import androidx.compose.Composable
-import androidx.ui.core.Alignment
-import androidx.ui.core.Modifier
-import androidx.ui.core.ViewAmbient
-import androidx.ui.foundation.Icon
-import androidx.ui.foundation.Text
-import androidx.ui.foundation.contentColor
-import androidx.ui.layout.Column
-import androidx.ui.layout.Row
-import androidx.ui.layout.RowScope
-import androidx.ui.layout.Spacer
-import androidx.ui.layout.fillMaxWidth
-import androidx.ui.layout.height
-import androidx.ui.layout.padding
-import androidx.ui.layout.preferredHeight
-import androidx.ui.layout.width
-import androidx.ui.material.Divider
-import androidx.ui.material.DropdownMenu
-import androidx.ui.material.DropdownMenuItem
-import androidx.ui.material.EmphasisAmbient
-import androidx.ui.material.FilledTextField
-import androidx.ui.material.IconButton
-import androidx.ui.material.MaterialTheme
-import androidx.ui.material.Scaffold
-import androidx.ui.material.TextButton
-import androidx.ui.material.icons.Icons
-import androidx.ui.material.icons.filled.Add
-import androidx.ui.material.icons.filled.ArrowBack
-import androidx.ui.material.icons.filled.Done
-import androidx.ui.text.style.TextAlign
+import androidx.compose.foundation.Icon
+import androidx.compose.foundation.Text
+import androidx.compose.foundation.contentColor
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.preferredHeight
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.Divider
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.EmphasisAmbient
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.TextButton
+import androidx.compose.material.TextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ViewAmbient
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
-import androidx.ui.unit.dp
 import com.popalay.tracktor.WindowInsetsAmbient
 import com.popalay.tracktor.model.UnitValueType
 import com.popalay.tracktor.success
@@ -85,7 +85,7 @@ private fun CustomUnitCreator(
     state: CreateTrackerWorkflow.State,
     onAction: (Action) -> Unit
 ) {
-    FilledTextField(
+    TextField(
         value = state.customUnit.name,
         label = { Text("Unit name") },
         onValueChange = { onAction(Action.CustomUnitNameChanged(it)) },
@@ -95,7 +95,7 @@ private fun CustomUnitCreator(
     )
     Spacer(modifier = Modifier.height(16.dp))
     Row {
-        FilledTextField(
+        TextField(
             value = state.customUnit.symbol,
             label = { Text("Unit symbol") },
             onValueChange = { onAction(Action.CustomUnitSymbolChanged(it)) },
@@ -168,7 +168,7 @@ private fun TitleInput(
     state: CreateTrackerWorkflow.State,
     onAction: (Action) -> Unit
 ) {
-    FilledTextField(
+    TextField(
         value = state.title,
         label = { Text("What would you like to track?") },
         onValueChange = { onAction(Action.TitleChanged(it)) },
@@ -218,7 +218,7 @@ private fun ValueInput(
     state: CreateTrackerWorkflow.State,
     onAction: (Action) -> Unit
 ) {
-    FilledTextField(
+    TextField(
         value = state.initialValue,
         label = { Text("What's your initial value?") },
         onValueChange = { onAction(Action.ValueChanged(it)) },
