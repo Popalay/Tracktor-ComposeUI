@@ -12,47 +12,63 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.popalay.tracktor.WindowInsetsAmbient
+import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.ui.dialog.UpdateTrackedValueDialog
+import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow.Action
+import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow.State
+import com.popalay.tracktor.ui.widget.AnimatedSnackbar
+import com.popalay.tracktor.utils.inject
 
 @Composable
 fun TrackerDetailContentView(
-    trackerWithRecords: TrackerWithRecords,
-    isAddRecordDialogShowing: Boolean = false,
-    onAction: (TrackerDetailWorkflow.Action) -> Unit
+    state: State,
+    onAction: (Action) -> Unit
 ) {
     val insets = WindowInsetsAmbient.current
     Scaffold(
         topBar = {
             ChartAppBar(
-                trackerWithRecords,
-                onArrowClicked = { onAction(TrackerDetailWorkflow.Action.CloseScreen) },
-                onUndoClicked = { onAction(TrackerDetailWorkflow.Action.RemoveLastRecordClicked) },
-                onDeleteClicked = { onAction(TrackerDetailWorkflow.Action.DeleteTrackerClicked) }
+                requireNotNull(state.trackerWithRecords),
+                onArrowClicked = { onAction(Action.CloseScreen) },
+                onUndoClicked = { onAction(Action.DeleteLastRecordClicked) },
+                onDeleteClicked = { onAction(Action.DeleteTrackerClicked) }
             )
         },
         floatingActionButtonPosition = Scaffold.FabPosition.Center,
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onAction(TrackerDetailWorkflow.Action.AddRecordClicked) },
-                modifier = Modifier.offset(y = -insets.bottom)
-            ) {
-                Icon(Icons.Default.Add)
+            val formatter: ValueRecordFormatter by inject()
+
+            Column(horizontalGravity = Alignment.CenterHorizontally) {
+                FloatingActionButton(
+                    onClick = { onAction(Action.AddRecordClicked) },
+                    modifier = Modifier.offset(y = -insets.bottom)
+                ) {
+                    Icon(Icons.Default.Add)
+                }
+                val message = state.trackerWithRecords?.tracker?.let { formatter.format(it, state.recordInDeleting) } ?: ""
+                AnimatedSnackbar(
+                    message = message,
+                    actionText = "UNDO",
+                    shouldDisplay = state.recordInDeleting != null,
+                    onActionClick = { onAction(Action.UndoDeletingClicked) }
+                )
             }
         }
     ) {
         Column {
-            if (isAddRecordDialogShowing) {
+            if (state.isAddRecordDialogShowing) {
                 UpdateTrackedValueDialog(
-                    unit = trackerWithRecords.tracker.compatibleUnit,
-                    onCloseRequest = { onAction(TrackerDetailWorkflow.Action.TrackDialogDismissed) },
-                    onSave = { onAction(TrackerDetailWorkflow.Action.NewRecordSubmitted(it)) }
+                    unit = requireNotNull(state.trackerWithRecords).tracker.compatibleUnit,
+                    onCloseRequest = { onAction(Action.TrackDialogDismissed) },
+                    onSave = { onAction(Action.NewRecordSubmitted(it)) }
                 )
             }
-            RecordsList(trackerWithRecords)
+            RecordsList(requireNotNull(state.trackerWithRecords))
         }
     }
 }

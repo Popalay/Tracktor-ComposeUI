@@ -52,8 +52,10 @@ fun ChartAppBar(
         },
         title = { Text(tracker.tracker.title) },
         actions = {
-            IconButton(onClick = onUndoClicked) {
-                Icon(Icons.Default.Undo)
+            if (tracker.records.size > 1) {
+                IconButton(onClick = onUndoClicked) {
+                    Icon(Icons.Default.Undo)
+                }
             }
             IconButton(onClick = onDeleteClicked) {
                 Icon(Icons.Default.DeleteForever)

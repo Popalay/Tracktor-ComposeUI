@@ -31,10 +31,6 @@ fun TrackerDetailScreen(
     if (state.trackerWithRecords == null) {
         TrackerDetailLoadingView(onArrowClicked = { onAction(Action.CloseScreen) })
     } else {
-        TrackerDetailContentView(
-            state.trackerWithRecords,
-            isAddRecordDialogShowing = state.isAddRecordDialogShowing,
-            onAction = onAction
-        )
+        TrackerDetailContentView(state, onAction)
     }
 }
