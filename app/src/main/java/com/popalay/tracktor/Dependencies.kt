@@ -10,6 +10,7 @@ import com.popalay.tracktor.data.MIGRATION_1_2
 import com.popalay.tracktor.data.MIGRATION_2_3
 import com.popalay.tracktor.data.MIGRATION_3_4
 import com.popalay.tracktor.data.MIGRATION_4_5
+import com.popalay.tracktor.data.MIGRATION_5_6
 import com.popalay.tracktor.data.TrackerDao
 import com.popalay.tracktor.data.TrackingRepository
 import com.popalay.tracktor.data.featureflags.FeatureFlagsManager
@@ -20,6 +21,7 @@ import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatterFacade
 import com.popalay.tracktor.domain.worker.GetAllTrackersWorker
 import com.popalay.tracktor.domain.worker.GetAllUnitsWorker
+import com.popalay.tracktor.model.ProgressDirection
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.ui.createtracker.CreateTrackerWorkflow
@@ -50,11 +52,11 @@ val domainModule = module {
 val dataModule = module {
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database-name")
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
             .addCallback(object : RoomDatabase.Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     Executors.newSingleThreadScheduledExecutor().execute {
-                        get<TrackerDao>().insertSync(Tracker("id", "title", TrackableUnit.Weight, LocalDateTime.now()))
+                        get<TrackerDao>().insertSync(Tracker("id", "title", TrackableUnit.Weight, ProgressDirection.ASCENDING, LocalDateTime.now()))
                     }
                 }
             }).build()

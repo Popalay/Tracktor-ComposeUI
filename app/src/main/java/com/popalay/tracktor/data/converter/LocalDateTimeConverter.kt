@@ -1,4 +1,4 @@
-package com.popalay.tracktor.data
+package com.popalay.tracktor.data.converter
 
 import androidx.room.TypeConverter
 import java.time.LocalDateTime

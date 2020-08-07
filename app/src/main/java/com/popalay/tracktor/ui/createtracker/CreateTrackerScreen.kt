@@ -1,9 +1,9 @@
 package com.popalay.tracktor.ui.createtracker
 
 import androidx.compose.foundation.Icon
+import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.contentColor
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -35,6 +35,7 @@ import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
 import com.popalay.tracktor.WindowInsetsAmbient
+import com.popalay.tracktor.model.ProgressDirection
 import com.popalay.tracktor.model.UnitValueType
 import com.popalay.tracktor.success
 import com.popalay.tracktor.ui.createtracker.CreateTrackerWorkflow.Action
@@ -62,9 +63,11 @@ fun CreateTrackerScreen(
     onAction: (Action) -> Unit = {}
 ) {
     Scaffold(topBar = { CreateTrackerAppBar(onAction, state) }) {
-        Column(modifier = Modifier.padding(top = 16.dp)) {
+        ScrollableColumn(modifier = Modifier.padding(top = 16.dp)) {
             TitleInput(state, onAction)
             if (state.isUnitsVisible) {
+                Divider(modifier = Modifier.padding(vertical = 16.dp))
+                DirectionSelector(state, onAction)
                 Divider(modifier = Modifier.padding(vertical = 16.dp))
                 UnitSelector(state, onAction)
                 Divider(modifier = Modifier.padding(vertical = 16.dp))
@@ -209,6 +212,28 @@ private fun UnitSelector(
             onClick = { if (state.isCustomUnitValid) onAction(Action.CustomUnitCreated) else onAction(Action.AddCustomUnitClicked) }
         ) {
             Icon(if (state.isCustomUnitValid) Icons.Default.Done else Icons.Default.Add)
+        }
+    }
+}
+
+@Composable
+private fun DirectionSelector(
+    state: CreateTrackerWorkflow.State,
+    onAction: (Action) -> Unit
+) {
+    Text(
+        "Progress direction, define value growth direction:",
+        style = MaterialTheme.typography.caption,
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+    )
+    ChipGroup {
+        ProgressDirection.values().forEach { unit ->
+            Chip(
+                isSelected = unit == state.selectedProgressDirection,
+                onClick = { onAction(Action.ProgressDirectionSelected(unit)) }
+            ) {
+                Text(unit.displayName)
+            }
         }
     }
 }
