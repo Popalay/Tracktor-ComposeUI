@@ -1,6 +1,7 @@
 package com.popalay.tracktor.utils
 
 import com.popalay.tracktor.model.FeatureFlagListItem
+import com.popalay.tracktor.model.ProgressDirection
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.model.TrackerWithRecords
@@ -12,8 +13,9 @@ object Faker {
         id: String = "trackerId",
         title: String = "title",
         unit: TrackableUnit = TrackableUnit.Weight,
+        direction: ProgressDirection = ProgressDirection.ASCENDING,
         date: LocalDateTime = LocalDateTime.now()
-    ): Tracker = Tracker(id, title, unit, date)
+    ): Tracker = Tracker(id, title, unit, direction, date)
 
     fun fakeRecord(
         id: String = "valueId",

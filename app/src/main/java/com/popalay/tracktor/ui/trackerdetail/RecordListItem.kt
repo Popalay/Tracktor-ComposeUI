@@ -32,7 +32,7 @@ fun RecordListItem(trackerWithRecords: TrackerWithRecords, record: ValueRecord, 
 
         val previousRecord = trackerWithRecords.records.getOrNull(trackerWithRecords.records.indexOf(record) - 1)
         val progress = trackerWithRecords.progress(previousRecord?.value, record.value)
-        ProgressTextField(progress)
+        ProgressTextField(progress, trackerWithRecords.tracker.direction)
 
         Spacer(modifier = Modifier.width(8.dp))
         Text(

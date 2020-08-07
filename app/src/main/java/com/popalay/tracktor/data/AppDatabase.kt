@@ -5,11 +5,14 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.popalay.tracktor.data.converter.LocalDateTimeConverter
+import com.popalay.tracktor.data.converter.ProgressDirectionConverter
+import com.popalay.tracktor.data.converter.UnitValueTypeConverter
 import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.model.ValueRecord
 
-@TypeConverters(value = [LocalDateTimeConverter::class, UnitValueTypeConverter::class])
-@Database(entities = [Tracker::class, ValueRecord::class], version = 5)
+@TypeConverters(value = [LocalDateTimeConverter::class, UnitValueTypeConverter::class, ProgressDirectionConverter::class])
+@Database(entities = [Tracker::class, ValueRecord::class], version = 6)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun trackerDao(): TrackerDao
     abstract fun recordDao(): RecordDao
@@ -80,5 +83,11 @@ val MIGRATION_4_5 = object : Migration(4, 5) {
         database.execSQL("DROP TABLE ValueRecord")
         // Change name of table to correct one
         database.execSQL("ALTER TABLE ValueRecord_new RENAME TO ValueRecord")
+    }
+}
+
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE tracker ADD COLUMN direction TEXT NOT NULL DEFAULT 'ASCENDING'")
     }
 }

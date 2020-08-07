@@ -29,3 +29,8 @@ enum class UnitValueType(val displayName: String) {
     DOUBLE("Double"),
     INTEGER("Integer")
 }
+
+enum class ProgressDirection(val displayName: String) {
+    ASCENDING("Ascending"),
+    DESCENDING("Descending")
+}

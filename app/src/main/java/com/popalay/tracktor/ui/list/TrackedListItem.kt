@@ -86,7 +86,7 @@ private fun Footer(
         }
         Spacer(modifier = Modifier.weight(1F))
         if (item.data.records.isNotEmpty()) {
-            ProgressTextField(item.data.progress())
+            ProgressTextField(item.data.progress(), item.data.tracker.direction)
             Spacer(modifier = Modifier.width(8.dp))
             Text(formatter.format(item.data.tracker, item.data.currentValue))
         } else {

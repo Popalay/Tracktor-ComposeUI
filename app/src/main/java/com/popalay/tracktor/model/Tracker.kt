@@ -10,6 +10,7 @@ data class Tracker(
     @PrimaryKey val id: String,
     val title: String,
     @Embedded val unit: TrackableUnit,
+    val direction: ProgressDirection,
     val date: LocalDateTime
 ) {
     val compatibleUnit: TrackableUnit

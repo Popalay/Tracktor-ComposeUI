@@ -3,6 +3,7 @@ package com.popalay.tracktor.ui.createtracker
 import androidx.compose.ui.text.input.KeyboardType
 import com.popalay.tracktor.data.TrackingRepository
 import com.popalay.tracktor.domain.worker.GetAllUnitsWorker
+import com.popalay.tracktor.model.ProgressDirection
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.model.UnitValueType
@@ -30,6 +31,7 @@ class CreateTrackerWorkflow(
         val title: String = "",
         @Transient val units: List<TrackableUnit> = emptyList(),
         val selectedUnit: TrackableUnit = TrackableUnit.None,
+        val selectedProgressDirection: ProgressDirection = ProgressDirection.ASCENDING,
         val initialValue: String = "",
         val initialValueKeyboardType: KeyboardType = KeyboardType.Number,
         val isUnitsVisible: Boolean = false,
@@ -54,6 +56,7 @@ class CreateTrackerWorkflow(
         data class SideEffectAction(val action: Action) : Action()
         data class TitleChanged(val title: String) : Action()
         data class UnitSelected(val unit: TrackableUnit) : Action()
+        data class ProgressDirectionSelected(val direction: ProgressDirection) : Action()
         data class ValueChanged(val value: String) : Action()
         data class UnitsUpdated(val units: List<TrackableUnit>) : Action()
         data class CustomUnitChanged(val customUnit: TrackableUnit) : Action()
@@ -83,11 +86,13 @@ class CreateTrackerWorkflow(
                 )
                 is UnitSelected -> nextState.copy(
                     selectedUnit = action.unit,
+                    selectedProgressDirection = if (action.unit == TrackableUnit.Word) ProgressDirection.ASCENDING else nextState.selectedProgressDirection,
                     initialValueKeyboardType = if (action.unit == TrackableUnit.Word) KeyboardType.Text else KeyboardType.Number,
                     isInitialValueVisible = nextState.title.isNotBlank() && action.unit != TrackableUnit.None,
                     isCustomUnitCreating = false,
                     customUnit = TrackableUnit.None
                 )
+                is ProgressDirectionSelected -> nextState.copy(selectedProgressDirection = action.direction)
                 is ValueChanged -> nextState.copy(initialValue = action.value)
                 is UnitsUpdated -> nextState.copy(units = action.units)
                 CustomUnitCreated -> nextState.copy(
@@ -163,6 +168,7 @@ class CreateTrackerWorkflow(
                         id = UUID.randomUUID().toString(),
                         title = state.title.trim(),
                         unit = state.selectedUnit,
+                        direction = state.selectedProgressDirection,
                         date = LocalDateTime.now()
                     )
                     trackingRepository.saveTracker(tracker)
