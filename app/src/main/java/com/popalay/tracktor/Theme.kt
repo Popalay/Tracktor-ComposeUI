@@ -1,15 +1,18 @@
 package com.popalay.tracktor
 
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Shapes
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.popalay.tracktor.model.TrackableUnit
 import kotlin.math.absoluteValue
 
-val lightThemeColors = lightColors(
+private val lightThemeColors = lightColors(
     primary = Color(0xFF1F1F1F),
     primaryVariant = Color(0xFF404040),
     secondary = Color.Black,
@@ -23,7 +26,7 @@ val lightThemeColors = lightColors(
     onError = Color.White
 )
 
-val darkThemeColors = darkColors(
+private val darkThemeColors = darkColors(
     primary = Color(0xFF1F1F1F),
     primaryVariant = Color(0xFF404040),
     secondary = Color.White,
@@ -35,6 +38,10 @@ val darkThemeColors = darkColors(
     onBackground = Color.White,
     onSurface = Color.White,
     onError = Color.Black
+)
+
+private val shapes = Shapes(
+    medium = RoundedCornerShape(16.dp)
 )
 
 val Colors.success get() = Color(0xFF348F50)
@@ -64,5 +71,6 @@ val TrackableUnit.gradient: List<Color>
 fun AppTheme(isDarkTheme: Boolean, content: @Composable () -> Unit) =
     MaterialTheme(
         colors = if (isDarkTheme) darkThemeColors else lightThemeColors,
+        shapes = shapes,
         content = content
     )

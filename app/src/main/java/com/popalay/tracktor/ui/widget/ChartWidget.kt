@@ -30,7 +30,7 @@ import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
 
-enum class ChartAnimationState {
+private enum class ChartAnimationState {
     STATE_START, STATE_END
 }
 

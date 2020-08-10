@@ -18,6 +18,7 @@ import com.squareup.workflow.Worker
 import com.squareup.workflow.WorkflowAction
 import com.squareup.workflow.applyTo
 import java.time.LocalDateTime
+import java.util.Locale
 import java.util.UUID
 
 class CreateTrackerWorkflow(
@@ -166,7 +167,7 @@ class CreateTrackerWorkflow(
                 val worker = Worker.from {
                     val tracker = Tracker(
                         id = UUID.randomUUID().toString(),
-                        title = state.title.trim(),
+                        title = state.title.trim().capitalize(Locale.getDefault()),
                         unit = state.selectedUnit,
                         direction = state.selectedProgressDirection,
                         date = LocalDateTime.now()

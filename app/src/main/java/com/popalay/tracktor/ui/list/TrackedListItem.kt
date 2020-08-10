@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -55,12 +54,9 @@ fun TrackerListItem(
     onRemoveClicked: () -> Unit = {}
 ) {
     val gradient = remember(item) { item.data.tracker.compatibleUnit.gradient }
-    Card(
-        modifier = modifier,
-        shape = RoundedCornerShape(16.dp)
-    ) {
+    Card {
         Column(
-            modifier = Modifier.preferredHeight(120.dp),
+            modifier = modifier.preferredHeight(120.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Body(item, gradient)
