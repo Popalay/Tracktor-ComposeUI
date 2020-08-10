@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.material.Card
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DeleteForever
@@ -119,7 +120,10 @@ private fun ChartValuePopup(offset: Offset, trackerWithRecords: TrackerWithRecor
     Popup(positionProvider) {
         val formatter: ValueRecordFormatter by inject()
 
-        Card(color = Color.White) {
+        Card(
+            color = Color.White,
+            shape = MaterialTheme.shapes.small
+        ) {
             Text(
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                 color = Color.Black,

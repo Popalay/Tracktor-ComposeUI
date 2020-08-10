@@ -3,6 +3,7 @@ package com.popalay.tracktor.ui.list
 import com.popalay.tracktor.data.TrackingRepository
 import com.popalay.tracktor.domain.worker.GetAllTrackersWorker
 import com.popalay.tracktor.model.MenuItem
+import com.popalay.tracktor.model.Statistic
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.model.TrackerListItem
@@ -41,6 +42,7 @@ class ListWorkflow(
         @Transient val itemInEditing: Tracker? = null,
         @Transient val itemInDeleting: TrackerWithRecords? = null,
         @Transient val currentAction: Action? = null,
+        @Transient val statistic: Statistic? = null,
         val animate: Boolean = true
     )
 
@@ -77,7 +79,10 @@ class ListWorkflow(
                     result.second?.also { setOutput(it) }
                     result.first
                 }
-                is ListUpdated -> nextState.copy(items = action.list.map { it.toListItem() })
+                is ListUpdated -> nextState.copy(
+                    items = action.list.map { it.toListItem() },
+                    statistic = Statistic.generateFor(action.list)
+                )
                 is AddRecordClicked -> nextState.copy(itemInEditing = action.item.tracker)
                 is TrackerClicked -> nextState.also { setOutput(Output.TrackerDetail(action.item.tracker.id)) }
                 is MenuItemClicked -> handleMenuItem(action.menuItem)

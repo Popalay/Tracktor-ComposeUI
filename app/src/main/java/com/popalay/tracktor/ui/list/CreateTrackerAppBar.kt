@@ -27,7 +27,7 @@ import com.popalay.tracktor.model.MenuItem
 
 @Preview
 @Composable
-fun CreateTrackerAppBar(
+fun LogoAppBar(
     menuItems: List<MenuItem> = emptyList(),
     onMenuItemClicked: (MenuItem) -> Unit = {}
 ) {

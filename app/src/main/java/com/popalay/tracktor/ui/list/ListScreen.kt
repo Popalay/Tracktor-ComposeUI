@@ -48,7 +48,7 @@ fun ListScreen(
 ) {
     Scaffold(
         topBar = {
-            CreateTrackerAppBar(
+            LogoAppBar(
                 menuItems = state.menuItems,
                 onMenuItemClicked = { onAction(Action.MenuItemClicked(it)) }
             )
@@ -97,6 +97,10 @@ private fun TrackerList(
         items = state.items, modifier,
         contentPadding = InnerPadding(16.dp).copy(bottom = insets.bottom + 16.dp)
     ) { index, item ->
+        if (index == 0 && state.statistic != null) {
+            StatisticWidget(state.statistic, state.animate)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
         TrackerListItem(
             item.copy(animate = state.animate),
             modifier = Modifier.clickable(onClick = { onAction(Action.TrackerClicked(item.data)) }),

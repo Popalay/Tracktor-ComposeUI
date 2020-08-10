@@ -1,6 +1,8 @@
 package com.popalay.tracktor.utils
 
+import android.graphics.Matrix
 import android.graphics.PathMeasure
+import android.graphics.RectF
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
@@ -19,6 +21,7 @@ import androidx.compose.ui.platform.ContextAmbient
 import org.koin.core.context.KoinContextHandler
 import org.koin.core.parameter.ParametersDefinition
 import org.koin.core.qualifier.Qualifier
+
 
 @Composable
 inline fun <reified T> inject(
@@ -48,6 +51,21 @@ fun Path.getSubPath(start: Float, end: Float): Path {
     val pathMeasure = PathMeasure(asAndroidPath(), false)
     pathMeasure.getSegment(start * pathMeasure.length, end * pathMeasure.length, subPath, true)
     return subPath.asComposePath()
+}
+
+fun Path.transform(
+    angle: Float,
+    scale: Float
+): Path {
+    if (angle == 0F && scale == 1F) return this
+    val matrix = Matrix()
+    val bounds = RectF()
+    return asAndroidPath().apply {
+        computeBounds(bounds, true)
+        matrix.postRotate(angle, bounds.centerX(), bounds.centerY())
+        matrix.postScale(scale, scale, bounds.centerX(), bounds.centerY())
+        transform(matrix)
+    }.asComposePath()
 }
 
 fun Modifier.dragGestureFilter(
