@@ -1,6 +1,7 @@
 package com.popalay.tracktor.ui.dialog
 
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -10,17 +11,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.state
 import androidx.compose.ui.text.input.KeyboardType
 import com.popalay.tracktor.model.TrackableUnit
+import com.popalay.tracktor.model.Tracker
 
 @Composable
 fun UpdateTrackedValueDialog(
-    unit: TrackableUnit,
+    tracker: Tracker,
     onCloseRequest: () -> Unit,
     onSave: (String) -> Unit
 ) {
     val newValue = state { "" }
-    val keyboardType = if (unit == TrackableUnit.Word) KeyboardType.Text else KeyboardType.Number
-    val validator: (String) -> Boolean = remember(unit) {
-        when (unit) {
+    val keyboardType = if (tracker.unit == TrackableUnit.Word) KeyboardType.Text else KeyboardType.Number
+    val validator: (String) -> Boolean = remember(tracker.unit) {
+        when (tracker.unit) {
             TrackableUnit.Word -> {
                 { it.isNotBlank() }
             }
@@ -32,11 +34,16 @@ fun UpdateTrackedValueDialog(
 
     AlertDialog(
         onCloseRequest = onCloseRequest,
-        title = { Text(text = "Track") },
+        title = {
+            Column {
+                Text(text = "Track ${tracker.title}")
+                Text(text = "(sorry for the crash, waiting for the fix)", style = MaterialTheme.typography.caption)
+            }
+        },
         text = {
             TextField(
                 value = newValue.value,
-                label = { Text(text = unit.displayName) },
+                label = { Text(text = tracker.unit.displayName) },
                 keyboardType = keyboardType,
                 activeColor = MaterialTheme.colors.onSurface,
                 onValueChange = { newValue.value = it }

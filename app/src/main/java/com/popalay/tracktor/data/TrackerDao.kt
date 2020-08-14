@@ -23,9 +23,6 @@ interface TrackerDao {
     suspend fun insert(value: Tracker)
 
     @Insert
-    fun insertSync(value: Tracker)
-
-    @Insert
     suspend fun insertAll(values: Tracker)
 
     @Delete

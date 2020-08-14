@@ -11,6 +11,7 @@ import com.popalay.tracktor.data.MIGRATION_2_3
 import com.popalay.tracktor.data.MIGRATION_3_4
 import com.popalay.tracktor.data.MIGRATION_4_5
 import com.popalay.tracktor.data.MIGRATION_5_6
+import com.popalay.tracktor.data.RecordDao
 import com.popalay.tracktor.data.TrackerDao
 import com.popalay.tracktor.data.TrackingRepository
 import com.popalay.tracktor.data.featureflags.FeatureFlagsManager
@@ -24,11 +25,13 @@ import com.popalay.tracktor.domain.worker.GetAllUnitsWorker
 import com.popalay.tracktor.model.ProgressDirection
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
+import com.popalay.tracktor.model.ValueRecord
 import com.popalay.tracktor.ui.createtracker.CreateTrackerWorkflow
 import com.popalay.tracktor.ui.featureflagslist.FeatureFlagsListWorkflow
 import com.popalay.tracktor.ui.list.ListWorkflow
 import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import java.time.LocalDateTime
@@ -56,7 +59,18 @@ val dataModule = module {
             .addCallback(object : RoomDatabase.Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     Executors.newSingleThreadScheduledExecutor().execute {
-                        get<TrackerDao>().insertSync(Tracker("id", "title", TrackableUnit.Weight, ProgressDirection.ASCENDING, LocalDateTime.now()))
+                        runBlocking {
+                            get<TrackerDao>().insert(
+                                Tracker(
+                                    "id",
+                                    "Number of cool app installs",
+                                    TrackableUnit.Quantity,
+                                    ProgressDirection.ASCENDING,
+                                    LocalDateTime.now()
+                                )
+                            )
+                            get<RecordDao>().insert(ValueRecord("id", "id", 42.0, "", LocalDateTime.now()))
+                        }
                     }
                 }
             }).build()

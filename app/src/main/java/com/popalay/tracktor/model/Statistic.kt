@@ -25,8 +25,8 @@ data class Statistic(
             val lastUpdatedTracker = trackers.maxByOrNull { trackerWithRecords ->
                 trackerWithRecords.records.map { it.date.toInstant(ZoneOffset.UTC).epochSecond }.maxOrNull() ?: 0
             }
-            val lastUpdatedTrackerDate = lastUpdatedTracker?.let { trackerWithRecords ->
-                trackerWithRecords.records.maxByOrNull { it.date.toInstant(ZoneOffset.UTC).epochSecond }?.date
+            val lastUpdatedTrackerDate = lastUpdatedTracker?.let {
+                lastUpdatedTracker.records.maxByOrNull { it.date.toInstant(ZoneOffset.UTC).epochSecond }?.date ?: lastUpdatedTracker.tracker.date
             }
             val mostProgressiveTracker = trackers.maxByOrNull {
                 it.progress() * if (it.tracker.direction == DESCENDING) -1 else 1

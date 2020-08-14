@@ -63,7 +63,7 @@ fun TrackerDetailContentView(
         Column {
             if (state.isAddRecordDialogShowing) {
                 UpdateTrackedValueDialog(
-                    unit = requireNotNull(state.trackerWithRecords).tracker.compatibleUnit,
+                    tracker = requireNotNull(state.trackerWithRecords).tracker,
                     onCloseRequest = { onAction(Action.TrackDialogDismissed) },
                     onSave = { onAction(Action.NewRecordSubmitted(it)) }
                 )
