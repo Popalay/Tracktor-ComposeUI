@@ -1,6 +1,8 @@
 package com.popalay.tracktor.model
 
 import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.Junction
 import androidx.room.Relation
 
 data class TrackerWithRecords(
@@ -9,7 +11,13 @@ data class TrackerWithRecords(
         parentColumn = "id",
         entityColumn = "trackerId"
     )
-    val records: List<ValueRecord>
+    val records: List<ValueRecord>,
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "categoryId",
+        associateBy = Junction(TrackerCategoryCrossRef::class)
+    )
+    val categories: List<Category>
 ) {
     val currentValue: ValueRecord? get() = records.lastOrNull()
 
@@ -20,3 +28,9 @@ data class TrackerWithRecords(
         return (currentValue ?: 0.0) / (previousValue ?: return 0.0) - 1
     }
 }
+
+@Entity(primaryKeys = ["id", "categoryId"])
+data class TrackerCategoryCrossRef(
+    val id: String,
+    val categoryId: String
+)

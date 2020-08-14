@@ -1,5 +1,6 @@
 package com.popalay.tracktor.utils
 
+import com.popalay.tracktor.model.Category
 import com.popalay.tracktor.model.FeatureFlagListItem
 import com.popalay.tracktor.model.ProgressDirection
 import com.popalay.tracktor.model.TrackableUnit
@@ -30,8 +31,14 @@ object Faker {
         records: List<ValueRecord> = List(5) { fakeRecord() }
     ): TrackerWithRecords = TrackerWithRecords(
         tracker = tracker,
-        records = records
+        records = records,
+        categories = List(5) { fakeCategory() }
     )
+
+    fun fakeCategory(
+        id: String = "id",
+        name: String = "Category"
+    ) = Category(id, name)
 
     fun fakeFeatureFlag(
         id: String = "id",

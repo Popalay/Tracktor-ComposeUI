@@ -1,7 +1,10 @@
 package com.popalay.tracktor.ui.trackerdetail
 
+import com.popalay.tracktor.data.CategoryRepository
 import com.popalay.tracktor.data.TrackingRepository
+import com.popalay.tracktor.domain.GetAllCategoriesWorker
 import com.popalay.tracktor.domain.worker.GetTrackerByIdWorker
+import com.popalay.tracktor.model.Category
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.model.ValueRecord
@@ -13,7 +16,9 @@ import com.squareup.workflow.WorkflowAction
 import com.squareup.workflow.applyTo
 
 class TrackerDetailWorkflow(
-    private val trackingRepository: TrackingRepository
+    private val trackingRepository: TrackingRepository,
+    private val categoryRepository: CategoryRepository,
+    private val getAllCategoriesWorker: GetAllCategoriesWorker,
 ) : StatefulWorkflow<TrackerDetailWorkflow.Props, TrackerDetailWorkflow.State, TrackerDetailWorkflow.Output, TrackerDetailWorkflow.Rendering>() {
     companion object {
         private const val DELETING_UNDO_TIMEOUT_MILLIS = 2500L
@@ -22,8 +27,10 @@ class TrackerDetailWorkflow(
     data class Props(val trackerId: String)
 
     data class State(
-        @Transient val trackerWithRecords: TrackerWithRecords? = null,
         val isAddRecordDialogShowing: Boolean = false,
+        val isAddCategoryDialogShowing: Boolean = false,
+        @Transient val trackerWithRecords: TrackerWithRecords? = null,
+        @Transient val allCategories: List<Category> = emptyList(),
         @Transient val recordInDeleting: ValueRecord? = null,
         @Transient val currentAction: Action? = null
     )
@@ -36,9 +43,11 @@ class TrackerDetailWorkflow(
     sealed class Action : WorkflowAction<State, Output> {
         data class SideEffectAction(val action: Action) : Action()
         data class TrackerUpdated(val trackerWithRecords: TrackerWithRecords) : Action()
+        data class AllCategoriesUpdated(val categories: List<Category>) : Action()
         data class DeleteSubmitted(val trackerWithRecords: TrackerWithRecords) : Action()
         data class DeleteRecordSubmitted(val record: ValueRecord) : Action()
         data class NewRecordSubmitted(val value: String) : Action()
+        data class TrackerCategoriesUpdated(val categories: List<Category>) : Action()
         object DeleteLastRecordClicked : Action()
         object DeleteTrackerClicked : Action()
         object CloseScreen : Action()
@@ -47,6 +56,8 @@ class TrackerDetailWorkflow(
         object UndoAvailabilityEnded : Action()
         object UndoDeletingClicked : Action()
         object UndoPerformed : Action()
+        object AddCategoryClicked : Action()
+        object AddCategoryDialogDismissed : Action()
 
         override fun WorkflowAction.Updater<State, Output>.apply() {
             nextState = when (val action = this@Action) {
@@ -57,11 +68,14 @@ class TrackerDetailWorkflow(
                 is TrackerUpdated -> nextState.copy(trackerWithRecords = action.trackerWithRecords)
                 is DeleteSubmitted -> nextState.also { setOutput(Output.TrackerDeleted(action.trackerWithRecords)) }
                 is DeleteRecordSubmitted -> nextState.copy(recordInDeleting = action.record)
+                is AllCategoriesUpdated -> nextState.copy(allCategories = action.categories)
                 CloseScreen -> nextState.also { setOutput(Output.Back) }
                 AddRecordClicked -> nextState.copy(isAddRecordDialogShowing = true)
                 TrackDialogDismissed -> nextState.copy(isAddRecordDialogShowing = false)
                 UndoAvailabilityEnded -> nextState.copy(recordInDeleting = null)
                 UndoPerformed -> nextState.copy(recordInDeleting = null)
+                AddCategoryClicked -> nextState.copy(isAddCategoryDialogShowing = true)
+                AddCategoryDialogDismissed -> nextState.copy(isAddCategoryDialogShowing = false)
                 else -> nextState.copy(currentAction = this@Action)
             }
         }
@@ -80,6 +94,7 @@ class TrackerDetailWorkflow(
         context: RenderContext<State, Output>
     ): Rendering {
         context.runningWorker(GetTrackerByIdWorker(props.trackerId, trackingRepository)) { Action.TrackerUpdated(it) }
+        context.runningWorker(getAllCategoriesWorker) { Action.AllCategoriesUpdated(it) }
         runSideEffects(state, context)
 
         return Rendering(
@@ -118,6 +133,12 @@ class TrackerDetailWorkflow(
                 state.recordInDeleting?.let {
                     val worker = Worker.from { trackingRepository.restoreRecord(it) }
                     context.runningWorker(worker) { Action.SideEffectAction(Action.UndoPerformed) }
+                }
+            }
+            is Action.TrackerCategoriesUpdated -> {
+                state.trackerWithRecords?.let {
+                    val worker = Worker.from { categoryRepository.saveCategories(it.tracker.id, action.categories) }
+                    context.runningWorker(worker) { Action.SideEffectAction(Action.AddCategoryDialogDismissed) }
                 }
             }
         }
