@@ -46,7 +46,7 @@ private val shapes = Shapes(
 
 val Colors.success get() = Color(0xFF348F50)
 
-private val gradients = listOf(
+val gradients = listOf(
     listOf(Color(0xFF64BFE1), Color(0xFFA091B7), Color(0xFFE0608A)),
     listOf(Color(0xFF64BFE1), Color(0xFF45A190), Color(0xFF348F50)),
     listOf(Color(0xFF64BFE1), Color(0xFF86A7E7), Color(0xFF8360C3)),
