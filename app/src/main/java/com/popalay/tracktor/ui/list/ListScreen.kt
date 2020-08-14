@@ -1,16 +1,19 @@
 package com.popalay.tracktor.ui.list
 
 import androidx.compose.foundation.Icon
+import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayout
 import androidx.compose.foundation.layout.InnerPadding
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Stack
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.lazy.LazyColumnForIndexed
 import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -18,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.onActive
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
@@ -71,7 +75,7 @@ fun ListScreen(
             }
         }
     ) {
-        Stack {
+        Stack(modifier = Modifier.fillMaxSize()) {
             when {
                 state.itemInEditing != null -> {
                     UpdateTrackedValueDialog(
@@ -81,7 +85,16 @@ fun ListScreen(
                     )
                 }
             }
-            TrackerList(state, onAction)
+            if (state.showEmptyState) {
+                Text(
+                    text = "Click on the button below and let's track!",
+                    style = MaterialTheme.typography.caption,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.gravity(Alignment.Center)
+                )
+            } else {
+                TrackerList(state, onAction)
+            }
         }
     }
 }

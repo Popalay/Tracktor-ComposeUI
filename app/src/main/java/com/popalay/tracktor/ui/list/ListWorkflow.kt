@@ -43,6 +43,7 @@ class ListWorkflow(
         @Transient val itemInDeleting: TrackerWithRecords? = null,
         @Transient val currentAction: Action? = null,
         @Transient val statistic: Statistic? = null,
+        val showEmptyState: Boolean = false,
         val animate: Boolean = true
     )
 
@@ -81,7 +82,8 @@ class ListWorkflow(
                 }
                 is ListUpdated -> nextState.copy(
                     items = action.list.map { it.toListItem() },
-                    statistic = Statistic.generateFor(action.list)
+                    statistic = Statistic.generateFor(action.list),
+                    showEmptyState = action.list.isEmpty()
                 )
                 is AddRecordClicked -> nextState.copy(itemInEditing = action.item.tracker)
                 is TrackerClicked -> nextState.also { setOutput(Output.TrackerDetail(action.item.tracker.id)) }

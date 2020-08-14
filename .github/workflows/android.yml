@@ -57,7 +57,7 @@ jobs:
           args: --fail-fast --config .github/detekt.yml --excludes **/workflow-kotlin-compose/**;**JsonAdapter.**
 
       - name: Build with Gradle
-        run: ./gradlew assembleRelease bundleRelease -Ptracktor.versioncode=$BUILD_NUMBER --scan --stacktrace
+        run: ./gradlew assembleDebug assembleRelease bundleRelease -Ptracktor.versioncode=$BUILD_NUMBER --scan --stacktrace
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1

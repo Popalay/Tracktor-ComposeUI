@@ -15,11 +15,12 @@ data class Statistic(
     val overallProgress: Double get() = trackersWithProgress.toDouble() / trackerCount
 
     companion object {
-        fun generateFor(trackers: List<TrackerWithRecords>): Statistic {
+        fun generateFor(trackers: List<TrackerWithRecords>): Statistic? {
+            if (trackers.isEmpty()) return null
             val trackerCount = trackers.size
             val trackersWithProgress = trackers.count {
-                it.progress() >= 0 && it.tracker.direction == ASCENDING ||
-                        it.progress() <= 0 && it.tracker.direction == DESCENDING
+                it.progress() > 0 && it.tracker.direction == ASCENDING ||
+                        it.progress() < 0 && it.tracker.direction == DESCENDING
             }
             val lastUpdatedTracker = trackers.maxByOrNull { trackerWithRecords ->
                 trackerWithRecords.records.map { it.date.toInstant(ZoneOffset.UTC).epochSecond }.maxOrNull() ?: 0
