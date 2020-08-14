@@ -8,7 +8,8 @@ data class TrackableUnit(
     val symbol: String,
     val valueType: UnitValueType
 ) {
-    val displayName: String get() = listOfNotNull(name, symbol.ifBlank { null }).joinToString()
+    @Transient
+    val displayName: String = listOfNotNull(name, symbol.ifBlank { null }).joinToString()
 
     companion object {
         val None = TrackableUnit(name = "", symbol = "", UnitValueType.NONE)
@@ -23,6 +24,7 @@ data class TrackableUnit(
     }
 }
 
+@JsonClass(generateAdapter = false)
 enum class UnitValueType(val displayName: String) {
     NONE(""),
     TEXT("Text"),
@@ -30,6 +32,7 @@ enum class UnitValueType(val displayName: String) {
     INTEGER("Integer")
 }
 
+@JsonClass(generateAdapter = false)
 enum class ProgressDirection(val displayName: String) {
     ASCENDING("Ascending"),
     DESCENDING("Descending")

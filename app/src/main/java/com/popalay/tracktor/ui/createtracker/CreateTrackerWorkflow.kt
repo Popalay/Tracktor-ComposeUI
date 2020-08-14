@@ -30,17 +30,17 @@ class CreateTrackerWorkflow(
     @JsonClass(generateAdapter = true)
     data class State(
         val title: String = "",
-        @Transient val units: List<TrackableUnit> = emptyList(),
         val selectedUnit: TrackableUnit = TrackableUnit.None,
         val selectedProgressDirection: ProgressDirection = ProgressDirection.ASCENDING,
         val initialValue: String = "",
-        val initialValueKeyboardType: KeyboardType = KeyboardType.Number,
         val isUnitsVisible: Boolean = false,
         val isInitialValueVisible: Boolean = false,
         val isCustomUnitCreating: Boolean = false,
         val customUnit: TrackableUnit = TrackableUnit.None,
         val isCustomUnitValueTypeDropdownShown: Boolean = false,
         val isCustomUnitValid: Boolean = false,
+        @Transient val units: List<TrackableUnit> = emptyList(),
+        @Transient val initialValueKeyboardType: KeyboardType = KeyboardType.Number,
         @Transient val currentAction: Action? = null
     ) {
         val isValidToSave: Boolean
