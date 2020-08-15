@@ -56,7 +56,11 @@ private val tweenDefinition = transitionDefinition<AnimationState> {
 }
 
 @Composable
-fun StatisticWidget(statistic: Statistic, animate: Boolean) {
+fun StatisticWidget(
+    statistic: Statistic,
+    animate: Boolean,
+    modifier: Modifier = Modifier
+) {
     val transitionState = transition(
         definition = tweenDefinition,
         initState = if (animate) STATE_START else STATE_END,
@@ -66,7 +70,8 @@ fun StatisticWidget(statistic: Statistic, animate: Boolean) {
 
     WithConstraints {
         Card(
-            elevation = 2.dp
+            elevation = 2.dp,
+            modifier = modifier
         ) {
             Row(
                 modifier = Modifier.background(HorizontalGradient(gradients[0], 0F, constraints.maxWidth.toFloat()), alpha = 0.5F)

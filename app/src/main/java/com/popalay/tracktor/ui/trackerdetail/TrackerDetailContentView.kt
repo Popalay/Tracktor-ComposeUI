@@ -1,15 +1,11 @@
 package com.popalay.tracktor.ui.trackerdetail
 
 import androidx.compose.foundation.Icon
-import androidx.compose.foundation.ScrollableRow
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.InnerPadding
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumnForIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.Card
@@ -25,14 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.popalay.tracktor.WindowInsetsAmbient
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
-import com.popalay.tracktor.model.Category
 import com.popalay.tracktor.model.TrackerWithRecords
-import com.popalay.tracktor.ui.dialog.AddCategoryDialog
 import com.popalay.tracktor.ui.dialog.UpdateTrackedValueDialog
 import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow.Action
 import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow.State
 import com.popalay.tracktor.ui.widget.AnimatedSnackbar
-import com.popalay.tracktor.ui.widget.Chip
+import com.popalay.tracktor.ui.widget.TrackerCategoryList
 import com.popalay.tracktor.utils.inject
 
 @Composable
@@ -80,7 +74,15 @@ fun TrackerDetailContentView(
                 )
             }
             ChartCard(requireNotNull(state.trackerWithRecords), modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
-            CategoryList(state, onAction, modifier = Modifier.padding(bottom = 8.dp))
+            TrackerCategoryList(
+                categories = state.trackerWithRecords.categories,
+                availableCategories = state.allCategories,
+                isAddCategoryDialogShowing = state.isAddCategoryDialogShowing,
+                onSave = { onAction(Action.TrackerCategoriesUpdated(it)) },
+                onAddCategoryClicked = { onAction(Action.AddCategoryClicked) },
+                onDialogDismissed = { onAction(Action.AddCategoryDialogDismissed) },
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
             RecordsList(requireNotNull(state.trackerWithRecords))
         }
     }
@@ -103,41 +105,5 @@ private fun RecordsList(trackerWithRecords: TrackerWithRecords) {
                 Divider(modifier = Modifier.padding(vertical = 16.dp))
             }
         }
-    }
-}
-
-@Composable
-private fun CategoryList(
-    state: State,
-    onAction: (Action) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    if (state.isAddCategoryDialogShowing) {
-        AddCategoryDialog(
-            trackerWithRecords = requireNotNull(state.trackerWithRecords),
-            categories = state.allCategories,
-            onCloseRequest = { onAction(Action.AddCategoryDialogDismissed) },
-            onSave = { onAction(Action.TrackerCategoriesUpdated(it.toList())) }
-        )
-    }
-
-    ScrollableRow(modifier) {
-        Spacer(modifier = Modifier.width(16.dp))
-        Chip(
-            onClick = { onAction(Action.AddCategoryClicked) },
-            activeColor = MaterialTheme.colors.surface,
-            contentColor = MaterialTheme.colors.onSurface
-        ) {
-            Icon(Icons.Default.Add)
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(text = "Categories")
-        }
-        listOf(Category("", "All")).plus(requireNotNull(state.trackerWithRecords).categories).forEach {
-            Spacer(modifier = Modifier.width(8.dp))
-            Chip(isSelected = true) {
-                Text(text = it.name)
-            }
-        }
-        Spacer(modifier = Modifier.width(16.dp))
     }
 }

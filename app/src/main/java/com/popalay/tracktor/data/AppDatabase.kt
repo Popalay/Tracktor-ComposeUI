@@ -100,8 +100,8 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
 val MIGRATION_6_7 = object : Migration(6, 7) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("BEGIN TRANSACTION;")
-        database.execSQL("CREATE TABLE IF NOT EXISTS Category (categoryId TEXT NOT NULL, name TEXT NOT NULL, PRIMARY KEY(categoryId))")
-        database.execSQL("CREATE TABLE IF NOT EXISTS TrackerCategoryCrossRef (id TEXT NOT NULL, categoryId TEXT NOT NULL, PRIMARY KEY(id, categoryId))")
+        database.execSQL("CREATE TABLE IF NOT EXISTS Category (categoryId TEXT NOT NULL, name TEXT NOT NULL, PRIMARY KEY(categoryId), FOREIGN KEY(categoryId) REFERENCES TrackerCategoryCrossRef(categoryId) ON UPDATE NO ACTION ON DELETE CASCADE)")
+        database.execSQL("CREATE TABLE IF NOT EXISTS TrackerCategoryCrossRef (id TEXT NOT NULL, categoryId TEXT NOT NULL, PRIMARY KEY(id, categoryId), FOREIGN KEY(id) REFERENCES Tracker(id) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(categoryId) REFERENCES Category(categoryId) ON UPDATE NO ACTION ON DELETE NO ACTION )")
         database.execSQL("COMMIT;")
     }
 }

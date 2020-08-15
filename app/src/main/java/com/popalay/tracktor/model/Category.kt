@@ -9,6 +9,8 @@ data class Category(
     val name: String
 ) {
     companion object {
+        val All = Category("", "All")
+
         fun defaultList() = listOf(
             Category("0", "Education"),
             Category("1", "Entertainment"),

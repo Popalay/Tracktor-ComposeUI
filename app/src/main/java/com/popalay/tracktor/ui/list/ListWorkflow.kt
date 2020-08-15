@@ -2,6 +2,7 @@ package com.popalay.tracktor.ui.list
 
 import com.popalay.tracktor.data.TrackingRepository
 import com.popalay.tracktor.domain.worker.GetAllTrackersWorker
+import com.popalay.tracktor.model.Category
 import com.popalay.tracktor.model.MenuItem
 import com.popalay.tracktor.model.Statistic
 import com.popalay.tracktor.model.TrackableUnit
@@ -38,7 +39,10 @@ class ListWorkflow(
     @JsonClass(generateAdapter = true)
     data class State(
         @Transient val items: List<TrackerListItem> = emptyList(),
+        @Transient val filteredItems: List<TrackerListItem> = emptyList(),
+        @Transient val allCategories: List<Category> = emptyList(),
         @Transient val menuItems: List<MenuItem> = listOf(MenuItem.FeatureFlagsMenuItem),
+        @Transient val selectedCategory: Category = Category.All,
         @Transient val itemInEditing: Tracker? = null,
         @Transient val itemInDeleting: TrackerWithRecords? = null,
         @Transient val currentAction: Action? = null,
@@ -67,6 +71,7 @@ class ListWorkflow(
         data class DeleteSubmitted(val item: TrackerWithRecords) : Action()
         data class TrackerClicked(val item: TrackerWithRecords) : Action()
         data class MenuItemClicked(val menuItem: MenuItem) : Action()
+        data class CategoryClick(val category: Category) : Action()
         object TrackDialogDismissed : Action()
         object CreateTrackerClicked : Action()
         object AnimationProceeded : Action()
@@ -80,15 +85,24 @@ class ListWorkflow(
                     result.second?.also { setOutput(it) }
                     result.first
                 }
-                is ListUpdated -> nextState.copy(
-                    items = action.list.map { it.toListItem() },
-                    statistic = Statistic.generateFor(action.list),
-                    showEmptyState = action.list.isEmpty()
-                )
+                is ListUpdated -> {
+                    val items = action.list.map { it.toListItem() }
+                    nextState.copy(
+                        items = items,
+                        allCategories = action.list.extractCategories(),
+                        filteredItems = items.filterByCategory(nextState.selectedCategory),
+                        statistic = Statistic.generateFor(action.list),
+                        showEmptyState = items.isEmpty()
+                    )
+                }
                 is AddRecordClicked -> nextState.copy(itemInEditing = action.item.tracker)
                 is TrackerClicked -> nextState.also { setOutput(Output.TrackerDetail(action.item.tracker.id)) }
                 is MenuItemClicked -> handleMenuItem(action.menuItem)
                 is DeleteSubmitted -> nextState.copy(itemInDeleting = action.item)
+                is CategoryClick -> nextState.copy(
+                    selectedCategory = action.category,
+                    filteredItems = nextState.items.filterByCategory(action.category),
+                )
                 CreateTrackerClicked -> nextState.also { setOutput(Output.CreateTracker) }
                 TrackDialogDismissed -> nextState.copy(itemInEditing = null)
                 AnimationProceeded -> nextState.copy(animate = false)
@@ -102,6 +116,13 @@ class ListWorkflow(
             when (menuItem) {
                 MenuItem.FeatureFlagsMenuItem -> nextState.also { setOutput(Output.FeatureFlagList) }
             }
+
+        private fun List<TrackerListItem>.filterByCategory(category: Category) =
+            if (category == Category.All) this else filter { category in it.data.categories }
+
+        private fun List<TrackerWithRecords>.extractCategories() = flatMap { it.categories }
+            .distinct().sortedBy { it.name }
+            .let { if (it.isEmpty()) it else listOf(Category.All).plus(it) }
     }
 
     override fun initialState(props: Props, snapshot: Snapshot?): State =

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumnForIndexed
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
@@ -30,24 +31,27 @@ import com.popalay.tracktor.WindowInsetsAmbient
 import com.popalay.tracktor.model.toListItem
 import com.popalay.tracktor.ui.dialog.UpdateTrackedValueDialog
 import com.popalay.tracktor.ui.list.ListWorkflow.Action
+import com.popalay.tracktor.ui.list.ListWorkflow.Rendering
+import com.popalay.tracktor.ui.list.ListWorkflow.State
+import com.popalay.tracktor.ui.widget.AllCategoryList
 import com.popalay.tracktor.ui.widget.AnimatedSnackbar
 import com.popalay.tracktor.utils.Faker
 import com.squareup.workflow.ui.compose.composedViewFactory
 
 @OptIn(ExperimentalLayout::class)
-val ListBinding = composedViewFactory<ListWorkflow.Rendering> { rendering, _ ->
+val ListBinding = composedViewFactory<Rendering> { rendering, _ ->
     ListScreen(rendering.state, rendering.onAction)
 }
 
-class ListStatePreviewProvider : PreviewParameterProvider<ListWorkflow.State> {
-    override val values: Sequence<ListWorkflow.State>
-        get() = sequenceOf(ListWorkflow.State(List(5) { Faker.fakeTrackerWithRecords() }.map { it.toListItem() }))
+class ListStatePreviewProvider : PreviewParameterProvider<State> {
+    override val values: Sequence<State>
+        get() = sequenceOf(State(List(5) { Faker.fakeTrackerWithRecords() }.map { it.toListItem() }))
 }
 
 @Preview
 @Composable
 fun ListScreen(
-    @PreviewParameter(ListStatePreviewProvider::class) state: ListWorkflow.State,
+    @PreviewParameter(ListStatePreviewProvider::class) state: State,
     onAction: (Action) -> Unit = {}
 ) {
     Scaffold(
@@ -101,22 +105,36 @@ fun ListScreen(
 
 @Composable
 private fun TrackerList(
-    state: ListWorkflow.State,
+    state: State,
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val insets = WindowInsetsAmbient.current
     LazyColumnForIndexed(
-        items = state.items, modifier,
-        contentPadding = InnerPadding(16.dp).copy(bottom = insets.bottom + 16.dp)
+        items = state.filteredItems,
+        contentPadding = InnerPadding(top = 16.dp, bottom = insets.bottom + 16.dp),
+        modifier = modifier
     ) { index, item ->
         if (index == 0 && state.statistic != null) {
-            StatisticWidget(state.statistic, state.animate)
+            StatisticWidget(
+                state.statistic,
+                state.animate,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            if (state.allCategories.isNotEmpty()) {
+                AllCategoryList(
+                    categories = state.allCategories,
+                    selectedCategory = state.selectedCategory,
+                    onCategoryClick = { onAction(Action.CategoryClick(it)) },
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
             Spacer(modifier = Modifier.height(8.dp))
         }
         TrackerListItem(
             item.copy(animate = state.animate),
-            modifier = Modifier.clickable(onClick = { onAction(Action.TrackerClicked(item.data)) }),
+            modifier = Modifier.padding(horizontal = 16.dp),
+            contentModifier = Modifier.clickable(onClick = { onAction(Action.TrackerClicked(item.data)) }),
             onAddClicked = { onAction(Action.AddRecordClicked(item.data)) },
             onRemoveClicked = { onAction(Action.DeleteTrackerClicked(item.data)) }
         )

@@ -50,13 +50,14 @@ class TrackerListItemPreviewProvider : PreviewParameterProvider<TrackerListItem>
 fun TrackerListItem(
     @PreviewParameter(TrackerListItemPreviewProvider::class) item: TrackerListItem,
     modifier: Modifier = Modifier,
+    contentModifier: Modifier = Modifier,
     onAddClicked: () -> Unit = {},
     onRemoveClicked: () -> Unit = {}
 ) {
     val gradient = remember(item) { item.data.tracker.compatibleUnit.gradient }
-    Card {
+    Card(modifier) {
         Column(
-            modifier = modifier.preferredHeight(120.dp),
+            modifier = contentModifier.preferredHeight(120.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Body(item, gradient)

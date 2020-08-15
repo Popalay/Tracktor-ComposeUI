@@ -10,5 +10,5 @@ class GetAllCategoriesWorker(
     private val categoryRepository: CategoryRepository
 ) : Worker<List<Category>> {
     override fun run(): Flow<List<Category>> = categoryRepository.getAll()
-        .map { categories -> categories.plus(Category.defaultList()).distinct().sortedBy { it.name } }
+        .map { categories -> listOf(Category.All).plus(categories).plus(Category.defaultList()).distinct().sortedBy { it.name } }
 }

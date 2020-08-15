@@ -17,7 +17,6 @@ import androidx.compose.runtime.state
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.popalay.tracktor.model.Category
-import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.success
 import com.popalay.tracktor.ui.widget.Chip
 import com.popalay.tracktor.ui.widget.ChipGroup
@@ -25,14 +24,14 @@ import java.util.UUID
 
 @Composable
 fun AddCategoryDialog(
-    trackerWithRecords: TrackerWithRecords,
-    categories: List<Category>,
+    trackerCategories: List<Category>,
+    allCategories: List<Category>,
     onCloseRequest: () -> Unit,
     onSave: (Set<Category>) -> Unit
 ) {
     val newValue = state { "" }
-    val newCategories = state { categories.toSet() }
-    val selectedCategories = state { trackerWithRecords.categories.toSet() }
+    val newCategories = state { allCategories.toSet() }
+    val selectedCategories = state { trackerCategories.toSet() }
     val isCustomCategoryValid = state { false }
     val isCustomCategoryCreation = state { false }
 
@@ -96,9 +95,14 @@ fun AddCategoryDialog(
         },
         confirmButton = {
             Button(
-                enabled = newValue.value.isNotBlank() || categories != newCategories.value,
+                enabled = newValue.value.isNotBlank() || trackerCategories.toSet() != selectedCategories.value,
                 onClick = { onSave(selectedCategories.value) }
             ) { Text(text = "Save") }
+        },
+        dismissButton = {
+            Button(onClick = onCloseRequest) {
+                Text(text = "Cancel")
+            }
         }
     )
 }
