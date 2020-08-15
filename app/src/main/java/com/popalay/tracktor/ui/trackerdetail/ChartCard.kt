@@ -1,6 +1,7 @@
 package com.popalay.tracktor.ui.trackerdetail
 
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.contentColor
 import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
@@ -12,7 +13,6 @@ import androidx.compose.runtime.state
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntBounds
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -39,7 +39,7 @@ fun ChartCard(tracker: TrackerWithRecords, modifier: Modifier = Modifier) {
                 modifier = Modifier.preferredHeight(200.dp),
                 data = tracker.records.map { it.value },
                 gradient = gradient,
-                pointColor = Color.White,
+                pointColor = contentColor(),
                 touchable = true,
                 onPointSelected = { offset, index -> selectedValue.value = offset to index % tracker.records.size },
                 onPointUnSelected = {
@@ -91,12 +91,12 @@ private fun ChartValuePopup(offset: Offset, trackerWithRecords: TrackerWithRecor
         val formatter: ValueRecordFormatter by inject()
 
         Card(
-            color = Color.White,
+            color = MaterialTheme.colors.onSurface,
             shape = MaterialTheme.shapes.small
         ) {
             Text(
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                color = Color.Black,
+                color = MaterialTheme.colors.surface,
                 text = formatter.format(trackerWithRecords.tracker, record)
             )
         }

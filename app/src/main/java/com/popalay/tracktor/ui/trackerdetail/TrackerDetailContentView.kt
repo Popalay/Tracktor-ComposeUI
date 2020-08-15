@@ -1,6 +1,7 @@
 package com.popalay.tracktor.ui.trackerdetail
 
 import androidx.compose.foundation.Icon
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.InnerPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -65,7 +66,9 @@ fun TrackerDetailContentView(
             }
         }
     ) {
-        Column {
+        Column(
+            modifier = Modifier.background(MaterialTheme.colors.background)
+        ) {
             if (state.isAddRecordDialogShowing) {
                 UpdateTrackedValueDialog(
                     tracker = requireNotNull(state.trackerWithRecords).tracker,

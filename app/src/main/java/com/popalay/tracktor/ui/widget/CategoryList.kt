@@ -6,6 +6,7 @@ import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
@@ -38,7 +39,7 @@ fun TrackerCategoryList(
         Chip(
             onClick = { onAddCategoryClicked() },
             activeColor = MaterialTheme.colors.surface,
-            contentColor = MaterialTheme.colors.onSurface
+            contentColor = contentColorFor(MaterialTheme.colors.surface)
         ) {
             Icon(Icons.Default.Add)
             Spacer(modifier = Modifier.width(4.dp))
