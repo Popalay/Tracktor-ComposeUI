@@ -20,10 +20,10 @@ interface CategoryDao {
     suspend fun insert(value: Category)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAll(vararg values: TrackerCategoryCrossRef)
+    suspend fun insertAll(values: List<TrackerCategoryCrossRef>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAll(vararg values: Category)
+    suspend fun insertAllRefs(values: List<Category>)
 
     @Delete
     suspend fun delete(value: Category)
@@ -34,7 +34,7 @@ interface CategoryDao {
     @Transaction
     suspend fun updateForTracker(trackerId: String, categories: List<Category>) {
         deleteAllByTrackerId(trackerId)
-        insertAll(*categories.toTypedArray())
-        insertAll(*categories.map { TrackerCategoryCrossRef(trackerId, it.categoryId) }.toTypedArray())
+        insertAllRefs(categories)
+        insertAll(categories.map { TrackerCategoryCrossRef(trackerId, it.categoryId) })
     }
 }
