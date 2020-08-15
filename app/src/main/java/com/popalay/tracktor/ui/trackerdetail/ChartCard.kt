@@ -1,16 +1,11 @@
 package com.popalay.tracktor.ui.trackerdetail
 
-import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.material.Card
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.DeleteForever
-import androidx.compose.material.icons.filled.Undo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.state
@@ -26,57 +21,32 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
-import com.popalay.tracktor.WindowInsetsAmbient
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
 import com.popalay.tracktor.gradient
 import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.model.ValueRecord
 import com.popalay.tracktor.ui.widget.ChartWidget
-import com.popalay.tracktor.ui.widget.TopAppBar
 import com.popalay.tracktor.utils.inject
 
 @Composable
-fun ChartAppBar(
-    tracker: TrackerWithRecords,
-    onArrowClicked: () -> Unit = {},
-    onUndoClicked: () -> Unit = {},
-    onDeleteClicked: () -> Unit = {}
-) {
+fun ChartCard(tracker: TrackerWithRecords, modifier: Modifier = Modifier) {
     val selectedValue = state<Pair<Offset, Int>?> { null }
+    val gradient = remember(tracker) { tracker.tracker.compatibleUnit.gradient }
 
-    val insets = WindowInsetsAmbient.current
-    TopAppBar(
-        navigationIcon = {
-            IconButton(onClick = onArrowClicked) {
-                Icon(Icons.Default.ArrowBack)
-            }
-        },
-        title = { Text(tracker.tracker.title) },
-        actions = {
-            if (tracker.records.size > 1) {
-                IconButton(onClick = onUndoClicked) {
-                    Icon(Icons.Default.Undo)
+    Stack(modifier) {
+        Card {
+            ChartWidget(
+                modifier = Modifier.preferredHeight(200.dp),
+                data = tracker.records.map { it.value },
+                gradient = gradient,
+                pointColor = Color.White,
+                touchable = true,
+                onPointSelected = { offset, index -> selectedValue.value = offset to index % tracker.records.size },
+                onPointUnSelected = {
+                    selectedValue.value = null
                 }
-            }
-            IconButton(onClick = onDeleteClicked) {
-                Icon(Icons.Default.DeleteForever)
-            }
-        },
-        modifier = Modifier.preferredHeight(insets.top + 240.dp),
-        contentModifier = Modifier.padding(bottom = 4.dp, top = insets.top)
-    ) {
-        val gradient = remember(tracker) { tracker.tracker.compatibleUnit.gradient }
-        ChartWidget(
-            modifier = Modifier.preferredHeight(200.dp),
-            data = tracker.records.map { it.value },
-            gradient = gradient,
-            pointColor = Color.White,
-            touchable = true,
-            onPointSelected = { offset, index -> selectedValue.value = offset to index % tracker.records.size },
-            onPointUnSelected = {
-                selectedValue.value = null
-            }
-        )
+            )
+        }
 
         if (selectedValue.value != null) {
             val (offset, index) = requireNotNull(selectedValue.value)
@@ -107,8 +77,8 @@ private fun ChartValuePopup(offset: Offset, trackerWithRecords: TrackerWithRecor
                 popupGlobalPosition -= IntOffset(relativePopupPos.x, relativePopupPos.y)
 
                 val resolvedOffset = IntOffset(
-                    intOffset.x * (if (layoutDirection == LayoutDirection.Ltr) 1 else -1),
-                    intOffset.y
+                    intOffset.x,
+                    (intOffset.y - popupContentSize.height * 1.5).toInt()
                 )
                 popupGlobalPosition += resolvedOffset
 

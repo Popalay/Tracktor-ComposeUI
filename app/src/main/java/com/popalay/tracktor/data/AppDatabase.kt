@@ -8,14 +8,17 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.popalay.tracktor.data.converter.LocalDateTimeConverter
 import com.popalay.tracktor.data.converter.ProgressDirectionConverter
 import com.popalay.tracktor.data.converter.UnitValueTypeConverter
+import com.popalay.tracktor.model.Category
 import com.popalay.tracktor.model.Tracker
+import com.popalay.tracktor.model.TrackerCategoryCrossRef
 import com.popalay.tracktor.model.ValueRecord
 
 @TypeConverters(value = [LocalDateTimeConverter::class, UnitValueTypeConverter::class, ProgressDirectionConverter::class])
-@Database(entities = [Tracker::class, ValueRecord::class], version = 6)
+@Database(entities = [Tracker::class, ValueRecord::class, Category::class, TrackerCategoryCrossRef::class], version = 7)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun trackerDao(): TrackerDao
     abstract fun recordDao(): RecordDao
+    abstract fun categoryDao(): CategoryDao
 }
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -61,6 +64,7 @@ val MIGRATION_3_4 = object : Migration(3, 4) {
 
 val MIGRATION_4_5 = object : Migration(4, 5) {
     override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("BEGIN TRANSACTION;")
         // Create a new translation table
         database.execSQL(
             "CREATE TABLE IF NOT EXISTS ValueRecord_new(" +
@@ -83,11 +87,36 @@ val MIGRATION_4_5 = object : Migration(4, 5) {
         database.execSQL("DROP TABLE ValueRecord")
         // Change name of table to correct one
         database.execSQL("ALTER TABLE ValueRecord_new RENAME TO ValueRecord")
+        database.execSQL("COMMIT;")
     }
 }
 
 val MIGRATION_5_6 = object : Migration(5, 6) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("ALTER TABLE tracker ADD COLUMN direction TEXT NOT NULL DEFAULT 'ASCENDING'")
+    }
+}
+
+val MIGRATION_6_7 = object : Migration(6, 7) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("BEGIN TRANSACTION;")
+        database.execSQL(
+            "CREATE TABLE IF NOT EXISTS Category(" +
+                    "categoryId TEXT NOT NULL," +
+                    "name TEXT NOT NULL," +
+                    "PRIMARY KEY(categoryId)," +
+                    "FOREIGN KEY(categoryId) REFERENCES TrackerCategoryCrossRef(categoryId) ON UPDATE NO ACTION ON DELETE CASCADE" +
+                    ")"
+        )
+        database.execSQL(
+            "CREATE TABLE IF NOT EXISTS TrackerCategoryCrossRef(" +
+                    "id TEXT NOT NULL," +
+                    "categoryId TEXT NOT NULL," +
+                    "PRIMARY KEY(id, categoryId)," +
+                    "FOREIGN KEY(id) REFERENCES Tracker(id) ON UPDATE NO ACTION ON DELETE NO ACTION," +
+                    "FOREIGN KEY(categoryId) REFERENCES Category(categoryId) ON UPDATE NO ACTION ON DELETE NO ACTION" +
+                    ")"
+        )
+        database.execSQL("COMMIT;")
     }
 }

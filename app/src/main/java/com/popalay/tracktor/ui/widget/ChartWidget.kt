@@ -126,7 +126,7 @@ fun ChartWidget(
     ) {
         val amplifier = transitionState[amplifierKey]
         val shift = Offset(0F, size.height * (1 - amplifier))
-        val points = createPoints(data, size, labelRadius.toPx(), topOffset.toPx()).map { it + shift }
+        val points = createPoints(data, size, labelRadius.toPx(), topOffset.toPx(), topOffset.toPx()).map { it + shift }
         val (conPoints1, conPoints2) = createConnectionPoints(points)
 
         if (points.isEmpty() || conPoints1.isEmpty() || conPoints2.isEmpty()) return@Canvas
@@ -174,9 +174,10 @@ private fun createPoints(
     data: List<Double>,
     size: Size,
     labelRadiusPx: Float = 0F,
-    topOffsetPx: Float = 0F
+    topOffsetPx: Float = 0F,
+    bottomOffsetPx: Float = 0F
 ): List<Offset> {
-    val bottomY = size.height
+    val bottomY = size.height - bottomOffsetPx
     val xDiff = size.width / max(data.size - 1, 1)
 
     val minData = data.minOrNull() ?: 0.0

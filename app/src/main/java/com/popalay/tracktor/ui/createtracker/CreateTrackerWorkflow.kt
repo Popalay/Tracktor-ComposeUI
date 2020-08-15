@@ -4,6 +4,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import com.popalay.tracktor.data.TrackingRepository
 import com.popalay.tracktor.domain.worker.GetAllUnitsWorker
 import com.popalay.tracktor.model.ProgressDirection
+import com.popalay.tracktor.model.ProgressDirection.ASCENDING
 import com.popalay.tracktor.model.TrackableUnit
 import com.popalay.tracktor.model.Tracker
 import com.popalay.tracktor.model.UnitValueType
@@ -31,7 +32,7 @@ class CreateTrackerWorkflow(
     data class State(
         val title: String = "",
         val selectedUnit: TrackableUnit = TrackableUnit.None,
-        val selectedProgressDirection: ProgressDirection = ProgressDirection.ASCENDING,
+        val selectedProgressDirection: ProgressDirection = ASCENDING,
         val initialValue: String = "",
         val isUnitsVisible: Boolean = false,
         val isInitialValueVisible: Boolean = false,
@@ -87,7 +88,7 @@ class CreateTrackerWorkflow(
                 )
                 is UnitSelected -> nextState.copy(
                     selectedUnit = action.unit,
-                    selectedProgressDirection = if (action.unit == TrackableUnit.Word) ProgressDirection.ASCENDING else nextState.selectedProgressDirection,
+                    selectedProgressDirection = if (action.unit == TrackableUnit.Word) ASCENDING else nextState.selectedProgressDirection,
                     initialValueKeyboardType = if (action.unit == TrackableUnit.Word) KeyboardType.Text else KeyboardType.Number,
                     isInitialValueVisible = nextState.title.isNotBlank() && action.unit != TrackableUnit.None,
                     isCustomUnitCreating = false,

@@ -3,6 +3,7 @@ package com.popalay.tracktor.data
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.popalay.tracktor.model.Tracker
@@ -19,11 +20,8 @@ interface TrackerDao {
     @Query("SELECT * FROM tracker WHERE id=:id")
     fun getTrackerWithRecordsById(id: String): Flow<TrackerWithRecords>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(value: Tracker)
-
-    @Insert
-    suspend fun insertAll(values: Tracker)
 
     @Delete
     suspend fun delete(value: Tracker)

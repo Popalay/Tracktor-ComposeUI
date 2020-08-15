@@ -17,8 +17,8 @@ val TrackerDetailBinding = composedViewFactory<TrackerDetailWorkflow.Rendering> 
 class TrackerDetailStatePreviewProvider : PreviewParameterProvider<TrackerDetailWorkflow.State> {
     override val values: Sequence<TrackerDetailWorkflow.State>
         get() = sequenceOf(
-            TrackerDetailWorkflow.State(null, false),
-            TrackerDetailWorkflow.State(Faker.fakeTrackerWithRecords(), true)
+            TrackerDetailWorkflow.State(isAddRecordDialogShowing = false),
+            TrackerDetailWorkflow.State(isAddRecordDialogShowing = true, trackerWithRecords = Faker.fakeTrackerWithRecords())
         )
 }
 

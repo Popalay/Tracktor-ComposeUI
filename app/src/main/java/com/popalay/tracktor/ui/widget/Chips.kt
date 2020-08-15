@@ -8,6 +8,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.ExperimentalLayout
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.MainAxisAlignment
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.SizeMode
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.EmphasisAmbient
@@ -45,7 +47,7 @@ fun Chip(
     inactiveColor: Color = EmphasisAmbient.current.disabled.applyEmphasis(activeColor),
     contentColor: Color = MaterialTheme.colors.onSecondary,
     bordered: Boolean = false,
-    content: @Composable () -> Unit
+    content: @Composable RowScope.() -> Unit
 ) {
     val color = animate(if (isSelected) activeColor else inactiveColor)
 
@@ -60,6 +62,10 @@ fun Chip(
         gravity = Alignment.Center,
         modifier = Modifier.clip(shape).clickable(onClick = onClick)
     ) {
-        Providers(ContentColorAmbient provides contentColor, children = content)
+        Providers(ContentColorAmbient provides contentColor) {
+            Row {
+                content()
+            }
+        }
     }
 }
