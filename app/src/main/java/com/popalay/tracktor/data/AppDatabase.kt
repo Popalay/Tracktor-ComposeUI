@@ -104,8 +104,7 @@ val MIGRATION_6_7 = object : Migration(6, 7) {
             "CREATE TABLE IF NOT EXISTS Category(" +
                     "categoryId TEXT NOT NULL," +
                     "name TEXT NOT NULL," +
-                    "PRIMARY KEY(categoryId)," +
-                    "FOREIGN KEY(categoryId) REFERENCES TrackerCategoryCrossRef(categoryId) ON UPDATE NO ACTION ON DELETE CASCADE" +
+                    "PRIMARY KEY(categoryId)" +
                     ")"
         )
         database.execSQL(
@@ -117,6 +116,8 @@ val MIGRATION_6_7 = object : Migration(6, 7) {
                     "FOREIGN KEY(categoryId) REFERENCES Category(categoryId) ON UPDATE NO ACTION ON DELETE NO ACTION" +
                     ")"
         )
+        database.execSQL("CREATE INDEX IF NOT EXISTS index_TrackerCategoryCrossRef_categoryId ON TrackerCategoryCrossRef(categoryId)")
+        database.execSQL("CREATE INDEX IF NOT EXISTS index_TrackerCategoryCrossRef_id ON TrackerCategoryCrossRef(id)")
         database.execSQL("COMMIT;")
     }
 }
