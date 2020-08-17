@@ -20,22 +20,30 @@ allprojects {
 subprojects {
     // Accessing the `PluginContainer` in order to use `whenPluginAdded` function
     project.plugins.configure(project = project)
+
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        kotlinOptions {
+            jvmTarget = JavaVersion.VERSION_1_8.toString()
+            freeCompilerArgs = listOf(
+                "-Xallow-jvm-ir-dependencies",
+                "-Xskip-prerelease-check",
+                "-Xskip-metadata-version-check",
+                "-Xopt-in=kotlin.RequiresOptIn"
+            )
+        }
+    }
 }
 
 // Extension function on `PluginContainer`
 fun PluginContainer.configure(project: Project) {
     whenPluginAdded {
         when (this) {
-            is AppPlugin -> {
-                project.extensions
-                    .getByType<AppExtension>()
-                    .apply { applyCommons() }
-            }
-            is LibraryPlugin -> {
-                project.extensions
-                    .getByType<LibraryExtension>()
-                    .apply { applyCommons() }
-            }
+            is AppPlugin -> project.extensions
+                .getByType<AppExtension>()
+                .apply { applyCommons() }
+            is LibraryPlugin -> project.extensions
+                .getByType<LibraryExtension>()
+                .apply { applyCommons() }
         }
     }
 }

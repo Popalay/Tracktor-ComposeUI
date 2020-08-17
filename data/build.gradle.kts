@@ -4,6 +4,11 @@ plugins {
     id("kotlin-kapt")
 }
 
+kapt {
+    correctErrorTypes = true
+    useBuildCache = true
+}
+
 android {
     defaultConfig {
         javaCompileOptions {

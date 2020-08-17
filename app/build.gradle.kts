@@ -4,6 +4,11 @@ plugins {
     id("kotlin-kapt")
 }
 
+kapt {
+    correctErrorTypes = true
+    useBuildCache = true
+}
+
 val isCI = System.getenv("CI") == "true"
 println("Is CI environment: $isCI")
 
@@ -73,17 +78,11 @@ android {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
-        freeCompilerArgs = listOf("-Xallow-jvm-ir-dependencies", "-Xskip-prerelease-check", "-Xskip-metadata-version-check")
-    }
-}
 dependencies {
     implementation(project(":data"))
+    implementation(project(":core"))
     implementation(Libs.kotlinStd)
     implementation(Libs.materialDesign)
-    implementation(Libs.preferenceKtx)
     implementation(Libs.insetterKtx)
 
     implementation(Libs.Compose.animation)
