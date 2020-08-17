@@ -8,6 +8,7 @@ import com.popalay.tracktor.data.model.TrackableUnit
 import com.popalay.tracktor.data.model.Tracker
 import com.popalay.tracktor.data.model.UnitValueType
 import com.popalay.tracktor.domain.worker.GetAllUnitsWorker
+import com.popalay.tracktor.domain.worker.SaveTrackerWorker
 import com.popalay.tracktor.utils.toData
 import com.popalay.tracktor.utils.toSnapshot
 import com.squareup.moshi.JsonClass
@@ -15,7 +16,6 @@ import com.squareup.moshi.Moshi
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow
-import com.squareup.workflow.Worker
 import com.squareup.workflow.WorkflowAction
 import com.squareup.workflow.applyTo
 import java.time.LocalDateTime
@@ -165,22 +165,16 @@ class CreateTrackerWorkflow(
     private fun runSideEffects(state: State, context: RenderContext<State, Output>) {
         when (state.currentAction) {
             is Action.SaveClicked -> {
-                val worker = Worker.from {
-                    val tracker = Tracker(
-                        id = UUID.randomUUID().toString(),
-                        title = state.title.trim().capitalize(Locale.getDefault()),
-                        unit = state.selectedUnit,
-                        direction = state.selectedProgressDirection,
-                        date = LocalDateTime.now()
-                    )
-                    trackingRepository.saveTracker(tracker)
-                    if (tracker.unit == TrackableUnit.Word) {
-                        trackingRepository.saveRecord(tracker, state.initialValue)
-                    } else {
-                        trackingRepository.saveRecord(tracker, state.initialValue.toDoubleOrNull() ?: 0.0)
-                    }
+                val tracker = Tracker(
+                    id = UUID.randomUUID().toString(),
+                    title = state.title.trim().capitalize(Locale.getDefault()),
+                    unit = state.selectedUnit,
+                    direction = state.selectedProgressDirection,
+                    date = LocalDateTime.now()
+                )
+                context.runningWorker(SaveTrackerWorker(tracker, state.initialValue, trackingRepository)) {
+                    Action.SideEffectAction(Action.TrackerSaved)
                 }
-                context.runningWorker(worker) { Action.SideEffectAction(Action.TrackerSaved) }
             }
         }
     }

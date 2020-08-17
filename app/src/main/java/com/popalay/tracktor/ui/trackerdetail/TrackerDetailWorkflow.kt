@@ -6,7 +6,7 @@ import com.popalay.tracktor.data.model.Category
 import com.popalay.tracktor.data.model.TrackableUnit
 import com.popalay.tracktor.data.model.TrackerWithRecords
 import com.popalay.tracktor.data.model.ValueRecord
-import com.popalay.tracktor.domain.GetAllCategoriesWorker
+import com.popalay.tracktor.domain.worker.GetAllCategoriesWorker
 import com.popalay.tracktor.domain.worker.GetTrackerByIdWorker
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot

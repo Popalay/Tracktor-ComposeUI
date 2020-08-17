@@ -5,6 +5,7 @@ rootProject.name = "Tracktor"
 include(":app")
 include(":data")
 include(":core")
+include(":domain")
 
 if (System.getenv("CI") != "true") {
     includeBuild("../workflow-kotlin-compose") {

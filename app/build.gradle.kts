@@ -81,6 +81,8 @@ android {
 dependencies {
     implementation(project(":data"))
     implementation(project(":core"))
+    implementation(project(":domain"))
+
     implementation(Libs.kotlinStd)
     implementation(Libs.materialDesign)
     implementation(Libs.insetterKtx)
