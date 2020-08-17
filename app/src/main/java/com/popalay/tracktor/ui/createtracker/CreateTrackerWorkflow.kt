@@ -2,12 +2,12 @@ package com.popalay.tracktor.ui.createtracker
 
 import androidx.compose.ui.text.input.KeyboardType
 import com.popalay.tracktor.data.TrackingRepository
+import com.popalay.tracktor.data.model.ProgressDirection
+import com.popalay.tracktor.data.model.ProgressDirection.ASCENDING
+import com.popalay.tracktor.data.model.TrackableUnit
+import com.popalay.tracktor.data.model.Tracker
+import com.popalay.tracktor.data.model.UnitValueType
 import com.popalay.tracktor.domain.worker.GetAllUnitsWorker
-import com.popalay.tracktor.model.ProgressDirection
-import com.popalay.tracktor.model.ProgressDirection.ASCENDING
-import com.popalay.tracktor.model.TrackableUnit
-import com.popalay.tracktor.model.Tracker
-import com.popalay.tracktor.model.UnitValueType
 import com.popalay.tracktor.utils.toData
 import com.popalay.tracktor.utils.toSnapshot
 import com.squareup.moshi.JsonClass

@@ -9,9 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.popalay.tracktor.data.model.TrackerWithRecords
+import com.popalay.tracktor.data.model.ValueRecord
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
-import com.popalay.tracktor.model.TrackerWithRecords
-import com.popalay.tracktor.model.ValueRecord
 import com.popalay.tracktor.ui.widget.ProgressTextField
 import com.popalay.tracktor.utils.inject
 import com.popalay.tracktor.utils.toRelativeFormat

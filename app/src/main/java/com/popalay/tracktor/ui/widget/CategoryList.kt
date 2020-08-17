@@ -12,7 +12,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.popalay.tracktor.model.Category
+import com.popalay.tracktor.data.model.Category
 import com.popalay.tracktor.ui.dialog.AddCategoryDialog
 
 @Composable

@@ -28,8 +28,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.popalay.tracktor.data.model.Statistic
 import com.popalay.tracktor.gradients
-import com.popalay.tracktor.model.Statistic
 import com.popalay.tracktor.ui.list.AnimationState.STATE_END
 import com.popalay.tracktor.ui.list.AnimationState.STATE_START
 import com.popalay.tracktor.ui.widget.DoughnutChart

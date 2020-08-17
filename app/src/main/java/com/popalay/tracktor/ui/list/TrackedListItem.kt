@@ -29,9 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
+import com.popalay.tracktor.data.model.TrackerListItem
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
 import com.popalay.tracktor.gradient
-import com.popalay.tracktor.model.TrackerListItem
 import com.popalay.tracktor.ui.widget.ProgressTextField
 import com.popalay.tracktor.ui.widget.SimpleChartWidget
 import com.popalay.tracktor.utils.Faker

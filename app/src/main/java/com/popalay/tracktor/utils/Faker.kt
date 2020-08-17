@@ -1,12 +1,12 @@
 package com.popalay.tracktor.utils
 
-import com.popalay.tracktor.model.Category
-import com.popalay.tracktor.model.FeatureFlagListItem
-import com.popalay.tracktor.model.ProgressDirection
-import com.popalay.tracktor.model.TrackableUnit
-import com.popalay.tracktor.model.Tracker
-import com.popalay.tracktor.model.TrackerWithRecords
-import com.popalay.tracktor.model.ValueRecord
+import com.popalay.tracktor.data.model.Category
+import com.popalay.tracktor.data.model.FeatureFlagListItem
+import com.popalay.tracktor.data.model.ProgressDirection
+import com.popalay.tracktor.data.model.TrackableUnit
+import com.popalay.tracktor.data.model.Tracker
+import com.popalay.tracktor.data.model.TrackerWithRecords
+import com.popalay.tracktor.data.model.ValueRecord
 import java.time.LocalDateTime
 
 object Faker {

@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.state
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.popalay.tracktor.model.Category
+import com.popalay.tracktor.data.model.Category
 import com.popalay.tracktor.success
 import com.popalay.tracktor.ui.widget.Chip
 import com.popalay.tracktor.ui.widget.ChipGroup

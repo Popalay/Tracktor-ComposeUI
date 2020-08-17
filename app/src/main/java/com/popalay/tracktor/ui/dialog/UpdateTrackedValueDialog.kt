@@ -10,8 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.state
 import androidx.compose.ui.text.input.KeyboardType
-import com.popalay.tracktor.model.TrackableUnit
-import com.popalay.tracktor.model.Tracker
+import com.popalay.tracktor.data.model.TrackableUnit
+import com.popalay.tracktor.data.model.Tracker
 
 @Composable
 fun UpdateTrackedValueDialog(

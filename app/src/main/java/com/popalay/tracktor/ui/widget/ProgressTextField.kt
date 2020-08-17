@@ -5,7 +5,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import com.popalay.tracktor.model.ProgressDirection
+import com.popalay.tracktor.data.model.ProgressDirection
 import com.popalay.tracktor.success
 
 @Composable

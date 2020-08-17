@@ -9,7 +9,7 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.popalay.tracktor.model.TrackableUnit
+import com.popalay.tracktor.data.model.TrackableUnit
 import kotlin.math.absoluteValue
 
 private val lightThemeColors = lightColors(

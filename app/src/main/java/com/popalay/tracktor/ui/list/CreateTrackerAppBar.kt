@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import com.popalay.tracktor.R
 import com.popalay.tracktor.WindowInsetsAmbient
-import com.popalay.tracktor.model.MenuItem
+import com.popalay.tracktor.data.model.MenuItem
 
 @Preview
 @Composable

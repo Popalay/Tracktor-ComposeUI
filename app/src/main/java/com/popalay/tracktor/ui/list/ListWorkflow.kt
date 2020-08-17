@@ -1,15 +1,15 @@
 package com.popalay.tracktor.ui.list
 
 import com.popalay.tracktor.data.TrackingRepository
+import com.popalay.tracktor.data.model.Category
+import com.popalay.tracktor.data.model.MenuItem
+import com.popalay.tracktor.data.model.Statistic
+import com.popalay.tracktor.data.model.TrackableUnit
+import com.popalay.tracktor.data.model.Tracker
+import com.popalay.tracktor.data.model.TrackerListItem
+import com.popalay.tracktor.data.model.TrackerWithRecords
+import com.popalay.tracktor.data.model.toListItem
 import com.popalay.tracktor.domain.worker.GetAllTrackersWorker
-import com.popalay.tracktor.model.Category
-import com.popalay.tracktor.model.MenuItem
-import com.popalay.tracktor.model.Statistic
-import com.popalay.tracktor.model.TrackableUnit
-import com.popalay.tracktor.model.Tracker
-import com.popalay.tracktor.model.TrackerListItem
-import com.popalay.tracktor.model.TrackerWithRecords
-import com.popalay.tracktor.model.toListItem
 import com.popalay.tracktor.utils.toData
 import com.popalay.tracktor.utils.toSnapshot
 import com.squareup.moshi.JsonClass

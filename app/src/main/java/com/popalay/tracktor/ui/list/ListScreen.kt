@@ -28,7 +28,7 @@ import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
 import com.popalay.tracktor.WindowInsetsAmbient
-import com.popalay.tracktor.model.toListItem
+import com.popalay.tracktor.data.model.toListItem
 import com.popalay.tracktor.ui.dialog.UpdateTrackedValueDialog
 import com.popalay.tracktor.ui.list.ListWorkflow.Action
 import com.popalay.tracktor.ui.list.ListWorkflow.Rendering

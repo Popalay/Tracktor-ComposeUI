@@ -1,7 +1,7 @@
 package com.popalay.tracktor.domain.worker
 
 import com.popalay.tracktor.data.TrackingRepository
-import com.popalay.tracktor.model.TrackerWithRecords
+import com.popalay.tracktor.data.model.TrackerWithRecords
 import com.squareup.workflow.Worker
 import kotlinx.coroutines.flow.Flow
 

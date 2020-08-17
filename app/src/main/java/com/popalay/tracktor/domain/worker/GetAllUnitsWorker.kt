@@ -1,6 +1,6 @@
 package com.popalay.tracktor.domain.worker
 
-import com.popalay.tracktor.model.TrackableUnit
+import com.popalay.tracktor.data.model.TrackableUnit
 import com.squareup.workflow.Worker
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf

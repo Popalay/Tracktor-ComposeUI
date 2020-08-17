@@ -1,9 +1,9 @@
 package com.popalay.tracktor.domain.formatter
 
-import com.popalay.tracktor.model.TrackableUnit
-import com.popalay.tracktor.model.Tracker
-import com.popalay.tracktor.model.UnitValueType
-import com.popalay.tracktor.model.ValueRecord
+import com.popalay.tracktor.data.model.TrackableUnit
+import com.popalay.tracktor.data.model.Tracker
+import com.popalay.tracktor.data.model.UnitValueType
+import com.popalay.tracktor.data.model.ValueRecord
 
 interface ValueRecordFormatter {
     fun isForUnit(unit: TrackableUnit): Boolean

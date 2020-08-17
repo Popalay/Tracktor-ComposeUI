@@ -1,7 +1,7 @@
 package com.popalay.tracktor.domain
 
 import com.popalay.tracktor.data.CategoryRepository
-import com.popalay.tracktor.model.Category
+import com.popalay.tracktor.data.model.Category
 import com.squareup.workflow.Worker
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
