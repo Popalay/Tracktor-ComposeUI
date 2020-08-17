@@ -6,7 +6,7 @@ buildscript {
             'targetSdk' : 29,
     ]
 
-    ext.kotlin_version = "1.4.0-rc"
+    ext.kotlin_version = "1.4.0"
     repositories {
         google()
         jcenter()
