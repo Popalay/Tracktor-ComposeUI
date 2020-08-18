@@ -52,7 +52,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
 
       - name: Detekt all
-        uses: natiginfo/action-detekt-all@1.10.0-RC1
+        uses: natiginfo/action-detekt-all@1.11.0
         with:
           args: --fail-fast --config .github/detekt.yml --excludes **/workflow-kotlin-compose/**;**JsonAdapter.**
 
