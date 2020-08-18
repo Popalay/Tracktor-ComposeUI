@@ -2,7 +2,6 @@ package com.popalay.tracktor.ui.list
 
 import com.popalay.tracktor.data.TrackingRepository
 import com.popalay.tracktor.data.model.Category
-import com.popalay.tracktor.data.model.MenuItem
 import com.popalay.tracktor.data.model.Statistic
 import com.popalay.tracktor.data.model.TrackableUnit
 import com.popalay.tracktor.data.model.Tracker
@@ -41,7 +40,6 @@ class ListWorkflow(
         @Transient val items: List<TrackerListItem> = emptyList(),
         @Transient val filteredItems: List<TrackerListItem> = emptyList(),
         @Transient val allCategories: List<Category> = emptyList(),
-        @Transient val menuItems: List<MenuItem> = listOf(MenuItem.FeatureFlagsMenuItem),
         @Transient val selectedCategory: Category = Category.All,
         @Transient val itemInEditing: Tracker? = null,
         @Transient val itemInDeleting: TrackerWithRecords? = null,
@@ -58,8 +56,8 @@ class ListWorkflow(
 
     sealed class Output {
         data class TrackerDetail(val trackerId: String) : Output()
-        object FeatureFlagList : Output()
         object CreateTracker : Output()
+        object Settings : Output()
     }
 
     sealed class Action : WorkflowAction<State, Output> {
@@ -70,7 +68,6 @@ class ListWorkflow(
         data class DeleteTrackerClicked(val item: TrackerWithRecords) : Action()
         data class DeleteSubmitted(val item: TrackerWithRecords) : Action()
         data class TrackerClicked(val item: TrackerWithRecords) : Action()
-        data class MenuItemClicked(val menuItem: MenuItem) : Action()
         data class CategoryClick(val category: Category) : Action()
         object TrackDialogDismissed : Action()
         object CreateTrackerClicked : Action()
@@ -78,6 +75,7 @@ class ListWorkflow(
         object UndoAvailabilityEnded : Action()
         object UndoDeletingClicked : Action()
         object UndoPerformed : Action()
+        object SettingsClicked : Action()
 
         override fun WorkflowAction.Updater<State, Output>.apply() {
             nextState = when (val action = this@Action) {
@@ -97,7 +95,6 @@ class ListWorkflow(
                 }
                 is AddRecordClicked -> nextState.copy(itemInEditing = action.item.tracker)
                 is TrackerClicked -> nextState.also { setOutput(Output.TrackerDetail(action.item.tracker.id)) }
-                is MenuItemClicked -> handleMenuItem(action.menuItem)
                 is DeleteSubmitted -> nextState.copy(itemInDeleting = action.item)
                 is CategoryClick -> nextState.copy(
                     selectedCategory = action.category,
@@ -108,14 +105,12 @@ class ListWorkflow(
                 AnimationProceeded -> nextState.copy(animate = false)
                 UndoAvailabilityEnded -> nextState.copy(itemInDeleting = null)
                 UndoPerformed -> nextState.copy(itemInDeleting = null)
+                SettingsClicked -> nextState.also {
+                    setOutput(Output.Settings)
+                }
                 else -> nextState.copy(currentAction = this@Action)
             }
         }
-
-        private fun WorkflowAction.Updater<State, Output>.handleMenuItem(menuItem: MenuItem): State =
-            when (menuItem) {
-                MenuItem.FeatureFlagsMenuItem -> nextState.also { setOutput(Output.FeatureFlagList) }
-            }
 
         private fun List<TrackerListItem>.filterByCategory(category: Category) =
             if (category == Category.All) this else filter { category in it.data.categories }
