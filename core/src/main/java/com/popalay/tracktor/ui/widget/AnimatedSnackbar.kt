@@ -1,4 +1,4 @@
-package com.popalay.tracktor.feature.widget
+package com.popalay.tracktor.ui.widget
 
 import androidx.compose.animation.animate
 import androidx.compose.foundation.Text

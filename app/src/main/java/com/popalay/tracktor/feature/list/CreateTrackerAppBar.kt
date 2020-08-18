@@ -12,7 +12,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import com.popalay.tracktor.R
-import com.popalay.tracktor.feature.widget.TopAppBar
+import com.popalay.tracktor.ui.widget.TopAppBar
 
 @Preview
 @Composable

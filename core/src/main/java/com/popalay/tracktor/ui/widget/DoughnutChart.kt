@@ -1,4 +1,4 @@
-package com.popalay.tracktor.feature.widget
+package com.popalay.tracktor.ui.widget
 
 import android.graphics.CornerPathEffect
 import androidx.compose.animation.core.AnimationConstants
@@ -20,8 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
-import com.popalay.tracktor.feature.widget.AnimationState.STATE_END
-import com.popalay.tracktor.feature.widget.AnimationState.STATE_START
+import com.popalay.tracktor.ui.widget.AnimationState.STATE_END
+import com.popalay.tracktor.ui.widget.AnimationState.STATE_START
 import com.popalay.tracktor.utils.createPolygon
 import com.popalay.tracktor.utils.transform
 import kotlin.math.roundToInt

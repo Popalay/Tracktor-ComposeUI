@@ -24,11 +24,11 @@ import androidx.compose.ui.unit.dp
 import com.popalay.tracktor.core.R
 import com.popalay.tracktor.data.model.TrackerWithRecords
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
-import com.popalay.tracktor.feature.dialog.AddNewRecordDialog
 import com.popalay.tracktor.feature.trackerdetail.TrackerDetailWorkflow.Action
 import com.popalay.tracktor.feature.trackerdetail.TrackerDetailWorkflow.State
-import com.popalay.tracktor.feature.widget.AnimatedSnackbar
-import com.popalay.tracktor.feature.widget.TrackerCategoryList
+import com.popalay.tracktor.ui.dialog.AddNewRecordDialog
+import com.popalay.tracktor.ui.widget.AnimatedSnackbar
+import com.popalay.tracktor.ui.widget.TrackerCategoryList
 import com.popalay.tracktor.utils.inject
 import com.popalay.tracktor.utils.navigationBarHeight
 import com.popalay.tracktor.utils.navigationBarPadding

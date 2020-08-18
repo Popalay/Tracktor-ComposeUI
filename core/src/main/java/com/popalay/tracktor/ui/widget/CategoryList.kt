@@ -1,4 +1,4 @@
-package com.popalay.tracktor.feature.widget
+package com.popalay.tracktor.ui.widget
 
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.ScrollableRow
@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.popalay.tracktor.core.R
 import com.popalay.tracktor.data.model.Category
-import com.popalay.tracktor.feature.dialog.AddCategoryDialog
+import com.popalay.tracktor.ui.dialog.AddCategoryDialog
 
 @Composable
 fun TrackerCategoryList(

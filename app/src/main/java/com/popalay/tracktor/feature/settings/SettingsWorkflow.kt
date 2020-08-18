@@ -34,16 +34,9 @@ class SettingsWorkflow : StatefulWorkflow<Unit, Unit, SettingsWorkflow.Output, S
         props: Unit,
         state: Unit,
         context: RenderContext<Unit, Output>
-    ): Rendering {
-        runSideEffects(state)
-
-        return Rendering(
-            onAction = { context.actionSink.send(it) }
-        )
-    }
+    ): Rendering = Rendering(
+        onAction = { context.actionSink.send(it) }
+    )
 
     override fun snapshotState(state: Unit): Snapshot = Snapshot.EMPTY
-
-    private fun runSideEffects(state: Unit) {
-    }
 }

@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.popalay.tracktor.data.model.TrackerWithRecords
 import com.popalay.tracktor.data.model.ValueRecord
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
-import com.popalay.tracktor.feature.widget.ProgressTextField
+import com.popalay.tracktor.ui.widget.ProgressTextField
 import com.popalay.tracktor.utils.inject
 import com.popalay.tracktor.utils.toRelativeFormat
 

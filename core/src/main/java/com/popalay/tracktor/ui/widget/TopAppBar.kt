@@ -1,4 +1,4 @@
-package com.popalay.tracktor.feature.widget
+package com.popalay.tracktor.ui.widget
 
 import androidx.compose.foundation.ContentColorAmbient
 import androidx.compose.foundation.ProvideTextStyle

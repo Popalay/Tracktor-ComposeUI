@@ -9,7 +9,7 @@ import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Undo
 import androidx.compose.runtime.Composable
 import com.popalay.tracktor.data.model.TrackerWithRecords
-import com.popalay.tracktor.feature.widget.TopAppBar
+import com.popalay.tracktor.ui.widget.TopAppBar
 
 @Composable
 fun TrackerDetailsAppBar(

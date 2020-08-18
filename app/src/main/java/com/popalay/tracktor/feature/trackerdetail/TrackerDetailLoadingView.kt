@@ -9,7 +9,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.popalay.tracktor.core.R
-import com.popalay.tracktor.feature.widget.TopAppBar
+import com.popalay.tracktor.ui.widget.TopAppBar
 
 @Composable
 fun TrackerDetailLoadingView(onArrowClicked: () -> Unit = {}) {

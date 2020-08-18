@@ -29,12 +29,12 @@ import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
 import com.popalay.tracktor.core.R
 import com.popalay.tracktor.data.model.toListItem
-import com.popalay.tracktor.feature.dialog.AddNewRecordDialog
 import com.popalay.tracktor.feature.list.ListWorkflow.Action
 import com.popalay.tracktor.feature.list.ListWorkflow.Rendering
 import com.popalay.tracktor.feature.list.ListWorkflow.State
-import com.popalay.tracktor.feature.widget.AllCategoryList
-import com.popalay.tracktor.feature.widget.AnimatedSnackbar
+import com.popalay.tracktor.ui.dialog.AddNewRecordDialog
+import com.popalay.tracktor.ui.widget.AllCategoryList
+import com.popalay.tracktor.ui.widget.AnimatedSnackbar
 import com.popalay.tracktor.utils.Faker
 import com.popalay.tracktor.utils.navigationBarHeight
 import com.popalay.tracktor.utils.navigationBarPadding

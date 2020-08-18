@@ -21,7 +21,7 @@ import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
 import com.popalay.tracktor.core.R
 import com.popalay.tracktor.feature.featureflagslist.FeatureFlagsListWorkflow.Action
-import com.popalay.tracktor.feature.widget.TopAppBar
+import com.popalay.tracktor.ui.widget.TopAppBar
 import com.popalay.tracktor.utils.Faker
 import com.popalay.tracktor.utils.onBackPressed
 import com.squareup.workflow.ui.compose.composedViewFactory

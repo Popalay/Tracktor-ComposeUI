@@ -1,4 +1,4 @@
-package com.popalay.tracktor.feature.widget
+package com.popalay.tracktor.ui.widget
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.FloatPropKey
@@ -22,8 +22,8 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.popalay.tracktor.feature.widget.ChartAnimationState.STATE_END
-import com.popalay.tracktor.feature.widget.ChartAnimationState.STATE_START
+import com.popalay.tracktor.ui.widget.ChartAnimationState.STATE_END
+import com.popalay.tracktor.ui.widget.ChartAnimationState.STATE_START
 import com.popalay.tracktor.utils.dragGestureFilter
 import com.popalay.tracktor.utils.getSubPath
 import kotlin.math.absoluteValue

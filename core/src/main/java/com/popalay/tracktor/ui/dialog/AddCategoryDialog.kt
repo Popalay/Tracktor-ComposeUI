@@ -1,4 +1,4 @@
-package com.popalay.tracktor.feature.dialog
+package com.popalay.tracktor.ui.dialog
 
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
@@ -19,9 +19,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.popalay.tracktor.core.R
 import com.popalay.tracktor.data.model.Category
-import com.popalay.tracktor.feature.widget.Chip
-import com.popalay.tracktor.feature.widget.ChipGroup
 import com.popalay.tracktor.success
+import com.popalay.tracktor.ui.widget.Chip
+import com.popalay.tracktor.ui.widget.ChipGroup
 import java.util.UUID
 
 @Composable

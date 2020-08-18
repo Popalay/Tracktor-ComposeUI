@@ -24,8 +24,8 @@ import androidx.compose.ui.window.PopupPositionProvider
 import com.popalay.tracktor.data.model.TrackerWithRecords
 import com.popalay.tracktor.data.model.ValueRecord
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
-import com.popalay.tracktor.feature.widget.ChartWidget
 import com.popalay.tracktor.gradient
+import com.popalay.tracktor.ui.widget.ChartWidget
 import com.popalay.tracktor.utils.inject
 
 @Composable

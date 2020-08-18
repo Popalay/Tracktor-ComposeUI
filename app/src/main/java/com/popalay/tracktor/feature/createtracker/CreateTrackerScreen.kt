@@ -38,10 +38,10 @@ import com.popalay.tracktor.core.R
 import com.popalay.tracktor.data.model.ProgressDirection
 import com.popalay.tracktor.data.model.UnitValueType
 import com.popalay.tracktor.feature.createtracker.CreateTrackerWorkflow.Action
-import com.popalay.tracktor.feature.widget.Chip
-import com.popalay.tracktor.feature.widget.ChipGroup
-import com.popalay.tracktor.feature.widget.TopAppBar
 import com.popalay.tracktor.success
+import com.popalay.tracktor.ui.widget.Chip
+import com.popalay.tracktor.ui.widget.ChipGroup
+import com.popalay.tracktor.ui.widget.TopAppBar
 import com.popalay.tracktor.utils.onBackPressed
 import com.squareup.workflow.ui.compose.composedViewFactory
 

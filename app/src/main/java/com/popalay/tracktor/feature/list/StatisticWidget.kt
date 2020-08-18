@@ -33,8 +33,8 @@ import com.popalay.tracktor.core.R
 import com.popalay.tracktor.data.model.Statistic
 import com.popalay.tracktor.feature.list.AnimationState.STATE_END
 import com.popalay.tracktor.feature.list.AnimationState.STATE_START
-import com.popalay.tracktor.feature.widget.DoughnutChart
 import com.popalay.tracktor.gradients
+import com.popalay.tracktor.ui.widget.DoughnutChart
 import com.popalay.tracktor.utils.addStyle
 import com.popalay.tracktor.utils.toRelativeFormat
 import kotlin.math.max

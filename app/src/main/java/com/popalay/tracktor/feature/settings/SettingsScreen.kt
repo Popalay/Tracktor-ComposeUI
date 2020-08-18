@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import com.popalay.tracktor.core.R
 import com.popalay.tracktor.feature.settings.SettingsWorkflow.Action
-import com.popalay.tracktor.feature.widget.TopAppBar
+import com.popalay.tracktor.ui.widget.TopAppBar
 import com.popalay.tracktor.utils.onBackPressed
 import com.squareup.workflow.ui.compose.composedViewFactory
 

@@ -33,9 +33,9 @@ import androidx.ui.tooling.preview.PreviewParameterProvider
 import com.popalay.tracktor.core.R
 import com.popalay.tracktor.data.model.TrackerListItem
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
-import com.popalay.tracktor.feature.widget.ProgressTextField
-import com.popalay.tracktor.feature.widget.SimpleChartWidget
 import com.popalay.tracktor.gradient
+import com.popalay.tracktor.ui.widget.ProgressTextField
+import com.popalay.tracktor.ui.widget.SimpleChartWidget
 import com.popalay.tracktor.utils.Faker
 import com.popalay.tracktor.utils.inject
 

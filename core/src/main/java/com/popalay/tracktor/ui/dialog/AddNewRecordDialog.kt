@@ -1,4 +1,4 @@
-package com.popalay.tracktor.feature.dialog
+package com.popalay.tracktor.ui.dialog
 
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
