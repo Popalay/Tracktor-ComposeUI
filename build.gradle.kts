@@ -4,17 +4,8 @@ import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 
 plugins {
+    id("com.android.application") version Version.androidGradlePlugin apply false
     kotlin("android") version Version.kotlin apply false
-}
-
-buildscript {
-    repositories {
-        google()
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath("com.android.tools.build:gradle:4.2.0-alpha07")
-    }
 }
 
 allprojects {
@@ -63,7 +54,7 @@ fun AppExtension.applyCommons() {
     defaultConfig.apply {
         minSdkVersion(AndroidConfig.minSdk)
         targetSdkVersion(AndroidConfig.targetSdk)
-        versionCode = properties.getOrDefault("tracktor.versioncode", 1) as Int
+        versionCode = properties.getOrDefault("tracktor.versioncode", 1).toString().toInt()
         versionName = AndroidConfig.versionName
     }
 
