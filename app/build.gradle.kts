@@ -85,7 +85,6 @@ dependencies {
 
     implementation(Libs.kotlinStd)
     implementation(Libs.materialDesign)
-    implementation(Libs.insetterKtx)
 
     implementation(Libs.Compose.animation)
     implementation(Libs.Compose.foundation)

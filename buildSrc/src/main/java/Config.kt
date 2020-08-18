@@ -21,7 +21,6 @@ object Libs {
     const val kotlinStd = "org.jetbrains.kotlin:kotlin-stdlib:${Version.kotlin}"
     const val materialDesign = "com.google.android.material:material:1.2.0"
     const val preferenceKtx = "androidx.preference:preference-ktx:1.1.1"
-    const val insetterKtx = "dev.chrisbanes:insetter-ktx:0.3.1"
 
     object Room {
         const val runtime = "androidx.room:room-runtime:${Version.room}"
