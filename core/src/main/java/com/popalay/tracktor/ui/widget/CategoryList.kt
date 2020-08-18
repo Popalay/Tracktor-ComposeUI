@@ -45,7 +45,7 @@ fun TrackerCategoryList(
         ) {
             Icon(Icons.Default.Add)
             Spacer(modifier = Modifier.width(4.dp))
-            Text(stringResource(R.string.category_list_title))
+            Text(stringResource(R.string.create_tracker_add_category))
         }
         categories.forEach {
             Spacer(modifier = Modifier.width(8.dp))

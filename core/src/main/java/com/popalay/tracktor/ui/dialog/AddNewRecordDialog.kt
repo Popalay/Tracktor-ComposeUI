@@ -38,7 +38,7 @@ fun AddNewRecordDialog(
         onCloseRequest = onCloseRequest,
         title = {
             Column {
-                Text(stringResource(R.string.add_new_record_title))
+                Text(stringResource(R.string.add_new_record_title, tracker.title))
                 Text(stringResource(R.string.common_sorry_for_crash), style = MaterialTheme.typography.caption)
             }
         },
