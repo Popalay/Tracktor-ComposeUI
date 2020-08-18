@@ -22,20 +22,3 @@ if (System.getenv("CI") != "true") {
         }
     }
 }
-
-pluginManagement {
-    repositories {
-        maven(url = "https://dl.bintray.com/kotlin/kotlin-eap/")
-        gradlePluginPortal()
-        jcenter()
-        google()
-    }
-
-    resolutionStrategy {
-        eachPlugin {
-            if (requested.id.namespace == "com.android") {
-                useModule("com.android.tools.build:gradle:${requested.version}")
-            }
-        }
-    }
-}

@@ -4,8 +4,17 @@ import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 
 plugins {
-    id("com.android.application") version Version.androidGradlePlugin apply false
     kotlin("android") version Version.kotlin apply false
+}
+
+buildscript {
+    repositories {
+        google()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath("com.android.tools.build:gradle:${Version.androidGradlePlugin}")
+    }
 }
 
 allprojects {
