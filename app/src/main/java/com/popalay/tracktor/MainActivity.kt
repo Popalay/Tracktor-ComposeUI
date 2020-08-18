@@ -1,16 +1,10 @@
 package com.popalay.tracktor
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.InnerPadding
-import androidx.compose.runtime.Providers
-import androidx.compose.runtime.state
-import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.platform.setContent
-import androidx.compose.ui.unit.Density
-import androidx.core.graphics.Insets
-import androidx.core.view.ViewCompat
-import dev.chrisbanes.insetter.setEdgeToEdgeSystemUiFlags
+import com.popalay.tracktor.utils.ProvideDisplayInsets
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,26 +12,11 @@ class MainActivity : AppCompatActivity() {
         setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
 
-        val view = window.decorView
-        view.setEdgeToEdgeSystemUiFlags()
-        view.rootWindowInsets
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 
         setContent {
-            val insetsState = state { ViewCompat.getRootWindowInsets(view)?.systemWindowInsets ?: Insets.NONE }
-
-            ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-                insetsState.value = insets.systemWindowInsets
-                insets
-            }
-            val padding = with(Density(ContextAmbient.current)) {
-                InnerPadding(
-                    insetsState.value.left.toDp(),
-                    insetsState.value.top.toDp(),
-                    insetsState.value.right.toDp(),
-                    insetsState.value.bottom.toDp()
-                )
-            }
-            Providers(WindowInsetsAmbient provides padding) {
+            ProvideDisplayInsets {
                 App()
             }
         }

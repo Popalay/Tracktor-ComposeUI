@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.material.Checkbox
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
@@ -19,9 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
-import com.popalay.tracktor.WindowInsetsAmbient
 import com.popalay.tracktor.ui.featureflagslist.FeatureFlagsListWorkflow.Action
-import com.popalay.tracktor.ui.widget.DefaultTopAppBarHeight
 import com.popalay.tracktor.ui.widget.TopAppBar
 import com.popalay.tracktor.utils.Faker
 import com.popalay.tracktor.utils.onBackPressed
@@ -51,9 +48,7 @@ fun FeatureFlagsListScreen(
                     IconButton(onClick = { onAction(Action.BackClicked) }) {
                         Icon(Icons.Default.ArrowBack)
                     }
-                },
-                modifier = Modifier.preferredHeight(DefaultTopAppBarHeight + WindowInsetsAmbient.current.top),
-                contentModifier = Modifier.padding(top = WindowInsetsAmbient.current.top)
+                }
             )
         }
     ) {
