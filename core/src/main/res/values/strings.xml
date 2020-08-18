@@ -1,3 +1,35 @@
-<resources>
-    <string name="app_name">Tracktor</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="common.loading">Loading…</string>
+    <string name="common.sorry_for_crash">(sorry for the crash, waiting for the fix)</string>
+
+    <string name="button.undo">UNDO</string>
+    <string name="button.save">SAVE</string>
+    <string name="button.cancel" tools:ignore="ButtonCase">CANCEL</string>
+
+    <string name="tracker_list.empty_message">Click on the button below and let\'s track!</string>
+    <string name="tracker_item.empty_message">Start tracking now</string>
+    <string name="tracker_item.removed_message">%s was removed</string>
+
+    <string name="feature_toggles.title">Feature toggles</string>
+
+    <string name="create_tracker.title">Let\'s track</string>
+    <string name="create_tracker.name.label">What would you like to track?</string>
+    <string name="create_tracker.value.label">What\'s your initial value?</string>
+    <string name="create_tracker.progress_direction.message">Progress direction, define value growth direction:</string>
+    <string name="create_tracker.unit.message">Choose preferred unit or create your own:</string>
+    <string name="create_tracker.custom_unit.name.label">Unit name</string>
+    <string name="create_tracker.custom_unit.symbol.label">Unit symbol</string>
+    <string name="create_tracker.custom_unit.type.label">Click to select</string>
+
+    <string name="progress_statistic.trackers_amount">You have %d trackers</string>
+    <string name="progress_statistic.trackers_with_progress">You have %d trackers with progress</string>
+    <string name="progress_statistic.most_progressive_tracker">%s is your most progressive tracker</string>
+    <string name="progress_statistic.last_updated_tracker">$1%s was updated $2%s</string>
+
+    <string name="add_new_record.title">Track %s</string>
+
+    <string name="add_category.title">Category</string>
+    <string name="add_category.new_category_label">Category</string>
+    <string name="category_list.title">Categories</string>
+
 </resources>

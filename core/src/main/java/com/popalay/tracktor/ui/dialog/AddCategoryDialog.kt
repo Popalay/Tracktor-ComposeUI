@@ -15,7 +15,9 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.state
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.popalay.tracktor.core.R
 import com.popalay.tracktor.data.model.Category
 import com.popalay.tracktor.success
 import com.popalay.tracktor.ui.widget.Chip
@@ -39,8 +41,8 @@ fun AddCategoryDialog(
         onCloseRequest = onCloseRequest,
         title = {
             Column {
-                Text(text = "Category")
-                Text(text = "(sorry for the crash, waiting for the fix)", style = MaterialTheme.typography.caption)
+                Text(stringResource(R.string.add_category_title))
+                Text(stringResource(R.string.common_sorry_for_crash), style = MaterialTheme.typography.caption)
             }
         },
         text = {
@@ -84,7 +86,7 @@ fun AddCategoryDialog(
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = newValue.value,
-                    label = { Text(text = "New category") },
+                    label = { Text(stringResource(R.string.add_category_new_category_label)) },
                     activeColor = MaterialTheme.colors.onSurface,
                     onValueChange = {
                         newValue.value = it
@@ -97,11 +99,11 @@ fun AddCategoryDialog(
             Button(
                 enabled = newValue.value.isNotBlank() || trackerCategories.toSet() != selectedCategories.value,
                 onClick = { onSave(selectedCategories.value) }
-            ) { Text(text = "Save") }
+            ) { Text(stringResource(R.string.button_save)) }
         },
         dismissButton = {
             Button(onClick = onCloseRequest) {
-                Text(text = "Cancel")
+                Text(stringResource(R.string.button_cancel))
             }
         }
     )

@@ -18,6 +18,8 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.platform.ContextAmbient
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import org.koin.core.context.KoinContextHandler
 import org.koin.core.parameter.ParametersDefinition
 import org.koin.core.qualifier.Qualifier
@@ -96,4 +98,14 @@ fun Modifier.dragGestureFilter(
         }
     }
     dragGestureFilter(dragObserver, canDrag, startDragImmediately)
+}
+
+fun AnnotatedString.Builder.addStyle(style: SpanStyle, source: String) {
+    val startIndex = toString().indexOf(source)
+    check(startIndex != -1) { "${toString()} doesn't contain $source" }
+    addStyle(
+        style,
+        startIndex,
+        startIndex + source.length
+    )
 }

@@ -14,10 +14,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
+import com.popalay.tracktor.core.R
 import com.popalay.tracktor.ui.featureflagslist.FeatureFlagsListWorkflow.Action
 import com.popalay.tracktor.ui.widget.TopAppBar
 import com.popalay.tracktor.utils.Faker
@@ -43,7 +45,7 @@ fun FeatureFlagsListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Feature toggles") },
+                title = { Text(stringResource(R.string.feature_toggles_title)) },
                 navigationIcon = {
                     IconButton(onClick = { onAction(Action.BackClicked) }) {
                         Icon(Icons.Default.ArrowBack)

@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
+import com.popalay.tracktor.core.R
 import com.popalay.tracktor.data.model.TrackerListItem
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
 import com.popalay.tracktor.gradient
@@ -87,7 +89,7 @@ private fun Footer(
             Spacer(modifier = Modifier.width(8.dp))
             Text(formatter.format(item.data.tracker, item.data.currentValue))
         } else {
-            Text("Start tracking now", style = MaterialTheme.typography.caption)
+            Text(stringResource(R.string.tracker_item_empty_message), style = MaterialTheme.typography.caption)
         }
     }
 }

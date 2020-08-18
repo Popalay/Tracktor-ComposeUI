@@ -21,13 +21,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.onActive
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
+import com.popalay.tracktor.core.R
 import com.popalay.tracktor.data.model.toListItem
-import com.popalay.tracktor.ui.dialog.UpdateTrackedValueDialog
+import com.popalay.tracktor.ui.dialog.AddNewRecordDialog
 import com.popalay.tracktor.ui.list.ListWorkflow.Action
 import com.popalay.tracktor.ui.list.ListWorkflow.Rendering
 import com.popalay.tracktor.ui.list.ListWorkflow.State
@@ -71,8 +73,8 @@ fun ListScreen(
                     Icon(Icons.Default.Add)
                 }
                 AnimatedSnackbar(
-                    message = state.itemInDeleting?.tracker?.title?.let { "$it was removed" } ?: "",
-                    actionText = "UNDO",
+                    message = state.itemInDeleting?.tracker?.title?.let { stringResource(R.string.tracker_item_removed_message, it) } ?: "",
+                    actionText = stringResource(R.string.button_undo),
                     shouldDisplay = state.itemInDeleting != null,
                     onActionClick = { onAction(Action.UndoDeletingClicked) }
                 )
@@ -82,7 +84,7 @@ fun ListScreen(
         Stack(modifier = Modifier.fillMaxSize()) {
             when {
                 state.itemInEditing != null -> {
-                    UpdateTrackedValueDialog(
+                    AddNewRecordDialog(
                         tracker = state.itemInEditing,
                         onCloseRequest = { onAction(Action.TrackDialogDismissed) },
                         onSave = { onAction(Action.NewRecordSubmitted(state.itemInEditing, it)) }
@@ -91,7 +93,7 @@ fun ListScreen(
             }
             if (state.showEmptyState) {
                 Text(
-                    text = "Click on the button below and let's track!",
+                    text = stringResource(R.string.tracker_list_empty_message),
                     style = MaterialTheme.typography.caption,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.gravity(Alignment.Center)

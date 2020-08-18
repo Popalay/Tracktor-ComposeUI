@@ -28,11 +28,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ViewAmbient
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
+import com.popalay.tracktor.core.R
 import com.popalay.tracktor.data.model.ProgressDirection
 import com.popalay.tracktor.data.model.UnitValueType
 import com.popalay.tracktor.success
@@ -87,7 +89,7 @@ private fun CustomUnitCreator(
 ) {
     TextField(
         value = state.customUnit.name,
-        label = { Text("Unit name") },
+        label = { Text(stringResource(R.string.create_tracker_custom_unit_name_label)) },
         onValueChange = { onAction(Action.CustomUnitNameChanged(it)) },
         activeColor = MaterialTheme.colors.onSurface,
         backgroundColor = MaterialTheme.colors.surface,
@@ -97,7 +99,7 @@ private fun CustomUnitCreator(
     Row {
         TextField(
             value = state.customUnit.symbol,
-            label = { Text("Unit symbol") },
+            label = { Text(stringResource(R.string.create_tracker_custom_unit_symbol_label)) },
             onValueChange = { onAction(Action.CustomUnitSymbolChanged(it)) },
             activeColor = MaterialTheme.colors.onSurface,
             backgroundColor = MaterialTheme.colors.surface,
@@ -120,7 +122,10 @@ private fun RowScope.CustomUnitValueTypeDropDown(
                 contentColor = contentColor(),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(state.customUnit.valueType.displayName.ifBlank { "Click to select" }, textAlign = TextAlign.Center)
+                Text(
+                    state.customUnit.valueType.displayName.ifBlank { stringResource(R.string.create_tracker_custom_unit_type_label) },
+                    textAlign = TextAlign.Center
+                )
             }
         },
         expanded = state.isCustomUnitValueTypeDropdownShown,
@@ -146,7 +151,7 @@ private fun CreateTrackerAppBar(
                 Icon(Icons.Default.ArrowBack)
             }
         },
-        title = { Text(text = "Let's track") },
+        title = { Text(stringResource(R.string.create_tracker_title)) },
         actions = {
             TextButton(
                 enabled = state.isValidToSave,
@@ -154,7 +159,7 @@ private fun CreateTrackerAppBar(
                 disabledContentColor = EmphasisAmbient.current.disabled.applyEmphasis(contentColor()),
                 onClick = { onAction(Action.SaveClicked) }
             ) {
-                Text(text = "SAVE")
+                Text(stringResource(R.string.button_save))
             }
         }
     )
@@ -167,7 +172,7 @@ private fun TitleInput(
 ) {
     TextField(
         value = state.title,
-        label = { Text("What would you like to track?") },
+        label = { Text(stringResource(R.string.create_tracker_name_label)) },
         onValueChange = { onAction(Action.TitleChanged(it)) },
         activeColor = MaterialTheme.colors.onSurface,
         backgroundColor = MaterialTheme.colors.surface,
@@ -182,7 +187,7 @@ private fun UnitSelector(
 ) {
     val rootView = ViewAmbient.current
     Text(
-        "Choose preferred unit or create your own:",
+        stringResource(R.string.create_tracker_unit_message),
         style = MaterialTheme.typography.caption,
         modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
     )
@@ -216,7 +221,7 @@ private fun DirectionSelector(
     onAction: (Action) -> Unit
 ) {
     Text(
-        "Progress direction, define value growth direction:",
+        stringResource(R.string.create_tracker_progress_direction_message),
         style = MaterialTheme.typography.caption,
         modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
     )
@@ -239,7 +244,7 @@ private fun ValueInput(
 ) {
     TextField(
         value = state.initialValue,
-        label = { Text("What's your initial value?") },
+        label = { stringResource(R.string.create_tracker_value_label) },
         onValueChange = { onAction(Action.ValueChanged(it)) },
         keyboardType = state.initialValueKeyboardType,
         activeColor = MaterialTheme.colors.onSurface,

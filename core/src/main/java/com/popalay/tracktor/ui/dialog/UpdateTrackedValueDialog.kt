@@ -9,12 +9,14 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.state
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import com.popalay.tracktor.core.R
 import com.popalay.tracktor.data.model.TrackableUnit
 import com.popalay.tracktor.data.model.Tracker
 
 @Composable
-fun UpdateTrackedValueDialog(
+fun AddNewRecordDialog(
     tracker: Tracker,
     onCloseRequest: () -> Unit,
     onSave: (String) -> Unit
@@ -36,14 +38,14 @@ fun UpdateTrackedValueDialog(
         onCloseRequest = onCloseRequest,
         title = {
             Column {
-                Text(text = "Track ${tracker.title}")
-                Text(text = "(sorry for the crash, waiting for the fix)", style = MaterialTheme.typography.caption)
+                Text(stringResource(R.string.add_new_record_title))
+                Text(stringResource(R.string.common_sorry_for_crash), style = MaterialTheme.typography.caption)
             }
         },
         text = {
             TextField(
                 value = newValue.value,
-                label = { Text(text = tracker.unit.displayName) },
+                label = { Text(tracker.unit.displayName) },
                 keyboardType = keyboardType,
                 activeColor = MaterialTheme.colors.onSurface,
                 onValueChange = { newValue.value = it }
@@ -53,7 +55,7 @@ fun UpdateTrackedValueDialog(
             Button(
                 enabled = validator(newValue.value),
                 onClick = { onSave(newValue.value.trim()) }
-            ) { Text(text = "Save") }
+            ) { Text(stringResource(R.string.button_save)) }
         }
     )
 }

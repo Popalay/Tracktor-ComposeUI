@@ -11,7 +11,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.popalay.tracktor.core.R
 import com.popalay.tracktor.data.model.Category
 import com.popalay.tracktor.ui.dialog.AddCategoryDialog
 
@@ -43,7 +45,7 @@ fun TrackerCategoryList(
         ) {
             Icon(Icons.Default.Add)
             Spacer(modifier = Modifier.width(4.dp))
-            Text(text = "Categories")
+            Text(stringResource(R.string.category_list_title))
         }
         categories.forEach {
             Spacer(modifier = Modifier.width(8.dp))
