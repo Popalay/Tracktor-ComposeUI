@@ -4,10 +4,8 @@ import com.popalay.tracktor.data.TrackingRepository
 import com.popalay.tracktor.data.model.TrackableUnit
 import com.popalay.tracktor.data.model.Tracker
 import com.squareup.workflow.Worker
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 
 class SaveTrackerWorker(
     private val tracker: Tracker,
@@ -22,7 +20,7 @@ class SaveTrackerWorker(
             trackingRepository.saveRecord(tracker, initialValue.toDoubleOrNull() ?: 0.0)
         }
         emit(Unit)
-    }.flowOn(Dispatchers.IO)
+    }
 
     override fun doesSameWorkAs(otherWorker: Worker<*>): Boolean =
         super.doesSameWorkAs(otherWorker) &&

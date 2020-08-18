@@ -3,7 +3,10 @@ package com.popalay.tracktor.data
 import com.popalay.tracktor.data.model.Tracker
 import com.popalay.tracktor.data.model.TrackerWithRecords
 import com.popalay.tracktor.data.model.ValueRecord
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -12,12 +15,16 @@ class TrackingRepository(
     private val recordDao: RecordDao
 ) {
     fun getAllTrackersWithRecords(): Flow<List<TrackerWithRecords>> = trackerDao.getAllTrackersWithRecords()
+        .flowOn(Dispatchers.IO)
 
     fun getTrackerWithRecordsById(id: String): Flow<TrackerWithRecords> = trackerDao.getTrackerWithRecordsById(id)
+        .flowOn(Dispatchers.IO)
 
-    suspend fun saveTracker(tracker: Tracker) = trackerDao.insert(tracker)
+    suspend fun saveTracker(tracker: Tracker) = withContext(Dispatchers.IO) {
+        trackerDao.insert(tracker)
+    }
 
-    suspend fun saveRecord(tracker: Tracker, value: Double) {
+    suspend fun saveRecord(tracker: Tracker, value: Double) = withContext(Dispatchers.IO) {
         val record = ValueRecord(
             id = UUID.randomUUID().toString(),
             trackerId = tracker.id,
@@ -28,7 +35,7 @@ class TrackingRepository(
         saveRecord(record)
     }
 
-    suspend fun saveRecord(tracker: Tracker, value: String) {
+    suspend fun saveRecord(tracker: Tracker, value: String) = withContext(Dispatchers.IO) {
         val size = recordDao.getAllByTrackerId(tracker.id).size
         val record = ValueRecord(
             id = UUID.randomUUID().toString(),
@@ -40,18 +47,24 @@ class TrackingRepository(
         saveRecord(record)
     }
 
-    suspend fun saveRecord(record: ValueRecord) = recordDao.insert(record)
+    suspend fun saveRecord(record: ValueRecord) = withContext(Dispatchers.IO) {
+        recordDao.insert(record)
+    }
 
-    suspend fun deleteTracker(tracker: Tracker) = trackerDao.delete(tracker)
+    suspend fun deleteTracker(tracker: Tracker) = withContext(Dispatchers.IO) {
+        trackerDao.delete(tracker)
+    }
 
-    suspend fun deleteRecord(record: ValueRecord) = recordDao.delete(record)
+    suspend fun deleteRecord(record: ValueRecord) = withContext(Dispatchers.IO) {
+        recordDao.delete(record)
+    }
 
-    suspend fun restoreTracker(trackerWithRecords: TrackerWithRecords) {
+    suspend fun restoreTracker(trackerWithRecords: TrackerWithRecords) = withContext(Dispatchers.IO) {
         trackerDao.insert(trackerWithRecords.tracker)
         recordDao.insertAll(trackerWithRecords.records)
     }
 
-    suspend fun restoreRecord(record: ValueRecord) {
+    suspend fun restoreRecord(record: ValueRecord) = withContext(Dispatchers.IO) {
         recordDao.insert(record)
     }
 }

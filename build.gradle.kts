@@ -32,6 +32,15 @@ subprojects {
             )
         }
     }
+
+    configurations.all {
+        resolutionStrategy {
+            force(
+                "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7",
+                "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.7"
+            )
+        }
+    }
 }
 
 // Extension function on `PluginContainer`
