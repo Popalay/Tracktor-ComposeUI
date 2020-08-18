@@ -35,8 +35,8 @@ import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
 import com.popalay.tracktor.WindowInsetsAmbient
-import com.popalay.tracktor.model.ProgressDirection
-import com.popalay.tracktor.model.UnitValueType
+import com.popalay.tracktor.data.model.ProgressDirection
+import com.popalay.tracktor.data.model.UnitValueType
 import com.popalay.tracktor.success
 import com.popalay.tracktor.ui.createtracker.CreateTrackerWorkflow.Action
 import com.popalay.tracktor.ui.widget.Chip

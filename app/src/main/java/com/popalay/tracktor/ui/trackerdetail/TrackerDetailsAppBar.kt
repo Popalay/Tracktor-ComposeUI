@@ -12,7 +12,7 @@ import androidx.compose.material.icons.filled.Undo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.popalay.tracktor.WindowInsetsAmbient
-import com.popalay.tracktor.model.TrackerWithRecords
+import com.popalay.tracktor.data.model.TrackerWithRecords
 import com.popalay.tracktor.ui.widget.DefaultTopAppBarHeight
 import com.popalay.tracktor.ui.widget.TopAppBar
 

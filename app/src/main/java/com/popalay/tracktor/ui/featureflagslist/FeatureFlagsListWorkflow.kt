@@ -1,7 +1,7 @@
 package com.popalay.tracktor.ui.featureflagslist
 
 import com.popalay.tracktor.data.featureflags.FeatureFlagsManager
-import com.popalay.tracktor.model.FeatureFlagListItem
+import com.popalay.tracktor.data.model.FeatureFlagListItem
 import com.popalay.tracktor.utils.updateItem
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot

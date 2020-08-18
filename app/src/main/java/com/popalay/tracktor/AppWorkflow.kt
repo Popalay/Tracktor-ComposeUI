@@ -1,6 +1,6 @@
 package com.popalay.tracktor
 
-import com.popalay.tracktor.model.TrackerWithRecords
+import com.popalay.tracktor.data.model.TrackerWithRecords
 import com.popalay.tracktor.ui.createtracker.CreateTrackerWorkflow
 import com.popalay.tracktor.ui.featureflagslist.FeatureFlagsListWorkflow
 import com.popalay.tracktor.ui.list.ListWorkflow

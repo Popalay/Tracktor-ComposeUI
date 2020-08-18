@@ -21,8 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.popalay.tracktor.WindowInsetsAmbient
+import com.popalay.tracktor.data.model.TrackerWithRecords
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
-import com.popalay.tracktor.model.TrackerWithRecords
 import com.popalay.tracktor.ui.dialog.UpdateTrackedValueDialog
 import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow.Action
 import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow.State
