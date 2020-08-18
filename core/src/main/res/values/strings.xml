@@ -32,4 +32,10 @@
     <string name="add_category.title">Category</string>
     <string name="add_category.new_category_label">Category</string>
 
+    <string name="settings.title">Settings</string>
+    <string name="settings.feature_toggles.title">Feature toggles</string>
+    <string name="settings.review.title">Review app</string>
+    <string name="settings.import.title">Import trackers</string>
+    <string name="settings.export.title">Export trackers</string>
+
 </resources>

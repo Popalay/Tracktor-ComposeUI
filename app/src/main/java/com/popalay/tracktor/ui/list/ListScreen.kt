@@ -57,12 +57,7 @@ fun ListScreen(
     onAction: (Action) -> Unit = {}
 ) {
     Scaffold(
-        topBar = {
-            LogoAppBar(
-                menuItems = state.menuItems,
-                onMenuItemClicked = { onAction(Action.MenuItemClicked(it)) }
-            )
-        },
+        topBar = { LogoAppBar(onActionClick = { onAction(Action.SettingsClicked) }) },
         floatingActionButtonPosition = Scaffold.FabPosition.Center,
         floatingActionButton = {
             Column(horizontalGravity = Alignment.CenterHorizontally) {
