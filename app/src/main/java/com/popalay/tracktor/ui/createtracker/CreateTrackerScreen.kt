@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
@@ -34,14 +33,12 @@ import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
-import com.popalay.tracktor.WindowInsetsAmbient
 import com.popalay.tracktor.data.model.ProgressDirection
 import com.popalay.tracktor.data.model.UnitValueType
 import com.popalay.tracktor.success
 import com.popalay.tracktor.ui.createtracker.CreateTrackerWorkflow.Action
 import com.popalay.tracktor.ui.widget.Chip
 import com.popalay.tracktor.ui.widget.ChipGroup
-import com.popalay.tracktor.ui.widget.DefaultTopAppBarHeight
 import com.popalay.tracktor.ui.widget.TopAppBar
 import com.popalay.tracktor.utils.onBackPressed
 import com.squareup.workflow.ui.compose.composedViewFactory
@@ -143,7 +140,6 @@ private fun CreateTrackerAppBar(
     onAction: (Action) -> Unit,
     state: CreateTrackerWorkflow.State
 ) {
-    val insets = WindowInsetsAmbient.current
     TopAppBar(
         navigationIcon = {
             IconButton(onClick = { onAction(Action.BackClicked) }) {
@@ -160,9 +156,7 @@ private fun CreateTrackerAppBar(
             ) {
                 Text(text = "SAVE")
             }
-        },
-        modifier = Modifier.preferredHeight(insets.top + DefaultTopAppBarHeight),
-        contentModifier = Modifier.padding(top = insets.top)
+        }
     )
 }
 

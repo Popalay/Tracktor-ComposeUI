@@ -4,8 +4,8 @@ import androidx.compose.foundation.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.InnerPadding
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumnForIndexed
 import androidx.compose.foundation.shape.CornerSize
@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.popalay.tracktor.WindowInsetsAmbient
 import com.popalay.tracktor.data.model.TrackerWithRecords
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
 import com.popalay.tracktor.ui.dialog.UpdateTrackedValueDialog
@@ -29,13 +28,14 @@ import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow.State
 import com.popalay.tracktor.ui.widget.AnimatedSnackbar
 import com.popalay.tracktor.ui.widget.TrackerCategoryList
 import com.popalay.tracktor.utils.inject
+import com.popalay.tracktor.utils.navigationBarHeight
+import com.popalay.tracktor.utils.navigationBarPadding
 
 @Composable
 fun TrackerDetailContentView(
     state: State,
     onAction: (Action) -> Unit
 ) {
-    val insets = WindowInsetsAmbient.current
     Scaffold(
         topBar = {
             TrackerDetailsAppBar(
@@ -52,7 +52,7 @@ fun TrackerDetailContentView(
             Column(horizontalGravity = Alignment.CenterHorizontally) {
                 FloatingActionButton(
                     onClick = { onAction(Action.AddRecordClicked) },
-                    modifier = Modifier.offset(y = -insets.bottom)
+                    modifier = Modifier.navigationBarPadding()
                 ) {
                     Icon(Icons.Default.Add)
                 }
@@ -94,18 +94,19 @@ fun TrackerDetailContentView(
 @Composable
 private fun RecordsList(trackerWithRecords: TrackerWithRecords) {
     val items = trackerWithRecords.records.reversed()
-    val insets = WindowInsetsAmbient.current
     Card(
         shape = MaterialTheme.shapes.medium.copy(bottomLeft = CornerSize(0), bottomRight = CornerSize(0)),
         modifier = Modifier.fillMaxSize()
     ) {
         LazyColumnForIndexed(
             items = items,
-            contentPadding = InnerPadding(16.dp).copy(bottom = 16.dp + insets.bottom)
+            contentPadding = InnerPadding(16.dp).copy(bottom = 16.dp)
         ) { index, item ->
             RecordListItem(trackerWithRecords, item)
             if (items.lastIndex != index) {
                 Divider(modifier = Modifier.padding(vertical = 16.dp))
+            } else {
+                Spacer(Modifier.navigationBarHeight())
             }
         }
     }

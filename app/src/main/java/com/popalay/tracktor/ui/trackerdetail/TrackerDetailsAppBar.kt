@@ -2,18 +2,13 @@ package com.popalay.tracktor.ui.trackerdetail
 
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Undo
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import com.popalay.tracktor.WindowInsetsAmbient
 import com.popalay.tracktor.data.model.TrackerWithRecords
-import com.popalay.tracktor.ui.widget.DefaultTopAppBarHeight
 import com.popalay.tracktor.ui.widget.TopAppBar
 
 @Composable
@@ -23,7 +18,6 @@ fun TrackerDetailsAppBar(
     onUndoClicked: () -> Unit = {},
     onDeleteClicked: () -> Unit = {}
 ) {
-    val insets = WindowInsetsAmbient.current
     TopAppBar(
         navigationIcon = {
             IconButton(onClick = onArrowClicked) {
@@ -40,8 +34,6 @@ fun TrackerDetailsAppBar(
             IconButton(onClick = onDeleteClicked) {
                 Icon(Icons.Default.DeleteForever)
             }
-        },
-        modifier = Modifier.preferredHeight(DefaultTopAppBarHeight + insets.top),
-        contentModifier = Modifier.padding(top = insets.top)
+        }
     )
 }

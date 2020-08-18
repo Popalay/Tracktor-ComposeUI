@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumnForIndexed
 import androidx.compose.material.FloatingActionButton
@@ -27,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
-import com.popalay.tracktor.WindowInsetsAmbient
 import com.popalay.tracktor.data.model.toListItem
 import com.popalay.tracktor.ui.dialog.UpdateTrackedValueDialog
 import com.popalay.tracktor.ui.list.ListWorkflow.Action
@@ -36,6 +34,8 @@ import com.popalay.tracktor.ui.list.ListWorkflow.State
 import com.popalay.tracktor.ui.widget.AllCategoryList
 import com.popalay.tracktor.ui.widget.AnimatedSnackbar
 import com.popalay.tracktor.utils.Faker
+import com.popalay.tracktor.utils.navigationBarHeight
+import com.popalay.tracktor.utils.navigationBarPadding
 import com.squareup.workflow.ui.compose.composedViewFactory
 
 @OptIn(ExperimentalLayout::class)
@@ -66,7 +66,7 @@ fun ListScreen(
             Column(horizontalGravity = Alignment.CenterHorizontally) {
                 FloatingActionButton(
                     onClick = { onAction(Action.CreateTrackerClicked) },
-                    modifier = Modifier.offset(y = -WindowInsetsAmbient.current.bottom)
+                    modifier = Modifier.navigationBarPadding()
                 ) {
                     Icon(Icons.Default.Add)
                 }
@@ -109,10 +109,9 @@ private fun TrackerList(
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val insets = WindowInsetsAmbient.current
     LazyColumnForIndexed(
         items = state.filteredItems,
-        contentPadding = InnerPadding(top = 16.dp, bottom = insets.bottom + 16.dp),
+        contentPadding = InnerPadding(top = 16.dp, bottom = 16.dp),
         modifier = modifier
     ) { index, item ->
         if (index == 0 && state.statistic != null) {
@@ -129,7 +128,7 @@ private fun TrackerList(
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(Modifier.height(8.dp))
         }
         TrackerListItem(
             item.copy(animate = state.animate),
@@ -139,7 +138,9 @@ private fun TrackerList(
             onRemoveClicked = { onAction(Action.DeleteTrackerClicked(item.data)) }
         )
         if (index != state.items.lastIndex) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(Modifier.height(8.dp))
+        } else {
+            Spacer(Modifier.navigationBarHeight())
         }
         onActive {
             onAction(Action.AnimationProceeded)
