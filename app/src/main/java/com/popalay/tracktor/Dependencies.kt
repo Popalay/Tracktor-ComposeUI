@@ -4,11 +4,11 @@ import com.popalay.tracktor.data.dataModule
 import com.popalay.tracktor.data.featureflags.FeatureFlagsManager
 import com.popalay.tracktor.data.featureflags.RealFeatureFlagsManager
 import com.popalay.tracktor.domain.domainModule
-import com.popalay.tracktor.ui.createtracker.CreateTrackerWorkflow
-import com.popalay.tracktor.ui.featureflagslist.FeatureFlagsListWorkflow
-import com.popalay.tracktor.ui.list.ListWorkflow
-import com.popalay.tracktor.ui.settings.SettingsWorkflow
-import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow
+import com.popalay.tracktor.feature.createtracker.CreateTrackerWorkflow
+import com.popalay.tracktor.feature.featureflagslist.FeatureFlagsListWorkflow
+import com.popalay.tracktor.feature.list.ListWorkflow
+import com.popalay.tracktor.feature.settings.SettingsWorkflow
+import com.popalay.tracktor.feature.trackerdetail.TrackerDetailWorkflow
 import org.koin.dsl.module
 
 val coreModule = module {

@@ -1,11 +1,11 @@
 package com.popalay.tracktor
 
 import com.popalay.tracktor.data.model.TrackerWithRecords
-import com.popalay.tracktor.ui.createtracker.CreateTrackerWorkflow
-import com.popalay.tracktor.ui.featureflagslist.FeatureFlagsListWorkflow
-import com.popalay.tracktor.ui.list.ListWorkflow
-import com.popalay.tracktor.ui.settings.SettingsWorkflow
-import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow
+import com.popalay.tracktor.feature.createtracker.CreateTrackerWorkflow
+import com.popalay.tracktor.feature.featureflagslist.FeatureFlagsListWorkflow
+import com.popalay.tracktor.feature.list.ListWorkflow
+import com.popalay.tracktor.feature.settings.SettingsWorkflow
+import com.popalay.tracktor.feature.trackerdetail.TrackerDetailWorkflow
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow
