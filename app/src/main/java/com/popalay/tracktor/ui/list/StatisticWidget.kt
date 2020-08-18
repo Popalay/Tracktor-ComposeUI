@@ -24,15 +24,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.WithConstraints
 import androidx.compose.ui.graphics.HorizontalGradient
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.annotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.popalay.tracktor.core.R
 import com.popalay.tracktor.data.model.Statistic
 import com.popalay.tracktor.gradients
 import com.popalay.tracktor.ui.list.AnimationState.STATE_END
 import com.popalay.tracktor.ui.list.AnimationState.STATE_START
 import com.popalay.tracktor.ui.widget.DoughnutChart
+import com.popalay.tracktor.utils.addStyle
 import com.popalay.tracktor.utils.toRelativeFormat
 import kotlin.math.max
 import kotlin.math.min
@@ -84,28 +87,32 @@ fun StatisticWidget(
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(2F).fillMaxHeight(), verticalArrangement = Arrangement.SpaceEvenly) {
                     val lines = listOf(
-                        AnnotatedString.Builder().apply {
-                            append("You have ")
-                            append(AnnotatedString(statistic.trackerCount.toString(), SpanStyle(fontWeight = FontWeight.Black)))
-                            append(" trackers")
-                        }.toAnnotatedString(),
+                        annotatedString {
+                            append(stringResource(R.string.progress_statistic_trackers_amount, statistic.trackerCount))
+                            addStyle(SpanStyle(fontWeight = FontWeight.Black), statistic.trackerCount.toString())
+                        },
 
-                        AnnotatedString.Builder().apply {
-                            append("You have ")
-                            append(AnnotatedString(statistic.trackersWithProgress.toString(), SpanStyle(fontWeight = FontWeight.Black)))
-                            append(" trackers with progress")
-                        }.toAnnotatedString(),
+                        annotatedString {
+                            append(stringResource(R.string.progress_statistic_trackers_with_progress, statistic.trackersWithProgress))
+                            addStyle(SpanStyle(fontWeight = FontWeight.Black), statistic.trackersWithProgress.toString())
+                        },
 
-                        AnnotatedString.Builder().apply {
-                            append(AnnotatedString(statistic.mostProgressiveTracker.title, SpanStyle(fontWeight = FontWeight.Black)))
-                            append(" is your most progressive tracker")
-                        }.toAnnotatedString(),
+                        annotatedString {
+                            append(stringResource(R.string.progress_statistic_most_progressive_tracker, statistic.mostProgressiveTracker.title))
+                            addStyle(SpanStyle(fontWeight = FontWeight.Black), statistic.mostProgressiveTracker.title)
+                        },
 
-                        AnnotatedString.Builder().apply {
-                            append(AnnotatedString(statistic.lastUpdatedTracker.title, SpanStyle(fontWeight = FontWeight.Black)))
-                            append(" was updated ")
-                            append(AnnotatedString(statistic.lastUpdatedTrackerDate.toRelativeFormat(), SpanStyle(fontWeight = FontWeight.Black)))
-                        }.toAnnotatedString(),
+                        annotatedString {
+                            append(
+                                stringResource(
+                                    R.string.progress_statistic_last_updated_tracker,
+                                    statistic.lastUpdatedTracker.title,
+                                    statistic.lastUpdatedTrackerDate.toRelativeFormat()
+                                )
+                            )
+                            addStyle(SpanStyle(fontWeight = FontWeight.Black), statistic.lastUpdatedTracker.title)
+                            addStyle(SpanStyle(fontWeight = FontWeight.Black), statistic.lastUpdatedTrackerDate.toRelativeFormat())
+                        },
                     )
 
                     lines.forEachIndexed { index, item ->

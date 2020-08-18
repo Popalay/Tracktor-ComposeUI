@@ -19,10 +19,12 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.popalay.tracktor.core.R
 import com.popalay.tracktor.data.model.TrackerWithRecords
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
-import com.popalay.tracktor.ui.dialog.UpdateTrackedValueDialog
+import com.popalay.tracktor.ui.dialog.AddNewRecordDialog
 import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow.Action
 import com.popalay.tracktor.ui.trackerdetail.TrackerDetailWorkflow.State
 import com.popalay.tracktor.ui.widget.AnimatedSnackbar
@@ -59,7 +61,7 @@ fun TrackerDetailContentView(
                 val message = state.trackerWithRecords?.tracker?.let { formatter.format(it, state.recordInDeleting) } ?: ""
                 AnimatedSnackbar(
                     message = message,
-                    actionText = "UNDO",
+                    actionText = stringResource(R.string.button_undo),
                     shouldDisplay = state.recordInDeleting != null,
                     onActionClick = { onAction(Action.UndoDeletingClicked) }
                 )
@@ -70,7 +72,7 @@ fun TrackerDetailContentView(
             modifier = Modifier.background(MaterialTheme.colors.background)
         ) {
             if (state.isAddRecordDialogShowing) {
-                UpdateTrackedValueDialog(
+                AddNewRecordDialog(
                     tracker = requireNotNull(state.trackerWithRecords).tracker,
                     onCloseRequest = { onAction(Action.TrackDialogDismissed) },
                     onSave = { onAction(Action.NewRecordSubmitted(it)) }
