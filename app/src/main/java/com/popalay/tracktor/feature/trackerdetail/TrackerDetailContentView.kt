@@ -3,14 +3,7 @@ package com.popalay.tracktor.feature.trackerdetail
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.InnerPadding
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumnForIndexed
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material.Card
-import androidx.compose.material.Divider
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -22,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.popalay.tracktor.core.R
-import com.popalay.tracktor.data.model.TrackerWithRecords
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
 import com.popalay.tracktor.feature.trackerdetail.TrackerDetailWorkflow.Action
 import com.popalay.tracktor.feature.trackerdetail.TrackerDetailWorkflow.State
@@ -30,7 +22,6 @@ import com.popalay.tracktor.ui.dialog.AddNewRecordDialog
 import com.popalay.tracktor.ui.widget.AnimatedSnackbar
 import com.popalay.tracktor.ui.widget.TrackerCategoryList
 import com.popalay.tracktor.utils.inject
-import com.popalay.tracktor.utils.navigationBarHeight
 import com.popalay.tracktor.utils.navigationBarPadding
 
 @Composable
@@ -89,27 +80,6 @@ fun TrackerDetailContentView(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             RecordsList(requireNotNull(state.trackerWithRecords))
-        }
-    }
-}
-
-@Composable
-private fun RecordsList(trackerWithRecords: TrackerWithRecords) {
-    val items = trackerWithRecords.records.reversed()
-    Card(
-        shape = MaterialTheme.shapes.medium.copy(bottomLeft = CornerSize(0), bottomRight = CornerSize(0)),
-        modifier = Modifier.fillMaxSize()
-    ) {
-        LazyColumnForIndexed(
-            items = items,
-            contentPadding = InnerPadding(16.dp).copy(bottom = 16.dp)
-        ) { index, item ->
-            RecordListItem(trackerWithRecords, item)
-            if (items.lastIndex != index) {
-                Divider(modifier = Modifier.padding(vertical = 16.dp))
-            } else {
-                Spacer(Modifier.navigationBarHeight())
-            }
         }
     }
 }
