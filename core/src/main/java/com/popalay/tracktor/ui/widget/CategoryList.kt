@@ -56,6 +56,7 @@ fun TrackerCategoryList(
     availableCategories: List<Category>,
     categories: List<Category>,
     isAddCategoryDialogShowing: Boolean = false,
+    animate: Boolean = true,
     onSave: (List<Category>) -> Unit = {},
     onAddCategoryClicked: () -> Unit = {},
     onDialogDismissed: () -> Unit = {},
@@ -64,7 +65,7 @@ fun TrackerCategoryList(
     val transitionState = transition(
         definition = tweenDefinition,
         toState = STATE_END,
-        initState = STATE_START
+        initState = if (animate) STATE_START else STATE_END
     )
 
     if (isAddCategoryDialogShowing) {

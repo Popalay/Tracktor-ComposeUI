@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.WithConstraints
 import androidx.compose.ui.unit.dp
 import com.popalay.tracktor.data.model.TrackerWithRecords
+import com.popalay.tracktor.feature.trackerdetail.RecordsListAnimationState.STATE_END
+import com.popalay.tracktor.feature.trackerdetail.RecordsListAnimationState.STATE_START
 import com.popalay.tracktor.utils.navigationBarHeight
 
 private enum class RecordsListAnimationState {
@@ -28,13 +30,13 @@ private enum class RecordsListAnimationState {
 private val offsetKey = FloatPropKey()
 
 private val tweenDefinition = transitionDefinition<RecordsListAnimationState> {
-    state(RecordsListAnimationState.STATE_START) {
+    state(STATE_START) {
         this[offsetKey] = 1F
     }
-    state(RecordsListAnimationState.STATE_END) {
+    state(STATE_END) {
         this[offsetKey] = 0F
     }
-    transition(RecordsListAnimationState.STATE_START, RecordsListAnimationState.STATE_END) {
+    transition(STATE_START, STATE_END) {
         offsetKey using tween(
             durationMillis = 500,
             delayMillis = 400
@@ -43,12 +45,15 @@ private val tweenDefinition = transitionDefinition<RecordsListAnimationState> {
 }
 
 @Composable
-fun RecordsList(trackerWithRecords: TrackerWithRecords) {
+fun RecordsList(
+    trackerWithRecords: TrackerWithRecords,
+    animate: Boolean = true,
+) {
     val items = trackerWithRecords.records.reversed()
     val transitionState = transition(
         definition = tweenDefinition,
-        toState = RecordsListAnimationState.STATE_END,
-        initState = RecordsListAnimationState.STATE_START
+        toState = STATE_END,
+        initState = if (animate) STATE_START else STATE_END
     )
 
     WithConstraints {

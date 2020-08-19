@@ -10,6 +10,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.onActive
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -74,12 +75,17 @@ fun TrackerDetailContentView(
                 categories = state.trackerWithRecords.categories,
                 availableCategories = state.allCategories,
                 isAddCategoryDialogShowing = state.isAddCategoryDialogShowing,
+                animate = state.animate,
                 onSave = { onAction(Action.TrackerCategoriesUpdated(it)) },
                 onAddCategoryClicked = { onAction(Action.AddCategoryClicked) },
                 onDialogDismissed = { onAction(Action.AddCategoryDialogDismissed) },
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-            RecordsList(requireNotNull(state.trackerWithRecords))
+            RecordsList(requireNotNull(state.trackerWithRecords), animate = state.animate)
+
+            onActive {
+                onAction(Action.AnimationProceeded)
+            }
         }
     }
 }

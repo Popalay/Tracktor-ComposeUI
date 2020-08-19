@@ -8,6 +8,10 @@ import com.popalay.tracktor.data.model.TrackerWithRecords
 import com.popalay.tracktor.data.model.ValueRecord
 import com.popalay.tracktor.domain.worker.GetAllCategoriesWorker
 import com.popalay.tracktor.domain.worker.GetTrackerByIdWorker
+import com.popalay.tracktor.utils.toData
+import com.popalay.tracktor.utils.toSnapshot
+import com.squareup.moshi.JsonClass
+import com.squareup.moshi.Moshi
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow
@@ -19,6 +23,7 @@ class TrackerDetailWorkflow(
     private val trackingRepository: TrackingRepository,
     private val categoryRepository: CategoryRepository,
     private val getAllCategoriesWorker: GetAllCategoriesWorker,
+    private val moshi: Moshi
 ) : StatefulWorkflow<TrackerDetailWorkflow.Props, TrackerDetailWorkflow.State, TrackerDetailWorkflow.Output, TrackerDetailWorkflow.Rendering>() {
     companion object {
         private const val DELETING_UNDO_TIMEOUT_MILLIS = 2500L
@@ -26,9 +31,11 @@ class TrackerDetailWorkflow(
 
     data class Props(val trackerId: String)
 
+    @JsonClass(generateAdapter = true)
     data class State(
         val isAddRecordDialogShowing: Boolean = false,
         val isAddCategoryDialogShowing: Boolean = false,
+        val animate: Boolean = true,
         @Transient val trackerWithRecords: TrackerWithRecords? = null,
         @Transient val allCategories: List<Category> = emptyList(),
         @Transient val recordInDeleting: ValueRecord? = null,
@@ -58,6 +65,7 @@ class TrackerDetailWorkflow(
         object UndoPerformed : Action()
         object AddCategoryClicked : Action()
         object AddCategoryDialogDismissed : Action()
+        object AnimationProceeded : Action()
 
         override fun WorkflowAction.Updater<State, Output>.apply() {
             nextState = when (val action = this@Action) {
@@ -76,6 +84,7 @@ class TrackerDetailWorkflow(
                 UndoPerformed -> nextState.copy(recordInDeleting = null)
                 AddCategoryClicked -> nextState.copy(isAddCategoryDialogShowing = true)
                 AddCategoryDialogDismissed -> nextState.copy(isAddCategoryDialogShowing = false)
+                AnimationProceeded -> nextState.copy(animate = false)
                 else -> nextState.copy(currentAction = this@Action)
             }
         }
@@ -86,7 +95,7 @@ class TrackerDetailWorkflow(
         val onAction: (Action) -> Unit
     )
 
-    override fun initialState(props: Props, snapshot: Snapshot?): State = State()
+    override fun initialState(props: Props, snapshot: Snapshot?): State = snapshot?.toData(moshi) ?: State()
 
     override fun render(
         props: Props,
@@ -103,7 +112,7 @@ class TrackerDetailWorkflow(
         )
     }
 
-    override fun snapshotState(state: State): Snapshot = Snapshot.EMPTY
+    override fun snapshotState(state: State): Snapshot = state.toSnapshot(moshi)
 
     private fun runSideEffects(state: State, context: RenderContext<State, Output>) {
         when (val action = state.currentAction) {
