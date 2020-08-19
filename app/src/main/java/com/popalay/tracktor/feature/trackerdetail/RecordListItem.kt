@@ -25,18 +25,18 @@ fun RecordListItem(trackerWithRecords: TrackerWithRecords, record: ValueRecord, 
         verticalGravity = Alignment.CenterVertically
     ) {
         Text(
-            text = record.date.toRelativeFormat(),
+            text = formatter.format(trackerWithRecords.tracker, record),
             style = MaterialTheme.typography.subtitle1
         )
-        Spacer(modifier = Modifier.weight(1F))
-
+        Spacer(modifier = Modifier.width(8.dp))
         val previousRecord = trackerWithRecords.records.getOrNull(trackerWithRecords.records.indexOf(record) - 1)
         val progress = trackerWithRecords.progress(previousRecord?.value, record.value)
         ProgressTextField(progress, trackerWithRecords.tracker.direction)
 
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.weight(1F))
+
         Text(
-            text = formatter.format(trackerWithRecords.tracker, record),
+            text = record.date.toRelativeFormat(),
             style = MaterialTheme.typography.subtitle2
         )
     }

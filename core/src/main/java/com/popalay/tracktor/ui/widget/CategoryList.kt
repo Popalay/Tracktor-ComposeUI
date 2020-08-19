@@ -5,12 +5,14 @@ import androidx.compose.foundation.ScrollableRow
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.EmphasisAmbient
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.popalay.tracktor.core.R
@@ -67,9 +69,16 @@ fun AllCategoryList(
     ScrollableRow(modifier) {
         Spacer(modifier = Modifier.width(8.dp))
         categories.forEach {
-            Spacer(modifier = Modifier.width(8.dp))
+            val contentColor = if (it == selectedCategory) {
+                MaterialTheme.colors.secondary
+            } else {
+                EmphasisAmbient.current.disabled.applyEmphasis(MaterialTheme.colors.secondary)
+            }
             Chip(
                 isSelected = it == selectedCategory,
+                activeColor = Color.Transparent,
+                inactiveColor = Color.Transparent,
+                contentColor = contentColor,
                 onClick = { onCategoryClick(it) }
             ) {
                 Text(text = it.name)
