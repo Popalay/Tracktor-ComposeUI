@@ -18,6 +18,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.HorizontalGradient
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
@@ -88,7 +89,7 @@ fun SimpleChartWidget(
         val borderPath = createBorderPath(points, conPoints1, conPoints2)
 
         val partPath = borderPath.getSubPath(0F, transitionState[amplifierKey])
-        drawPath(partPath, createBrush(gradient, size), 1.0F, Stroke(lineWidth.toPx()))
+        drawPath(partPath, createBrush(gradient, size), 1.0F, Stroke(lineWidth.toPx(), cap = StrokeCap.Round))
     }
 }
 

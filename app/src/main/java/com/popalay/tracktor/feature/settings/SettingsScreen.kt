@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.Card
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
@@ -83,9 +84,11 @@ fun SettingItem(
     title: @Composable () -> Unit,
     onClick: () -> Unit
 ) {
-    Row(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(16.dp)) {
-        icon()
-        Spacer(Modifier.width(16.dp))
-        title()
+    Card(Modifier.fillMaxWidth().padding(16.dp)) {
+        Row(Modifier.clickable(onClick = onClick).padding(16.dp)) {
+            icon()
+            Spacer(Modifier.width(16.dp))
+            title()
+        }
     }
 }
