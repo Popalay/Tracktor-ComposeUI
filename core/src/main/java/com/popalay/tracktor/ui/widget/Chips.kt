@@ -47,6 +47,7 @@ fun Chip(
     inactiveColor: Color = EmphasisAmbient.current.disabled.applyEmphasis(activeColor),
     contentColor: Color = MaterialTheme.colors.onSecondary,
     bordered: Boolean = false,
+    modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit
 ) {
     val color = animate(if (isSelected) activeColor else inactiveColor)
@@ -60,7 +61,7 @@ fun Chip(
         paddingStart = 16.dp,
         paddingEnd = 16.dp,
         gravity = Alignment.Center,
-        modifier = Modifier.clip(shape).clickable(onClick = onClick)
+        modifier = modifier.clip(shape).clickable(onClick = onClick)
     ) {
         Providers(ContentColorAmbient provides contentColor) {
             Row {

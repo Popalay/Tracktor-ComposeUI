@@ -14,7 +14,7 @@ import org.koin.dsl.module
 val coreModule = module {
     single { AppWorkflow(get(), get(), get(), get(), get()) }
     single { ListWorkflow(get(), get(), get()) }
-    single { TrackerDetailWorkflow(get(), get(), get()) }
+    single { TrackerDetailWorkflow(get(), get(), get(), get()) }
     single { FeatureFlagsListWorkflow(get()) }
     single { CreateTrackerWorkflow(get(), get(), get()) }
     single { SettingsWorkflow() }
