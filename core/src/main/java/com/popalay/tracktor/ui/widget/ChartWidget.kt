@@ -1,10 +1,8 @@
 package com.popalay.tracktor.ui.widget
 
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.FloatPropKey
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.transitionDefinition
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.transition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,7 +16,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.HorizontalGradient
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
@@ -26,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import com.popalay.tracktor.ui.widget.ChartAnimationState.STATE_END
 import com.popalay.tracktor.ui.widget.ChartAnimationState.STATE_START
 import com.popalay.tracktor.utils.dragGestureFilter
-import com.popalay.tracktor.utils.getSubPath
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
@@ -36,21 +32,6 @@ private enum class ChartAnimationState {
 }
 
 private val amplifierKey = FloatPropKey()
-
-private val tweenDefinition = transitionDefinition<ChartAnimationState> {
-    state(STATE_START) {
-        this[amplifierKey] = 0F
-    }
-    state(STATE_END) {
-        this[amplifierKey] = 1F
-    }
-    transition(fromState = STATE_START, toState = STATE_END) {
-        amplifierKey using tween(
-            durationMillis = 1500,
-            easing = FastOutSlowInEasing
-        )
-    }
-}
 
 private val springDefinition = transitionDefinition<ChartAnimationState> {
     state(STATE_START) {
@@ -64,32 +45,6 @@ private val springDefinition = transitionDefinition<ChartAnimationState> {
             dampingRatio = 0.7F,
             stiffness = 80F
         )
-    }
-}
-
-@Composable
-fun SimpleChartWidget(
-    data: List<Double>,
-    gradient: List<Color>,
-    modifier: Modifier = Modifier,
-    lineWidth: Dp = ChartLineWidth,
-    animate: Boolean = true
-) {
-    val transitionState = transition(
-        definition = tweenDefinition,
-        toState = STATE_END,
-        initState = if (animate) STATE_START else STATE_END
-    )
-    Canvas(modifier) {
-        val points = createPoints(data, size)
-        val (conPoints1, conPoints2) = createConnectionPoints(points)
-
-        if (points.isEmpty() || conPoints1.isEmpty() || conPoints2.isEmpty()) return@Canvas
-
-        val borderPath = createBorderPath(points, conPoints1, conPoints2)
-
-        val partPath = borderPath.getSubPath(0F, transitionState[amplifierKey])
-        drawPath(partPath, createBrush(gradient, size), 1.0F, Stroke(lineWidth.toPx(), cap = StrokeCap.Round))
     }
 }
 
@@ -171,7 +126,7 @@ private fun DrawScope.drawTouchable(
     }
 }
 
-private fun createPoints(
+fun createPoints(
     data: List<Double>,
     size: Size,
     labelRadiusPx: Float = 0F,
@@ -196,7 +151,7 @@ private fun createPoints(
     }
 }
 
-private fun createConnectionPoints(points: List<Offset>): Pair<List<Offset>, List<Offset>> {
+fun createConnectionPoints(points: List<Offset>): Pair<List<Offset>, List<Offset>> {
     val conPoints1 = mutableListOf<Offset>()
     val conPoints2 = mutableListOf<Offset>()
     for (i in 1 until points.size) {
@@ -206,7 +161,7 @@ private fun createConnectionPoints(points: List<Offset>): Pair<List<Offset>, Lis
     return conPoints1 to conPoints2
 }
 
-private fun createBorderPath(
+fun createBorderPath(
     points: List<Offset>,
     conPoints1: List<Offset>,
     conPoints2: List<Offset>
@@ -226,7 +181,7 @@ private fun createBorderPath(
     return borderPath
 }
 
-private fun createFillPath(borderPath: Path, size: Size): Path {
+fun createFillPath(borderPath: Path, size: Size): Path {
     val fillPath = Path().apply {
         addPath(borderPath)
     }
@@ -236,12 +191,12 @@ private fun createFillPath(borderPath: Path, size: Size): Path {
     return fillPath
 }
 
-private fun createBrush(gradient: List<Color>, size: Size) = HorizontalGradient(
+fun createBrush(gradient: List<Color>, size: Size) = HorizontalGradient(
     colors = gradient,
     startX = 0F,
     endX = size.width
 )
 
-private val ChartDefaultHeight = 100.dp
-private val ChartLabelRadius = 4.dp
-private val ChartLineWidth = 2.dp
+val ChartDefaultHeight = 100.dp
+val ChartLabelRadius = 4.dp
+val ChartLineWidth = 2.dp
