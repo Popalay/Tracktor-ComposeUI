@@ -3,7 +3,7 @@ object AndroidConfig {
     const val minSdk = 26
     const val targetSdk = 29
 
-    const val versionName = "1.6"
+    const val versionName = "1.7"
 }
 
 object Version {
