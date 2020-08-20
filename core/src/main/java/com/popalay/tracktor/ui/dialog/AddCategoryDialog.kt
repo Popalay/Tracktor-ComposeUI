@@ -13,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.state
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -22,23 +21,24 @@ import com.popalay.tracktor.data.model.Category
 import com.popalay.tracktor.success
 import com.popalay.tracktor.ui.widget.Chip
 import com.popalay.tracktor.ui.widget.ChipGroup
+import com.popalay.tracktor.utils.rememberMutableState
 import java.util.UUID
 
 @Composable
 fun AddCategoryDialog(
     trackerCategories: List<Category>,
     allCategories: List<Category>,
-    onCloseRequest: () -> Unit,
+    onDismissRequest: () -> Unit,
     onSave: (Set<Category>) -> Unit
 ) {
-    val newValue = state { "" }
-    val newCategories = state { allCategories.toSet() }
-    val selectedCategories = state { trackerCategories.toSet() }
-    val isCustomCategoryValid = state { false }
-    val isCustomCategoryCreation = state { false }
+    val newValue = rememberMutableState { "" }
+    val newCategories = rememberMutableState { allCategories.toSet() }
+    val selectedCategories = rememberMutableState { trackerCategories.toSet() }
+    val isCustomCategoryValid = rememberMutableState { false }
+    val isCustomCategoryCreation = rememberMutableState { false }
 
     AlertDialog(
-        onCloseRequest = onCloseRequest,
+        onDismissRequest = onDismissRequest,
         title = {
             Column {
                 Text(stringResource(R.string.add_category_title))
@@ -102,7 +102,7 @@ fun AddCategoryDialog(
             ) { Text(stringResource(R.string.button_save)) }
         },
         dismissButton = {
-            Button(onClick = onCloseRequest) {
+            Button(onClick = onDismissRequest) {
                 Text(stringResource(R.string.button_cancel))
             }
         }

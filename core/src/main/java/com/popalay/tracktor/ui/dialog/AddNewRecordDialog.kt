@@ -8,20 +8,20 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.state
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.popalay.tracktor.core.R
 import com.popalay.tracktor.data.model.TrackableUnit
 import com.popalay.tracktor.data.model.Tracker
+import com.popalay.tracktor.utils.rememberMutableState
 
 @Composable
 fun AddNewRecordDialog(
     tracker: Tracker,
-    onCloseRequest: () -> Unit,
+    onDismissRequest: () -> Unit,
     onSave: (String) -> Unit
 ) {
-    val newValue = state { "" }
+    val newValue = rememberMutableState { "" }
     val keyboardType = if (tracker.unit == TrackableUnit.Word) KeyboardType.Text else KeyboardType.Number
     val validator: (String) -> Boolean = remember(tracker.unit) {
         when (tracker.unit) {
@@ -35,7 +35,7 @@ fun AddNewRecordDialog(
     }
 
     AlertDialog(
-        onCloseRequest = onCloseRequest,
+        onDismissRequest = onDismissRequest,
         title = {
             Column {
                 Text(stringResource(R.string.add_new_record_title, tracker.title))

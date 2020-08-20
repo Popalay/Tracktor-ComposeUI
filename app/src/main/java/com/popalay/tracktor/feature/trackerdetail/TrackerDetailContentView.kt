@@ -4,6 +4,11 @@ import androidx.compose.foundation.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumnForIndexed
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material.Card
+import androidx.compose.material.Divider
+import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -39,24 +44,25 @@ fun TrackerDetailContentView(
                 onDeleteClicked = { onAction(Action.DeleteTrackerClicked) }
             )
         },
-        floatingActionButtonPosition = Scaffold.FabPosition.Center,
+        floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             val formatter: ValueRecordFormatter by inject()
 
             Column(horizontalGravity = Alignment.CenterHorizontally) {
+                val message = state.trackerWithRecords?.tracker?.let { formatter.format(it, state.recordInDeleting) } ?: ""
+                AnimatedSnackbar(
+                    message = message,
+                    actionText = stringResource(R.string.button_undo),
+                    shouldDisplay = state.recordInDeleting != null,
+                    onActionClick = { onAction(Action.UndoDeletingClicked) },
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
                 FloatingActionButton(
                     onClick = { onAction(Action.AddRecordClicked) },
                     modifier = Modifier.navigationBarPadding()
                 ) {
                     Icon(Icons.Default.Add)
                 }
-                val message = state.trackerWithRecords?.tracker?.let { formatter.format(it, state.recordInDeleting) } ?: ""
-                AnimatedSnackbar(
-                    message = message,
-                    actionText = stringResource(R.string.button_undo),
-                    shouldDisplay = state.recordInDeleting != null,
-                    onActionClick = { onAction(Action.UndoDeletingClicked) }
-                )
             }
         }
     ) {
@@ -66,7 +72,7 @@ fun TrackerDetailContentView(
             if (state.isAddRecordDialogShowing) {
                 AddNewRecordDialog(
                     tracker = requireNotNull(state.trackerWithRecords).tracker,
-                    onCloseRequest = { onAction(Action.TrackDialogDismissed) },
+                    onDismissRequest = { onAction(Action.TrackDialogDismissed) },
                     onSave = { onAction(Action.NewRecordSubmitted(it)) }
                 )
             }

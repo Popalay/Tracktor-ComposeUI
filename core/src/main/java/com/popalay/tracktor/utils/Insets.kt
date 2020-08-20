@@ -307,7 +307,7 @@ fun Modifier.navigationBarWidth(side: HorizontalSide) = composed {
 /**
  * Allows conditional setting of [insets] on each dimension.
  */
-private inline fun Modifier.insetsPadding(
+private fun Modifier.insetsPadding(
     insets: Insets,
     applyLeft: Boolean = false,
     applyTop: Boolean = false,
@@ -328,7 +328,7 @@ private inline fun Modifier.insetsPadding(
     val height = (placeable.height + vertical)
         .coerceIn(constraints.minHeight, constraints.maxHeight)
     layout(width, height) {
-        placeable.placeAbsolute(left, top)
+        placeable.place(left, top)
     }
 }
 
@@ -382,7 +382,7 @@ private data class InsetsSizeModifier(
         }
         val placeable = measurable.measure(wrappedConstraints)
         return layout(placeable.width, placeable.height) {
-            placeable.placeAbsolute(0, 0)
+            placeable.place(0, 0)
         }
     }
 

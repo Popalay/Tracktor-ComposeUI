@@ -1,9 +1,12 @@
 package com.popalay.tracktor.feature.createtracker
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.contentColor
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -55,6 +58,7 @@ class CreateTrackerStatePreviewProvider : PreviewParameterProvider<CreateTracker
         get() = sequenceOf(CreateTrackerWorkflow.State())
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Preview
 @Composable
 fun CreateTrackerScreen(
@@ -64,18 +68,22 @@ fun CreateTrackerScreen(
     Scaffold(topBar = { CreateTrackerAppBar(onAction, state) }) {
         ScrollableColumn(modifier = Modifier.padding(top = 16.dp)) {
             TitleInput(state, onAction)
-            if (state.isUnitsVisible) {
-                Divider(modifier = Modifier.padding(vertical = 16.dp))
-                DirectionSelector(state, onAction)
-                Divider(modifier = Modifier.padding(vertical = 16.dp))
-                UnitSelector(state, onAction)
-                Divider(modifier = Modifier.padding(vertical = 16.dp))
+            AnimatedVisibility(visible = state.isUnitsVisible) {
+                Column {
+                    Divider(modifier = Modifier.padding(vertical = 16.dp))
+                    DirectionSelector(state, onAction)
+                    Divider(modifier = Modifier.padding(vertical = 16.dp))
+                    UnitSelector(state, onAction)
+                    Divider(modifier = Modifier.padding(vertical = 16.dp))
+                }
             }
-            if (state.isCustomUnitCreating) {
-                CustomUnitCreator(state, onAction)
-                Divider(modifier = Modifier.padding(vertical = 16.dp))
+            AnimatedVisibility(visible = state.isCustomUnitCreating) {
+                Column {
+                    CustomUnitCreator(state, onAction)
+                    Divider(modifier = Modifier.padding(vertical = 16.dp))
+                }
             }
-            if (state.isInitialValueVisible) {
+            AnimatedVisibility(visible = state.isInitialValueVisible) {
                 ValueInput(state, onAction)
             }
         }
