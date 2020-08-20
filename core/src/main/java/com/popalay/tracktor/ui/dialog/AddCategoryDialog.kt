@@ -2,7 +2,6 @@ package com.popalay.tracktor.ui.dialog
 
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.AlertDialog
@@ -39,12 +38,7 @@ fun AddCategoryDialog(
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        title = {
-            Column {
-                Text(stringResource(R.string.add_category_title))
-                Text(stringResource(R.string.common_sorry_for_crash), style = MaterialTheme.typography.caption)
-            }
-        },
+        title = { Text(stringResource(R.string.add_category_title)) },
         text = {
             ChipGroup {
                 newCategories.value.forEach {

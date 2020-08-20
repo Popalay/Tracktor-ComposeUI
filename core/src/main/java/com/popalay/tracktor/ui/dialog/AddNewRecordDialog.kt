@@ -1,7 +1,6 @@
 package com.popalay.tracktor.ui.dialog
 
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.layout.Column
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -36,12 +35,7 @@ fun AddNewRecordDialog(
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        title = {
-            Column {
-                Text(stringResource(R.string.add_new_record_title, tracker.title))
-                Text(stringResource(R.string.common_sorry_for_crash), style = MaterialTheme.typography.caption)
-            }
-        },
+        title = { Text(stringResource(R.string.add_new_record_title, tracker.title)) },
         text = {
             TextField(
                 value = newValue.value,
