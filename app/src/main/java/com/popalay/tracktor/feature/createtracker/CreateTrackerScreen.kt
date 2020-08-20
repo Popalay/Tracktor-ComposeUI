@@ -244,7 +244,7 @@ private fun ValueInput(
 ) {
     TextField(
         value = state.initialValue,
-        label = { stringResource(R.string.create_tracker_value_label) },
+        label = { Text(stringResource(R.string.create_tracker_value_label)) },
         onValueChange = { onAction(Action.ValueChanged(it)) },
         keyboardType = state.initialValueKeyboardType,
         activeColor = MaterialTheme.colors.onSurface,

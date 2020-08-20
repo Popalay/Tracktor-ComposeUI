@@ -11,12 +11,8 @@ import androidx.room.Index
         ForeignKey(
             entity = Tracker::class,
             parentColumns = ["id"],
-            childColumns = ["id"]
-        ),
-        ForeignKey(
-            entity = Category::class,
-            parentColumns = ["categoryId"],
-            childColumns = ["categoryId"]
+            childColumns = ["id"],
+            onDelete = ForeignKey.CASCADE
         )
     ]
 )
