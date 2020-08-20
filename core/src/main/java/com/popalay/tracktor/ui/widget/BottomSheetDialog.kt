@@ -24,14 +24,14 @@ import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 @Composable
-fun BottomSheetDialog(onCloseRequest: () -> Unit, children: @Composable () -> Unit) {
+fun BottomSheetDialog(onDismissRequest: () -> Unit, children: @Composable () -> Unit) {
     val view = ViewAmbient.current
 
     @OptIn(ExperimentalComposeApi::class)
     val recomposer = currentComposer.recomposer
     // The recomposer can't change.
     val dialog = remember(view) { BottomSheetDialogWrapper(view, recomposer) }
-    dialog.onCloseRequest = onCloseRequest
+    dialog.onDismissRequest = onDismissRequest
 
     onActive {
         dialog.show()
@@ -57,7 +57,7 @@ private class BottomSheetDialogWrapper(
     composeView: View,
     private val recomposer: Recomposer
 ) : BottomSheetDialog(composeView.context) {
-    lateinit var onCloseRequest: () -> Unit
+    lateinit var onDismissRequest: () -> Unit
 
     private val frameLayout = CoordinatorLayout(context)
     private var composition: Composition? = null
@@ -81,7 +81,7 @@ private class BottomSheetDialogWrapper(
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val result = super.onTouchEvent(event)
         if (result) {
-            onCloseRequest()
+            onDismissRequest()
         }
 
         return result
@@ -89,11 +89,11 @@ private class BottomSheetDialogWrapper(
 
     override fun cancel() {
         // Prevents the dialog from dismissing itself
-        onCloseRequest()
+        onDismissRequest()
         return
     }
 
     override fun onBackPressed() {
-        onCloseRequest()
+        onDismissRequest()
     }
 }

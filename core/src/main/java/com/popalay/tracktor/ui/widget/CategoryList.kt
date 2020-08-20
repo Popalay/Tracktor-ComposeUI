@@ -33,7 +33,7 @@ fun TrackerCategoryList(
         AddCategoryDialog(
             categories,
             availableCategories.minus(Category.All),
-            onCloseRequest = onDialogDismissed,
+            onDismissRequest = onDialogDismissed,
             onSave = { onSave(it.toList()) }
         )
     }

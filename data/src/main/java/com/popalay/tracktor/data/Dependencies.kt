@@ -18,7 +18,7 @@ val dataModule = module {
     single { get<AppDatabase>().recordDao() }
     single { get<AppDatabase>().categoryDao() }
 
-    single { TrackingRepository(get(), get()) }
+    single { TrackingRepository(get(), get(), get()) }
     single { CategoryRepository(get()) }
 
     single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }

@@ -12,7 +12,8 @@ import java.util.UUID
 
 class TrackingRepository(
     private val trackerDao: TrackerDao,
-    private val recordDao: RecordDao
+    private val recordDao: RecordDao,
+    private val categoryDao: CategoryDao
 ) {
     fun getAllTrackersWithRecords(): Flow<List<TrackerWithRecords>> = trackerDao.getAllTrackersWithRecords()
         .flowOn(Dispatchers.IO)
@@ -62,6 +63,7 @@ class TrackingRepository(
     suspend fun restoreTracker(trackerWithRecords: TrackerWithRecords) = withContext(Dispatchers.IO) {
         trackerDao.insert(trackerWithRecords.tracker)
         recordDao.insertAll(trackerWithRecords.records)
+        categoryDao.updateForTracker(trackerWithRecords.tracker.id, trackerWithRecords.categories)
     }
 
     suspend fun restoreRecord(record: ValueRecord) = withContext(Dispatchers.IO) {

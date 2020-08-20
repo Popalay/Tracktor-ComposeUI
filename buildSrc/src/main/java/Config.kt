@@ -11,7 +11,7 @@ object Version {
     const val kotlin = "1.4.0"
     const val koin = "2.1.6"
     const val moshi = "1.9.3"
-    const val compose = "0.1.0-dev16"
+    const val compose = "0.1.0-dev17"
     const val workflow = "1.0.0-alpha.1"
     const val workflowCompose = "0.30.0"
     const val room = "2.2.5"

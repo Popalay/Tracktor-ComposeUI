@@ -9,7 +9,6 @@ import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.state
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -27,10 +26,11 @@ import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
 import com.popalay.tracktor.gradient
 import com.popalay.tracktor.ui.widget.ChartWidget
 import com.popalay.tracktor.utils.inject
+import com.popalay.tracktor.utils.rememberMutableState
 
 @Composable
 fun ChartCard(tracker: TrackerWithRecords, modifier: Modifier = Modifier) {
-    val selectedValue = state<Pair<Offset, Int>?> { null }
+    val selectedValue = rememberMutableState<Pair<Offset, Int>?> { null }
     val gradient = remember(tracker) { tracker.tracker.compatibleUnit.gradient }
 
     Stack(modifier) {
@@ -91,7 +91,7 @@ private fun ChartValuePopup(offset: Offset, trackerWithRecords: TrackerWithRecor
         val formatter: ValueRecordFormatter by inject()
 
         Card(
-            color = MaterialTheme.colors.onSurface,
+            backgroundColor = MaterialTheme.colors.onSurface,
             shape = MaterialTheme.shapes.small
         ) {
             Text(

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumnForIndexed
+import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -58,21 +59,22 @@ fun ListScreen(
 ) {
     Scaffold(
         topBar = { LogoAppBar(onActionClick = { onAction(Action.SettingsClicked) }) },
-        floatingActionButtonPosition = Scaffold.FabPosition.Center,
+        floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             Column(horizontalGravity = Alignment.CenterHorizontally) {
+                AnimatedSnackbar(
+                    message = state.itemInDeleting?.tracker?.title?.let { stringResource(R.string.tracker_item_removed_message, it) } ?: "",
+                    actionText = stringResource(R.string.button_undo),
+                    shouldDisplay = state.itemInDeleting != null,
+                    onActionClick = { onAction(Action.UndoDeletingClicked) },
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
                 FloatingActionButton(
                     onClick = { onAction(Action.CreateTrackerClicked) },
                     modifier = Modifier.navigationBarPadding()
                 ) {
                     Icon(Icons.Default.Add)
                 }
-                AnimatedSnackbar(
-                    message = state.itemInDeleting?.tracker?.title?.let { stringResource(R.string.tracker_item_removed_message, it) } ?: "",
-                    actionText = stringResource(R.string.button_undo),
-                    shouldDisplay = state.itemInDeleting != null,
-                    onActionClick = { onAction(Action.UndoDeletingClicked) }
-                )
             }
         }
     ) {
@@ -81,7 +83,7 @@ fun ListScreen(
                 state.itemInEditing != null -> {
                     AddNewRecordDialog(
                         tracker = state.itemInEditing,
-                        onCloseRequest = { onAction(Action.TrackDialogDismissed) },
+                        onDismissRequest = { onAction(Action.TrackDialogDismissed) },
                         onSave = { onAction(Action.NewRecordSubmitted(state.itemInEditing, it)) }
                     )
                 }

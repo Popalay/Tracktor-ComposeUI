@@ -1,7 +1,7 @@
 package com.popalay.tracktor.ui.widget
 
 import androidx.compose.animation.animate
-import androidx.compose.foundation.Border
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Box
 import androidx.compose.foundation.ContentColorAmbient
 import androidx.compose.foundation.clickable
@@ -54,7 +54,7 @@ fun Chip(
     Box(
         shape = shape,
         backgroundColor = if (bordered) Color.Transparent else color,
-        border = if (bordered) Border(2.dp, color) else null,
+        border = if (bordered) BorderStroke(2.dp, color) else null,
         paddingBottom = 4.dp,
         paddingTop = 4.dp,
         paddingStart = 16.dp,
