@@ -307,7 +307,7 @@ fun Modifier.navigationBarWidth(side: HorizontalSide) = composed {
 /**
  * Allows conditional setting of [insets] on each dimension.
  */
-private inline fun Modifier.insetsPadding(
+private fun Modifier.insetsPadding(
     insets: Insets,
     applyLeft: Boolean = false,
     applyTop: Boolean = false,

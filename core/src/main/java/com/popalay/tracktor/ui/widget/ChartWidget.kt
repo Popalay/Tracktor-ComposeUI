@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.state
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -23,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.popalay.tracktor.ui.widget.ChartAnimationState.STATE_END
 import com.popalay.tracktor.ui.widget.ChartAnimationState.STATE_START
 import com.popalay.tracktor.utils.dragGestureFilter
+import com.popalay.tracktor.utils.rememberMutableState
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
@@ -67,7 +67,7 @@ fun ChartWidget(
         initState = if (animate) STATE_START else STATE_END,
         toState = STATE_END
     )
-    val touchPosition = state<Offset?> { null }
+    val touchPosition = rememberMutableState<Offset?> { null }
     Canvas(
         modifier = modifier
             .fillMaxWidth()
