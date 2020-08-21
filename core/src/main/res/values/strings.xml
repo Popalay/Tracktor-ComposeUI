@@ -22,9 +22,9 @@
     <string name="create_tracker.custom_unit.type.label">Click to select</string>
     <string name="create_tracker.add_category">Category</string>
 
-    <string name="progress_statistic.trackers_amount">You have %d trackers</string>
-    <string name="progress_statistic.trackers_with_progress">You have %d trackers with progress</string>
-    <string name="progress_statistic.most_progressive_tracker">%s is your most progressive tracker</string>
+    <string name="progress_statistic.trackers_amount">%d trackers</string>
+    <string name="progress_statistic.trackers_with_progress">%d with progress</string>
+    <string name="progress_statistic.most_progressive_tracker">%s the most progressive</string>
     <string name="progress_statistic.last_updated_tracker">%s was updated %s</string>
 
     <string name="add_new_record.title">Track %s</string>

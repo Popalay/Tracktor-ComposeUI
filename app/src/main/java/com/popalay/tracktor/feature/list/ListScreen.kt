@@ -69,22 +69,23 @@ class ListRenderingPreviewProvider : PreviewParameterProvider<Rendering> {
 @Composable
 fun ListScreen(
     @PreviewParameter(ListRenderingPreviewProvider::class) rendering: Rendering,
-    onAction: (Action) -> Unit = {}
 ) {
     Scaffold(
-        topBar = { LogoAppBar(onActionClick = { onAction(Action.SettingsClicked) }) },
+        topBar = { LogoAppBar(onActionClick = { rendering.onAction(Action.SettingsClicked) }) },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             Column(horizontalGravity = Alignment.CenterHorizontally) {
                 AnimatedSnackbar(
-                    message = rendering.itemInDeleting?.tracker?.title?.let { stringResource(R.string.tracker_item_removed_message, it) } ?: "",
+                    message = rendering.itemInDeleting?.tracker?.title?.let {
+                        stringResource(R.string.tracker_item_removed_message, it)
+                    }.orEmpty(),
                     actionText = stringResource(R.string.button_undo),
                     shouldDisplay = rendering.itemInDeleting != null,
-                    onActionClick = { onAction(Action.UndoDeletingClicked) },
+                    onActionClick = { rendering.onAction(Action.UndoDeletingClicked) },
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
                 FloatingActionButton(
-                    onClick = { onAction(Action.CreateTrackerClicked) },
+                    onClick = { rendering.onAction(Action.CreateTrackerClicked) },
                     modifier = Modifier.navigationBarPadding()
                 ) {
                     Icon(Icons.Default.Add)
@@ -97,8 +98,8 @@ fun ListScreen(
                 rendering.itemInEditing != null -> {
                     AddNewRecordDialog(
                         tracker = rendering.itemInEditing,
-                        onDismissRequest = { onAction(Action.TrackDialogDismissed) },
-                        onSave = { onAction(Action.NewRecordSubmitted(rendering.itemInEditing, it)) }
+                        onDismissRequest = { rendering.onAction(Action.TrackDialogDismissed) },
+                        onSave = { rendering.onAction(Action.NewRecordSubmitted(rendering.itemInEditing, it)) }
                     )
                 }
             }

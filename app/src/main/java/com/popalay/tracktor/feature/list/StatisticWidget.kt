@@ -1,6 +1,5 @@
 package com.popalay.tracktor.feature.list
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FloatPropKey
 import androidx.compose.animation.core.transitionDefinition
 import androidx.compose.animation.core.tween
@@ -119,8 +118,7 @@ fun StatisticWidget(
                         Text(
                             item,
                             color = contentColor().copy(alpha = min(max(opacityValue * lines.size - index, 0F), 1F)),
-                            style = MaterialTheme.typography.caption,
-                            modifier = Modifier.animateContentSize()
+                            style = MaterialTheme.typography.body2
                         )
                     }
                 }

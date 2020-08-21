@@ -24,8 +24,8 @@ android {
             register("release") {
                 storeFile = file("../release/release.keystore")
                 keyAlias = "tracktor"
-                storePassword = System.getenv("ANDROID_RELEASE_KEYSTORE_PWD") ?: ""
-                keyPassword = System.getenv("ANDROID_RELEASE_KEY_PWD") ?: ""
+                storePassword = System.getenv("ANDROID_RELEASE_KEYSTORE_PWD").orEmpty()
+                keyPassword = System.getenv("ANDROID_RELEASE_KEY_PWD").orEmpty()
             }
         }
 

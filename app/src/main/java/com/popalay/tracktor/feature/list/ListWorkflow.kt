@@ -36,7 +36,7 @@ class ListWorkflow(
     private val moshi: Moshi
 ) : StatefulWorkflow<ListWorkflow.Props, ListWorkflow.State, ListWorkflow.Output, Any>(), KoinComponent {
     companion object {
-        private const val DELETING_UNDO_TIMEOUT_MILLIS = 2500L
+        private const val DELETING_UNDO_TIMEOUT_MILLIS = 4000L
     }
 
     object Props

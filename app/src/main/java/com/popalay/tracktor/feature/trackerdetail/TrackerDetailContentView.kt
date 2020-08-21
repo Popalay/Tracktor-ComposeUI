@@ -4,10 +4,6 @@ import androidx.compose.foundation.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumnForIndexed
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material.Card
-import androidx.compose.material.Divider
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
@@ -49,7 +45,7 @@ fun TrackerDetailContentView(
             val formatter: ValueRecordFormatter by inject()
 
             Column(horizontalGravity = Alignment.CenterHorizontally) {
-                val message = state.trackerWithRecords?.tracker?.let { formatter.format(it, state.recordInDeleting) } ?: ""
+                val message = state.trackerWithRecords?.tracker?.let { formatter.format(it, state.recordInDeleting) }.orEmpty()
                 AnimatedSnackbar(
                     message = message,
                     actionText = stringResource(R.string.button_undo),
