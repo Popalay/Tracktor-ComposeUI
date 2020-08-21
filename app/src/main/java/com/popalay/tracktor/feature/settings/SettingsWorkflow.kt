@@ -1,25 +1,37 @@
 package com.popalay.tracktor.feature.settings
 
+import com.popalay.tracktor.feature.featureflagslist.FeatureFlagsListWorkflow
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow
 import com.squareup.workflow.WorkflowAction
+import com.squareup.workflow.renderChild
+import java.nio.charset.Charset
 
-class SettingsWorkflow : StatefulWorkflow<Unit, Unit, SettingsWorkflow.Output, SettingsWorkflow.Rendering>() {
+class SettingsWorkflow(
+    private val featureFlagsListWorkflow: FeatureFlagsListWorkflow
+) : StatefulWorkflow<Unit, SettingsWorkflow.State, SettingsWorkflow.Output, Any>() {
+
+    enum class State {
+        Root, FeatureFlagsList
+    }
 
     sealed class Output {
         object Back : Output()
-        object FeatureTogglesList : Output()
     }
 
-    sealed class Action : WorkflowAction<Unit, Output> {
+    sealed class Action : WorkflowAction<State, Output> {
+        data class FeatureFlagListOutput(val output: FeatureFlagsListWorkflow.Output) : Action()
         object BackClicked : Action()
         object FeatureTogglesClicked : Action()
 
-        override fun WorkflowAction.Updater<Unit, Output>.apply() {
-            nextState = when (this@Action) {
+        override fun WorkflowAction.Updater<State, Output>.apply() {
+            nextState = when (val action = this@Action) {
+                is FeatureFlagListOutput -> when (action.output) {
+                    FeatureFlagsListWorkflow.Output.Back -> State.Root
+                }
                 BackClicked -> nextState.also { setOutput(Output.Back) }
-                FeatureTogglesClicked -> nextState.also { setOutput(Output.FeatureTogglesList) }
+                FeatureTogglesClicked -> State.FeatureFlagsList
             }
         }
     }
@@ -28,15 +40,19 @@ class SettingsWorkflow : StatefulWorkflow<Unit, Unit, SettingsWorkflow.Output, S
         val onAction: (Action) -> Unit
     )
 
-    override fun initialState(props: Unit, snapshot: Snapshot?) = Unit
+    override fun initialState(props: Unit, snapshot: Snapshot?) =
+        snapshot?.let { State.valueOf(it.bytes.string(Charset.defaultCharset())) } ?: State.Root
 
     override fun render(
         props: Unit,
-        state: Unit,
-        context: RenderContext<Unit, Output>
-    ): Rendering = Rendering(
-        onAction = { context.actionSink.send(it) }
-    )
+        state: State,
+        context: RenderContext<State, Output>
+    ): Any = when (state) {
+        State.Root -> Rendering(
+            onAction = { context.actionSink.send(it) }
+        )
+        State.FeatureFlagsList -> context.renderChild(featureFlagsListWorkflow) { Action.FeatureFlagListOutput(it) }
+    }
 
-    override fun snapshotState(state: Unit): Snapshot = Snapshot.EMPTY
+    override fun snapshotState(state: State): Snapshot = Snapshot.of(state.name)
 }

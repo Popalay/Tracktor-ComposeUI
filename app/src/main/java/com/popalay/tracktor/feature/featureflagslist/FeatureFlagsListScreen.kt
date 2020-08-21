@@ -45,7 +45,7 @@ fun FeatureFlagsListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.feature_toggles_title)) },
+                title = { Text(stringResource(R.string.feature_flags_title)) },
                 navigationIcon = {
                     IconButton(onClick = { onAction(Action.BackClicked) }) {
                         Icon(Icons.Default.ArrowBack)
