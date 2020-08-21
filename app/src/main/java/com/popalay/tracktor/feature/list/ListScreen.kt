@@ -29,10 +29,11 @@ import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
 import com.popalay.tracktor.core.R
+import com.popalay.tracktor.data.model.Category
+import com.popalay.tracktor.data.model.Statistic
 import com.popalay.tracktor.data.model.toListItem
 import com.popalay.tracktor.feature.list.ListWorkflow.Action
 import com.popalay.tracktor.feature.list.ListWorkflow.Rendering
-import com.popalay.tracktor.feature.list.ListWorkflow.State
 import com.popalay.tracktor.ui.dialog.AddNewRecordDialog
 import com.popalay.tracktor.ui.widget.AllCategoryList
 import com.popalay.tracktor.ui.widget.AnimatedSnackbar
@@ -43,18 +44,31 @@ import com.squareup.workflow.ui.compose.composedViewFactory
 
 @OptIn(ExperimentalLayout::class)
 val ListBinding = composedViewFactory<Rendering> { rendering, _ ->
-    ListScreen(rendering.state, rendering.onAction)
+    ListScreen(rendering)
 }
 
-class ListStatePreviewProvider : PreviewParameterProvider<State> {
-    override val values: Sequence<State>
-        get() = sequenceOf(State(List(5) { Faker.fakeTrackerWithRecords() }.map { it.toListItem() }))
+class ListRenderingPreviewProvider : PreviewParameterProvider<Rendering> {
+    override val values: Sequence<Rendering>
+        get() = sequenceOf(
+            Rendering(
+                items = List(5) { Faker.fakeTrackerWithRecords() }.map { it.toListItem() },
+                filteredItems = List(5) { Faker.fakeTrackerWithRecords() }.map { it.toListItem() },
+                statistic = Statistic.generateFor(List(5) { Faker.fakeTrackerWithRecords() }),
+                allCategories = Category.defaultList(),
+                selectedCategory = Category.All,
+                itemInDeleting = null,
+                itemInEditing = null,
+                showEmptyState = false,
+                animate = false,
+                onAction = {}
+            )
+        )
 }
 
 @Preview
 @Composable
 fun ListScreen(
-    @PreviewParameter(ListStatePreviewProvider::class) state: State,
+    @PreviewParameter(ListRenderingPreviewProvider::class) rendering: Rendering,
     onAction: (Action) -> Unit = {}
 ) {
     Scaffold(
@@ -63,9 +77,9 @@ fun ListScreen(
         floatingActionButton = {
             Column(horizontalGravity = Alignment.CenterHorizontally) {
                 AnimatedSnackbar(
-                    message = state.itemInDeleting?.tracker?.title?.let { stringResource(R.string.tracker_item_removed_message, it) } ?: "",
+                    message = rendering.itemInDeleting?.tracker?.title?.let { stringResource(R.string.tracker_item_removed_message, it) } ?: "",
                     actionText = stringResource(R.string.button_undo),
-                    shouldDisplay = state.itemInDeleting != null,
+                    shouldDisplay = rendering.itemInDeleting != null,
                     onActionClick = { onAction(Action.UndoDeletingClicked) },
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
@@ -80,15 +94,15 @@ fun ListScreen(
     ) {
         Stack(modifier = Modifier.fillMaxSize()) {
             when {
-                state.itemInEditing != null -> {
+                rendering.itemInEditing != null -> {
                     AddNewRecordDialog(
-                        tracker = state.itemInEditing,
+                        tracker = rendering.itemInEditing,
                         onDismissRequest = { onAction(Action.TrackDialogDismissed) },
-                        onSave = { onAction(Action.NewRecordSubmitted(state.itemInEditing, it)) }
+                        onSave = { onAction(Action.NewRecordSubmitted(rendering.itemInEditing, it)) }
                     )
                 }
             }
-            if (state.showEmptyState) {
+            if (rendering.showEmptyState) {
                 Text(
                     text = stringResource(R.string.tracker_list_empty_message),
                     style = MaterialTheme.typography.caption,
@@ -96,7 +110,7 @@ fun ListScreen(
                     modifier = Modifier.gravity(Alignment.Center)
                 )
             } else {
-                TrackerList(state, onAction)
+                TrackerList(rendering)
             }
         }
     }
@@ -104,45 +118,44 @@ fun ListScreen(
 
 @Composable
 private fun TrackerList(
-    state: State,
-    onAction: (Action) -> Unit,
+    rendering: Rendering,
     modifier: Modifier = Modifier
 ) {
     LazyColumnForIndexed(
-        items = state.filteredItems,
+        items = rendering.filteredItems,
         contentPadding = InnerPadding(top = 16.dp, bottom = 16.dp),
         modifier = modifier
     ) { index, item ->
-        if (index == 0 && state.statistic != null) {
+        if (index == 0 && rendering.statistic != null) {
             StatisticWidget(
-                state.statistic,
-                state.animate,
+                rendering.statistic,
+                rendering.animate,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-            if (state.allCategories.isNotEmpty()) {
+            if (rendering.allCategories.isNotEmpty()) {
                 AllCategoryList(
-                    categories = state.allCategories,
-                    selectedCategory = state.selectedCategory,
-                    onCategoryClick = { onAction(Action.CategoryClick(it)) },
+                    categories = rendering.allCategories,
+                    selectedCategory = rendering.selectedCategory,
+                    onCategoryClick = { rendering.onAction(Action.CategoryClick(it)) },
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
             Spacer(Modifier.height(8.dp))
         }
         TrackerListItem(
-            item.copy(animate = state.animate),
+            item.copy(animate = rendering.animate),
             modifier = Modifier.padding(horizontal = 16.dp),
-            contentModifier = Modifier.clickable(onClick = { onAction(Action.TrackerClicked(item.data)) }),
-            onAddClicked = { onAction(Action.AddRecordClicked(item.data)) },
-            onRemoveClicked = { onAction(Action.DeleteTrackerClicked(item.data)) }
+            contentModifier = Modifier.clickable(onClick = { rendering.onAction(Action.TrackerClicked(item.data)) }),
+            onAddClicked = { rendering.onAction(Action.AddRecordClicked(item.data)) },
+            onRemoveClicked = { rendering.onAction(Action.DeleteTrackerClicked(item.data)) }
         )
-        if (index != state.items.lastIndex) {
+        if (index != rendering.items.lastIndex) {
             Spacer(Modifier.height(8.dp))
         } else {
             Spacer(Modifier.navigationBarHeight())
         }
         onActive {
-            onAction(Action.AnimationProceeded)
+            rendering.onAction(Action.AnimationProceeded)
         }
     }
 }

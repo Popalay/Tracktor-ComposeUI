@@ -116,5 +116,8 @@ dependencies {
     implementation(Libs.Koin.android)
 
     implementation(Libs.Moshi.core)
+    implementation(Libs.Moshi.adapters)
+    implementation(Libs.Moshi.sealedAnnotations)
     kapt(Libs.Moshi.codegen)
+    kapt(Libs.Moshi.sealedCodgen)
 }

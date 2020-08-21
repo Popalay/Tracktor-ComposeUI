@@ -11,6 +11,7 @@ object Version {
     const val kotlin = "1.4.0"
     const val koin = "2.1.6"
     const val moshi = "1.9.3"
+    const val moshiSealed = "0.2.0"
     const val compose = "0.1.0-dev17"
     const val workflow = "1.0.0-alpha.1"
     const val workflowCompose = "0.30.0"
@@ -52,6 +53,9 @@ object Libs {
 
     object Moshi {
         const val core = "com.squareup.moshi:moshi:${Version.moshi}"
+        const val adapters = "com.squareup.moshi:moshi-adapters:${Version.moshi}"
         const val codegen = "com.squareup.moshi:moshi-kotlin-codegen:${Version.moshi}"
+        const val sealedAnnotations = "dev.zacsweers.moshisealed:moshi-sealed-annotations:${Version.moshiSealed}"
+        const val sealedCodgen = "dev.zacsweers.moshisealed:moshi-sealed-codegen:${Version.moshiSealed}"
     }
 }

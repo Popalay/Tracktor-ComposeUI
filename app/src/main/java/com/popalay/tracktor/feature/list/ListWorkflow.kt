@@ -9,6 +9,9 @@ import com.popalay.tracktor.data.model.TrackerListItem
 import com.popalay.tracktor.data.model.TrackerWithRecords
 import com.popalay.tracktor.data.model.toListItem
 import com.popalay.tracktor.domain.worker.GetAllTrackersWorker
+import com.popalay.tracktor.feature.createtracker.CreateTrackerWorkflow
+import com.popalay.tracktor.feature.settings.SettingsWorkflow
+import com.popalay.tracktor.feature.trackerdetail.TrackerDetailWorkflow
 import com.popalay.tracktor.utils.toData
 import com.popalay.tracktor.utils.toSnapshot
 import com.squareup.moshi.JsonClass
@@ -19,46 +22,72 @@ import com.squareup.workflow.StatefulWorkflow
 import com.squareup.workflow.Worker
 import com.squareup.workflow.WorkflowAction
 import com.squareup.workflow.applyTo
+import com.squareup.workflow.renderChild
+import dev.zacsweers.moshisealed.annotations.DefaultNull
+import dev.zacsweers.moshisealed.annotations.TypeLabel
 import org.koin.core.KoinComponent
 
 class ListWorkflow(
     private val trackingRepository: TrackingRepository,
     private val getAllTrackersWorker: GetAllTrackersWorker,
+    private val trackerDetailWorkflow: TrackerDetailWorkflow,
+    private val createTrackerWorkflow: CreateTrackerWorkflow,
+    private val settingsWorkflow: SettingsWorkflow,
     private val moshi: Moshi
 ) : StatefulWorkflow<ListWorkflow.Props, ListWorkflow.State, ListWorkflow.Output, Any>(), KoinComponent {
     companion object {
         private const val DELETING_UNDO_TIMEOUT_MILLIS = 2500L
     }
 
-    data class Props(
-        val animate: Boolean,
-        val itemInDeleting: TrackerWithRecords? = null
-    )
+    object Props
 
     @JsonClass(generateAdapter = true)
     data class State(
         @Transient val items: List<TrackerListItem> = emptyList(),
         @Transient val filteredItems: List<TrackerListItem> = emptyList(),
         @Transient val allCategories: List<Category> = emptyList(),
-        @Transient val selectedCategory: Category = Category.All,
         @Transient val itemInEditing: Tracker? = null,
         @Transient val itemInDeleting: TrackerWithRecords? = null,
         @Transient val currentAction: Action? = null,
         @Transient val statistic: Statistic? = null,
+        val selectedCategory: Category = Category.All,
+        val childState: ChildState? = null,
         val showEmptyState: Boolean = false,
         val animate: Boolean = true
     )
 
+    @DefaultNull
+    @JsonClass(generateAdapter = true, generator = "sealed:type")
+    sealed class ChildState {
+        @TypeLabel("TrackerDetail")
+        @JsonClass(generateAdapter = true)
+        data class TrackerDetail(val trackerId: String) : ChildState()
+
+        @TypeLabel("Settings")
+        @JsonClass(generateAdapter = true)
+        @Suppress("CanSealedSubClassBeObject")
+        class Settings : ChildState()
+
+        @TypeLabel("TrackerCreation")
+        @JsonClass(generateAdapter = true)
+        @Suppress("CanSealedSubClassBeObject")
+        class TrackerCreation : ChildState()
+    }
+
     data class Rendering(
-        val state: State,
+        val items: List<TrackerListItem>,
+        val filteredItems: List<TrackerListItem>,
+        val allCategories: List<Category>,
+        val itemInEditing: Tracker?,
+        val itemInDeleting: TrackerWithRecords?,
+        val statistic: Statistic?,
+        val selectedCategory: Category,
+        val showEmptyState: Boolean,
+        val animate: Boolean,
         val onAction: (Action) -> Unit
     )
 
-    sealed class Output {
-        data class TrackerDetail(val trackerId: String) : Output()
-        object CreateTracker : Output()
-        object Settings : Output()
-    }
+    object Output
 
     sealed class Action : WorkflowAction<State, Output> {
         data class SideEffectAction(val action: Action) : Action()
@@ -69,6 +98,9 @@ class ListWorkflow(
         data class DeleteSubmitted(val item: TrackerWithRecords) : Action()
         data class TrackerClicked(val item: TrackerWithRecords) : Action()
         data class CategoryClick(val category: Category) : Action()
+        data class TrackerDetailOutput(val output: TrackerDetailWorkflow.Output) : Action()
+        data class TrackerCreationOutput(val output: CreateTrackerWorkflow.Output) : Action()
+        data class SettingsOutput(val output: SettingsWorkflow.Output) : Action()
         object TrackDialogDismissed : Action()
         object CreateTrackerClicked : Action()
         object AnimationProceeded : Action()
@@ -94,20 +126,31 @@ class ListWorkflow(
                     )
                 }
                 is AddRecordClicked -> nextState.copy(itemInEditing = action.item.tracker)
-                is TrackerClicked -> nextState.also { setOutput(Output.TrackerDetail(action.item.tracker.id)) }
+                is TrackerClicked -> nextState.copy(childState = ChildState.TrackerDetail(action.item.tracker.id))
                 is DeleteSubmitted -> nextState.copy(itemInDeleting = action.item)
                 is CategoryClick -> nextState.copy(
                     selectedCategory = action.category,
                     filteredItems = nextState.items.filterByCategory(action.category),
                 )
-                CreateTrackerClicked -> nextState.also { setOutput(Output.CreateTracker) }
+                is SettingsOutput -> when (action.output) {
+                    SettingsWorkflow.Output.Back -> nextState.copy(childState = null)
+                }
+                is TrackerCreationOutput -> when (action.output) {
+                    CreateTrackerWorkflow.Output.Back -> nextState.copy(childState = null)
+                }
+                is TrackerDetailOutput -> when (val output = action.output) {
+                    TrackerDetailWorkflow.Output.Back -> nextState.copy(childState = null)
+                    is TrackerDetailWorkflow.Output.TrackerDeleted -> nextState.copy(
+                        childState = null,
+                        itemInDeleting = output.item
+                    )
+                }
+                CreateTrackerClicked -> nextState.copy(childState = ChildState.TrackerCreation())
                 TrackDialogDismissed -> nextState.copy(itemInEditing = null)
                 AnimationProceeded -> nextState.copy(animate = false)
                 UndoAvailabilityEnded -> nextState.copy(itemInDeleting = null)
                 UndoPerformed -> nextState.copy(itemInDeleting = null)
-                SettingsClicked -> nextState.also {
-                    setOutput(Output.Settings)
-                }
+                SettingsClicked -> nextState.copy(childState = ChildState.Settings())
                 else -> nextState.copy(currentAction = this@Action)
             }
         }
@@ -120,8 +163,7 @@ class ListWorkflow(
             .let { if (it.isEmpty()) it else listOf(Category.All).plus(it) }
     }
 
-    override fun initialState(props: Props, snapshot: Snapshot?): State =
-        snapshot?.toData(moshi) ?: State(animate = props.animate, itemInDeleting = props.itemInDeleting)
+    override fun initialState(props: Props, snapshot: Snapshot?): State = snapshot?.toData(moshi) ?: State()
 
     override fun render(
         props: Props,
@@ -131,10 +173,25 @@ class ListWorkflow(
         context.runningWorker(getAllTrackersWorker) { Action.ListUpdated(it) }
         runSideEffects(state, context)
 
-        return Rendering(
-            state = state,
-            onAction = { context.actionSink.send(it) }
-        )
+        return when (state.childState) {
+            is ChildState.TrackerDetail -> context.renderChild(trackerDetailWorkflow, TrackerDetailWorkflow.Props(state.childState.trackerId)) {
+                Action.TrackerDetailOutput(it)
+            }
+            is ChildState.Settings -> context.renderChild(settingsWorkflow) { Action.SettingsOutput(it) }
+            is ChildState.TrackerCreation -> context.renderChild(createTrackerWorkflow) { Action.TrackerCreationOutput(it) }
+            else -> Rendering(
+                items = state.items,
+                filteredItems = state.filteredItems,
+                allCategories = state.allCategories,
+                itemInEditing = state.itemInEditing,
+                itemInDeleting = state.itemInDeleting,
+                statistic = state.statistic,
+                selectedCategory = state.selectedCategory,
+                showEmptyState = state.showEmptyState,
+                animate = state.animate,
+                onAction = { context.actionSink.send(it) }
+            )
+        }
     }
 
     override fun snapshotState(state: State): Snapshot = state.toSnapshot(moshi)
@@ -154,9 +211,10 @@ class ListWorkflow(
                 context.runningWorker(worker) { Action.SideEffectAction(Action.DeleteSubmitted(action.item)) }
             }
             is Action.UndoDeletingClicked -> {
-                if (state.itemInDeleting == null) return
-                val worker = Worker.from { trackingRepository.restoreTracker(state.itemInDeleting) }
-                context.runningWorker(worker) { Action.SideEffectAction(Action.UndoPerformed) }
+                state.itemInDeleting?.let {
+                    val worker = Worker.from { trackingRepository.restoreTracker(it) }
+                    context.runningWorker(worker) { Action.SideEffectAction(Action.UndoPerformed) }
+                }
             }
         }
         if (state.itemInDeleting != null) {
