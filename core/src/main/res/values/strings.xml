@@ -10,7 +10,7 @@
     <string name="tracker_item.empty_message">Start tracking now</string>
     <string name="tracker_item.removed_message">%s was removed</string>
 
-    <string name="feature_toggles.title">Feature toggles</string>
+    <string name="feature_flags.title">Feature flags</string>
 
     <string name="create_tracker.title">Let\'s track</string>
     <string name="create_tracker.name.label">What would you like to track?</string>
@@ -33,7 +33,7 @@
     <string name="add_category.new_category_label">Category</string>
 
     <string name="settings.title">Settings</string>
-    <string name="settings.feature_toggles.title">Feature toggles</string>
+    <string name="settings.feature_flags.title">Feature flags</string>
     <string name="settings.review.title">Review app</string>
     <string name="settings.import.title">Import trackers</string>
     <string name="settings.export.title">Export trackers</string>

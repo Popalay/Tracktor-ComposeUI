@@ -54,7 +54,7 @@ fun SettingsScreen(
         Column {
             SettingItem(
                 icon = { Icon(Icons.Default.FeaturedPlayList) },
-                title = { Text(stringResource(R.string.feature_toggles_title)) },
+                title = { Text(stringResource(R.string.feature_flags_title)) },
                 onClick = { onAction(Action.FeatureTogglesClicked) }
             )
             if (false) {
