@@ -33,7 +33,7 @@ fun AnimatedSnackbar(
         )
     ) {
         Snackbar(
-            text = { Text(text = message.takeIf { shouldDisplay } ?: "") },
+            text = { Text(text = message.takeIf { shouldDisplay }.orEmpty()) },
             action = {
                 TextButton(onClick = onActionClick) {
                     Text(text = actionText)
