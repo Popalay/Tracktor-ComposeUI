@@ -12,6 +12,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -30,25 +32,25 @@ fun AddCategoryDialog(
     onDismissRequest: () -> Unit,
     onSave: (Set<Category>) -> Unit
 ) {
-    val newValue = rememberMutableState { "" }
-    val newCategories = rememberMutableState { allCategories.toSet() }
-    val selectedCategories = rememberMutableState { trackerCategories.toSet() }
-    val isCustomCategoryValid = rememberMutableState { false }
-    val isCustomCategoryCreation = rememberMutableState { false }
+    var newValue by rememberMutableState { "" }
+    var newCategories by rememberMutableState { allCategories.toSet() }
+    var selectedCategories by rememberMutableState { trackerCategories.toSet() }
+    var isCustomCategoryValid by rememberMutableState { false }
+    var isCustomCategoryCreation by rememberMutableState { false }
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
         title = { Text(stringResource(R.string.add_category_title)) },
         text = {
             ChipGroup {
-                newCategories.value.forEach {
+                newCategories.forEach {
                     Chip(
-                        isSelected = it in selectedCategories.value,
+                        isSelected = it in selectedCategories,
                         onClick = {
-                            if (it in selectedCategories.value) {
-                                selectedCategories.value = selectedCategories.value - it
+                            selectedCategories = if (it in selectedCategories) {
+                                selectedCategories - it
                             } else {
-                                selectedCategories.value = selectedCategories.value + it
+                                selectedCategories + it
                             }
                         }
                     ) {
@@ -56,43 +58,43 @@ fun AddCategoryDialog(
                     }
                 }
                 Chip(
-                    isSelected = isCustomCategoryCreation.value,
-                    bordered = !isCustomCategoryValid.value,
+                    isSelected = isCustomCategoryCreation,
+                    bordered = !isCustomCategoryValid,
                     contentColor = MaterialTheme.colors.onBackground,
-                    activeColor = if (isCustomCategoryValid.value) MaterialTheme.colors.success else MaterialTheme.colors.secondary,
+                    activeColor = if (isCustomCategoryValid) MaterialTheme.colors.success else MaterialTheme.colors.secondary,
                     onClick = {
-                        if (isCustomCategoryValid.value) {
-                            val category = Category(UUID.randomUUID().toString(), newValue.value)
-                            newCategories.value = newCategories.value + category
-                            selectedCategories.value = selectedCategories.value + category
-                            isCustomCategoryCreation.value = false
-                            isCustomCategoryValid.value = false
-                            newValue.value = ""
+                        if (isCustomCategoryValid) {
+                            val category = Category(UUID.randomUUID().toString(), newValue)
+                            newCategories = newCategories + category
+                            selectedCategories = selectedCategories + category
+                            isCustomCategoryCreation = false
+                            isCustomCategoryValid = false
+                            newValue = ""
                         } else {
-                            isCustomCategoryCreation.value = true
+                            isCustomCategoryCreation = true
                         }
                     }
                 ) {
-                    Icon(if (isCustomCategoryValid.value) Icons.Default.Done else Icons.Default.Add)
+                    Icon(if (isCustomCategoryValid) Icons.Default.Done else Icons.Default.Add)
                 }
             }
-            if (isCustomCategoryCreation.value) {
+            if (isCustomCategoryCreation) {
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
-                    value = newValue.value,
+                    value = newValue,
                     label = { Text(stringResource(R.string.add_category_new_category_label)) },
                     activeColor = MaterialTheme.colors.onSurface,
                     onValueChange = {
-                        newValue.value = it
-                        isCustomCategoryValid.value = it.isNotBlank()
+                        newValue = it
+                        isCustomCategoryValid = it.isNotBlank()
                     }
                 )
             }
         },
         confirmButton = {
             Button(
-                enabled = newValue.value.isNotBlank() || trackerCategories.toSet() != selectedCategories.value,
-                onClick = { onSave(selectedCategories.value) }
+                enabled = newValue.isNotBlank() || trackerCategories.toSet() != selectedCategories,
+                onClick = { onSave(selectedCategories) }
             ) { Text(stringResource(R.string.button_save)) }
         },
         dismissButton = {

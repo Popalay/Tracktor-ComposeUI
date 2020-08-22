@@ -6,7 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.transition
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
-import androidx.compose.foundation.contentColor
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +22,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.WithConstraints
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.HorizontalGradient
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -69,6 +70,8 @@ fun StatisticWidget(
         toState = STATE_END
     )
     val opacityValue = transitionState[opacityKey]
+    val alpha = if (isSystemInDarkTheme()) 0.5F else 1F
+    val contentColor = Color.White
 
     WithConstraints {
         Card(
@@ -76,14 +79,14 @@ fun StatisticWidget(
             modifier = modifier
         ) {
             Row(
-                modifier = Modifier.background(HorizontalGradient(gradients[0], 0F, constraints.maxWidth.toFloat()), alpha = 0.5F)
+                modifier = Modifier.background(HorizontalGradient(gradients[0], 0F, constraints.maxWidth.toFloat()), alpha = alpha)
                     .height(150.dp)
                     .fillMaxWidth()
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                DoughnutChart(statistic.overallProgress, animate, modifier = Modifier.fillMaxSize().weight(1F))
-                Spacer(modifier = Modifier.width(16.dp))
+                DoughnutChart(statistic.overallProgress, contentColor, animate, modifier = Modifier.fillMaxSize().weight(1F))
+                Spacer(Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(2F).fillMaxHeight(), verticalArrangement = Arrangement.SpaceEvenly) {
                     val lines = listOf(
                         annotatedString {
@@ -117,7 +120,7 @@ fun StatisticWidget(
                     lines.forEachIndexed { index, item ->
                         Text(
                             item,
-                            color = contentColor().copy(alpha = min(max(opacityValue * lines.size - index, 0F), 1F)),
+                            color = contentColor.copy(alpha = min(max(opacityValue * lines.size - index, 0F), 1F)),
                             style = MaterialTheme.typography.body2
                         )
                     }

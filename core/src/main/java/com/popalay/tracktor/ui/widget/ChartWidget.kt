@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -67,15 +69,15 @@ fun ChartWidget(
         initState = if (animate) STATE_START else STATE_END,
         toState = STATE_END
     )
-    val touchPosition = rememberMutableState<Offset?> { null }
+    var touchPosition by rememberMutableState<Offset?> { null }
     Canvas(
         modifier = modifier
             .fillMaxWidth()
             .dragGestureFilter(
-                onStart = { touchPosition.value = it },
-                onDrag = { touchPosition.value = touchPosition.value?.plus(it);it },
-                onStop = { touchPosition.value = null },
-                onCancel = { touchPosition.value = null },
+                onStart = { touchPosition = it },
+                onDrag = { touchPosition = touchPosition?.plus(it);it },
+                onStop = { touchPosition = null },
+                onCancel = { touchPosition = null },
                 canDrag = { touchable },
                 startDragImmediately = true
             )
@@ -94,7 +96,7 @@ fun ChartWidget(
         drawPath(borderPath, createBrush(gradient, size), 1.0F, Stroke(lineWidth.toPx()))
 
         if (touchable) {
-            drawTouchable(touchPosition.value, points, labelRadius, pointColor, topOffset, onPointUnSelected, onPointSelected)
+            drawTouchable(touchPosition, points, labelRadius, pointColor, topOffset, onPointUnSelected, onPointSelected)
         }
     }
 }

@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -30,7 +32,7 @@ import com.popalay.tracktor.utils.rememberMutableState
 
 @Composable
 fun ChartCard(tracker: TrackerWithRecords, modifier: Modifier = Modifier) {
-    val selectedValue = rememberMutableState<Pair<Offset, Int>?> { null }
+    var selectedValue by rememberMutableState<Pair<Offset, Int>?> { null }
     val gradient = remember(tracker) { tracker.tracker.compatibleUnit.gradient }
 
     Stack(modifier) {
@@ -41,15 +43,15 @@ fun ChartCard(tracker: TrackerWithRecords, modifier: Modifier = Modifier) {
                 gradient = gradient,
                 pointColor = contentColor(),
                 touchable = true,
-                onPointSelected = { offset, index -> selectedValue.value = offset to index % tracker.records.size },
+                onPointSelected = { offset, index -> selectedValue = offset to index % tracker.records.size },
                 onPointUnSelected = {
-                    selectedValue.value = null
+                    selectedValue = null
                 }
             )
         }
 
-        if (selectedValue.value != null) {
-            val (offset, index) = requireNotNull(selectedValue.value)
+        if (selectedValue != null) {
+            val (offset, index) = requireNotNull(selectedValue)
 
             ChartValuePopup(offset, tracker, tracker.records[index])
         }

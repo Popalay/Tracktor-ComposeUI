@@ -11,13 +11,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.transition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.contentColor
 import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import com.popalay.tracktor.ui.widget.AnimationState.STATE_END
@@ -78,7 +78,12 @@ private val tickAnimationDefinition = transitionDefinition<AnimationState> {
 }
 
 @Composable
-fun DoughnutChart(progress: Double, animate: Boolean = true, modifier: Modifier = Modifier.fillMaxSize()) {
+fun DoughnutChart(
+    progress: Double,
+    color: Color,
+    animate: Boolean = true,
+    modifier: Modifier = Modifier.fillMaxSize()
+) {
     val startAnimation = transition(
         definition = startAnimationDefinition,
         initState = if (animate) STATE_START else STATE_END,
@@ -95,8 +100,6 @@ fun DoughnutChart(progress: Double, animate: Boolean = true, modifier: Modifier 
     val angleValue = startAnimation[angleKey]
 
     Stack(modifier) {
-        val pathColor = contentColor()
-
         Canvas(Modifier.fillMaxSize()) {
             val path = createPolygon(size, 6)
 
@@ -105,7 +108,7 @@ fun DoughnutChart(progress: Double, animate: Boolean = true, modifier: Modifier 
 
                 drawPath(
                     path.transform(angle, sizeValue),
-                    pathColor,
+                    color,
                     style = Stroke(
                         width = 2.dp.toPx(),
                         pathEffect = CornerPathEffect(4.dp.toPx())
@@ -116,7 +119,7 @@ fun DoughnutChart(progress: Double, animate: Boolean = true, modifier: Modifier 
 
         Text(
             text = "↑${(progress * 100).roundToInt()}%",
-            color = contentColor().copy(alpha = opacityValue),
+            color = color.copy(alpha = opacityValue),
             style = MaterialTheme.typography.h5,
             modifier = Modifier.gravity(Alignment.Center)
         )

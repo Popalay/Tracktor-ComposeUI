@@ -6,7 +6,9 @@ import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.popalay.tracktor.core.R
@@ -20,7 +22,7 @@ fun AddNewRecordDialog(
     onDismissRequest: () -> Unit,
     onSave: (String) -> Unit
 ) {
-    val newValue = rememberMutableState { "" }
+    var newValue by rememberMutableState { "" }
     val keyboardType = if (tracker.unit == TrackableUnit.Word) KeyboardType.Text else KeyboardType.Number
     val validator: (String) -> Boolean = remember(tracker.unit) {
         when (tracker.unit) {
@@ -38,17 +40,17 @@ fun AddNewRecordDialog(
         title = { Text(stringResource(R.string.add_new_record_title, tracker.title)) },
         text = {
             TextField(
-                value = newValue.value,
+                value = newValue,
                 label = { Text(tracker.unit.displayName) },
                 keyboardType = keyboardType,
                 activeColor = MaterialTheme.colors.onSurface,
-                onValueChange = { newValue.value = it }
+                onValueChange = { newValue = it }
             )
         },
         confirmButton = {
             Button(
-                enabled = validator(newValue.value),
-                onClick = { onSave(newValue.value.trim()) }
+                enabled = validator(newValue),
+                onClick = { onSave(newValue.trim()) }
             ) { Text(stringResource(R.string.button_save)) }
         }
     )
