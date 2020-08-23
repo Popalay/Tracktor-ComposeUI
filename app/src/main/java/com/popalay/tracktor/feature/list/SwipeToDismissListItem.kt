@@ -17,7 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.savedinstancestate.rememberSavedInstanceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.drawLayer
 import androidx.compose.ui.platform.AnimationClockAmbient
@@ -32,19 +32,20 @@ fun SwipeToDismissListItem(
     itemContent: @Composable () -> Unit
 ) {
     val clock = AnimationClockAmbient.current.asDisposableClock()
-    val dismissState = remember(state, clock) {
-        DismissState(
-            DismissValue.Default,
-            clock
-        ) {
-            when (it) {
-                DismissValue.DismissedToEnd -> onDismissedToEnd()
-                DismissValue.DismissedToStart -> onDismissedToStart()
-                DismissValue.Default -> Unit
-            }
-            true
+    val confirmStateChange: (DismissValue) -> Boolean = {
+        when (it) {
+            DismissValue.DismissedToEnd -> onDismissedToEnd()
+            DismissValue.DismissedToStart -> onDismissedToStart()
+            DismissValue.Default -> Unit
         }
+        it != DismissValue.DismissedToEnd
     }
+    val dismissState = rememberSavedInstanceState(
+        state,
+        clock,
+        saver = DismissState.Saver(clock, confirmStateChange)
+    ) { DismissState(DismissValue.Default, clock, confirmStateChange) }
+
     SwipeToDismiss(
         state = dismissState,
         directions = setOf(DismissDirection.StartToEnd, DismissDirection.EndToStart),
