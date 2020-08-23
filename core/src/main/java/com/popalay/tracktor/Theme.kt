@@ -63,7 +63,7 @@ val gradients = listOf(
 
 val TrackableUnit.gradient: List<Color>
     get() {
-        val gradientIndex = hashCode().absoluteValue % gradients.size
+        val gradientIndex = name.hashCode().absoluteValue % gradients.size
         return gradients[gradientIndex]
     }
 

@@ -1,18 +1,25 @@
 package com.popalay.tracktor.feature.list
 
+import androidx.compose.animation.animate
+import androidx.compose.foundation.Box
+import androidx.compose.foundation.ContentGravity
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Card
-import androidx.compose.material.IconButton
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissState
+import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -21,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.drawLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -52,41 +60,30 @@ class TrackerListItemPreviewProvider : PreviewParameterProvider<TrackerListItem>
 fun TrackerListItem(
     @PreviewParameter(TrackerListItemPreviewProvider::class) item: TrackerListItem,
     modifier: Modifier = Modifier,
-    contentModifier: Modifier = Modifier,
-    onAddClicked: () -> Unit = {},
-    onRemoveClicked: () -> Unit = {}
+    contentModifier: Modifier = Modifier
 ) {
     val gradient = remember(item) { item.data.tracker.compatibleUnit.gradient }
-    Card(modifier) {
+
+    Card(modifier = modifier) {
         Column(
             modifier = contentModifier.preferredHeight(120.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Body(item, gradient)
-            Footer(onAddClicked, onRemoveClicked, item)
+            Footer(item)
         }
     }
 }
 
 @Composable
-private fun Footer(
-    onAddClicked: () -> Unit,
-    onRemoveClicked: () -> Unit,
-    item: TrackerListItem
-) {
+private fun Footer(item: TrackerListItem) {
     val formatter: ValueRecordFormatter by inject()
 
     Row(verticalGravity = Alignment.CenterVertically, modifier = Modifier.padding(end = 16.dp)) {
-        IconButton(onClick = onAddClicked) {
-            Icon(asset = Icons.Default.Add)
-        }
-        IconButton(onClick = onRemoveClicked) {
-            Icon(asset = Icons.Default.Delete)
-        }
-        Spacer(modifier = Modifier.weight(1F))
+        Spacer(Modifier.weight(1F))
         if (item.data.records.isNotEmpty()) {
             ProgressTextField(item.data.progress(), item.data.tracker.direction)
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(Modifier.width(8.dp))
             Text(formatter.format(item.data.tracker, item.data.currentValue))
         } else {
             Text(stringResource(R.string.tracker_item_empty_message), style = MaterialTheme.typography.caption)
@@ -125,5 +122,25 @@ private fun Body(item: TrackerListItem, gradient: List<Color>) {
                 modifier = Modifier.gravity(Alignment.CenterVertically).preferredWidth(100.dp)
             )
         }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun SwipeToDismissBackground(dismissState: DismissState) {
+    val direction = dismissState.dismissDirection ?: return
+    val (gravity, icon) = when (direction) {
+        DismissDirection.StartToEnd -> ContentGravity.CenterStart to Icons.Default.Add
+        DismissDirection.EndToStart -> ContentGravity.CenterEnd to Icons.Default.Delete
+    }
+    val scale = animate(if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f)
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        paddingStart = 24.dp,
+        paddingEnd = 24.dp,
+        gravity = gravity
+    ) {
+        Icon(icon, modifier = Modifier.drawLayer(scaleX = scale, scaleY = scale))
     }
 }
