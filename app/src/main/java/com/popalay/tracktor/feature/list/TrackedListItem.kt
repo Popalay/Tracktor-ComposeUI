@@ -59,9 +59,7 @@ fun TrackerListItem(
                 modifier = Modifier.weight(1F)
             )
             Spacer(Modifier.width(24.dp))
-            Column(
-                horizontalGravity = Alignment.CenterHorizontally
-            ) {
+            Column {
                 SimpleChartWidget(
                     data = item.data.records.map { it.value },
                     gradient = gradient,
@@ -69,7 +67,10 @@ fun TrackerListItem(
                     modifier = Modifier.preferredSize(100.dp, 50.dp)
                 )
                 Spacer(Modifier.height(8.dp))
-                Row(verticalGravity = Alignment.CenterVertically) {
+                Row(
+                    verticalGravity = Alignment.CenterVertically,
+                    modifier = Modifier.gravity(Alignment.End)
+                ) {
                     ProgressTextField(item.data.progress(), item.data.tracker.direction)
                     Spacer(Modifier.width(8.dp))
                     Text(formatter.format(item.data.tracker, item.data.currentValue))
