@@ -92,7 +92,7 @@ fun ChartWidget(
         val borderPath = createBorderPath(points, conPoints1, conPoints2)
         val fillPath = createFillPath(borderPath, size)
 
-        drawPath(fillPath, createBrush(gradient, size), 0.5F)
+        drawPath(fillPath, createBrush(gradient, size), 0.2F)
         drawPath(borderPath, createBrush(gradient, size), 1.0F, Stroke(lineWidth.toPx()))
 
         if (touchable) {
@@ -201,4 +201,4 @@ fun createBrush(gradient: List<Color>, size: Size) = HorizontalGradient(
 
 val ChartDefaultHeight = 100.dp
 val ChartLabelRadius = 4.dp
-val ChartLineWidth = 2.dp
+val ChartLineWidth = 3.dp

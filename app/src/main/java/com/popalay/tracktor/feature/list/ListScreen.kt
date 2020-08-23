@@ -1,5 +1,7 @@
 package com.popalay.tracktor.feature.list
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
@@ -127,36 +129,52 @@ private fun TrackerList(
         contentPadding = InnerPadding(top = 16.dp, bottom = 16.dp),
         modifier = modifier
     ) { index, item ->
-        if (index == 0 && rendering.statistic != null) {
-            StatisticWidget(
-                rendering.statistic,
-                rendering.animate,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-            if (rendering.allCategories.isNotEmpty()) {
-                AllCategoryList(
-                    categories = rendering.allCategories,
-                    selectedCategory = rendering.selectedCategory,
-                    onCategoryClick = { rendering.onAction(Action.CategoryClick(it)) },
-                    modifier = Modifier.padding(top = 8.dp)
-                )
-            }
-            Spacer(Modifier.height(8.dp))
+        if (index == 0) {
+            TrackerListHeader(rendering)
         }
-        TrackerListItem(
-            item.copy(animate = rendering.animate),
-            modifier = Modifier.padding(horizontal = 16.dp),
-            contentModifier = Modifier.clickable(onClick = { rendering.onAction(Action.TrackerClicked(item.data)) }),
-            onAddClicked = { rendering.onAction(Action.AddRecordClicked(item.data)) },
-            onRemoveClicked = { rendering.onAction(Action.DeleteTrackerClicked(item.data)) }
-        )
+
+        SwipeToDismissListItem(
+            state = rendering.filteredItems,
+            onDismissedToStart = { rendering.onAction(Action.DeleteTrackerClicked(item.data)) },
+            onDismissedToEnd = { rendering.onAction(Action.AddRecordClicked(item.data)) }
+        ) {
+            TrackerListItem(
+                item.copy(animate = rendering.animate),
+                contentModifier = Modifier.clickable(onClick = { rendering.onAction(Action.TrackerClicked(item.data)) }),
+            )
+        }
+
         if (index != rendering.items.lastIndex) {
             Spacer(Modifier.height(8.dp))
         } else {
             Spacer(Modifier.navigationBarHeight())
         }
+
         onActive {
             rendering.onAction(Action.AnimationProceeded)
         }
     }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun TrackerListHeader(
+    rendering: Rendering
+) {
+    AnimatedVisibility(rendering.statistic != null) {
+        StatisticWidget(
+            requireNotNull(rendering.statistic),
+            rendering.animate,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+    }
+    AnimatedVisibility(rendering.allCategories.isNotEmpty()) {
+        AllCategoryList(
+            categories = rendering.allCategories,
+            selectedCategory = rendering.selectedCategory,
+            onCategoryClick = { rendering.onAction(Action.CategoryClick(it)) },
+            modifier = Modifier.padding(top = 8.dp)
+        )
+    }
+    Spacer(Modifier.height(8.dp))
 }
