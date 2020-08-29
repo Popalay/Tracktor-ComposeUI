@@ -85,6 +85,7 @@ dependencies {
 
     implementation(Libs.kotlinStd)
     implementation(Libs.materialDesign)
+    implementation(Libs.androidXCore)
 
     implementation(Libs.Compose.animation)
     implementation(Libs.Compose.foundation)

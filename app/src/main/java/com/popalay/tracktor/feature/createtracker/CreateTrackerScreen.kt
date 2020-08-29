@@ -7,6 +7,7 @@ import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.contentColor
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.InnerPadding
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -45,6 +46,7 @@ import com.popalay.tracktor.success
 import com.popalay.tracktor.ui.widget.Chip
 import com.popalay.tracktor.ui.widget.ChipGroup
 import com.popalay.tracktor.ui.widget.TopAppBar
+import com.popalay.tracktor.utils.imePadding
 import com.popalay.tracktor.utils.onBackPressed
 import com.squareup.workflow.ui.compose.composedViewFactory
 
@@ -66,24 +68,24 @@ fun CreateTrackerScreen(
     onAction: (Action) -> Unit = {}
 ) {
     Scaffold(topBar = { CreateTrackerAppBar(onAction, state) }) {
-        ScrollableColumn(modifier = Modifier.padding(top = 16.dp)) {
+        ScrollableColumn(contentPadding = InnerPadding(top = 16.dp), modifier = Modifier.imePadding()) {
             TitleInput(state, onAction)
-            AnimatedVisibility(visible = state.isUnitsVisible) {
+            AnimatedVisibility(state.isUnitsVisible) {
                 Column {
-                    Divider(modifier = Modifier.padding(vertical = 16.dp))
+                    Divider(Modifier.padding(vertical = 16.dp))
                     DirectionSelector(state, onAction)
-                    Divider(modifier = Modifier.padding(vertical = 16.dp))
+                    Divider(Modifier.padding(vertical = 16.dp))
                     UnitSelector(state, onAction)
-                    Divider(modifier = Modifier.padding(vertical = 16.dp))
+                    Divider(Modifier.padding(vertical = 16.dp))
                 }
             }
-            AnimatedVisibility(visible = state.isCustomUnitCreating) {
+            AnimatedVisibility(state.isCustomUnitCreating) {
                 Column {
                     CustomUnitCreator(state, onAction)
-                    Divider(modifier = Modifier.padding(vertical = 16.dp))
+                    Divider(Modifier.padding(vertical = 16.dp))
                 }
             }
-            AnimatedVisibility(visible = state.isInitialValueVisible) {
+            AnimatedVisibility(state.isInitialValueVisible) {
                 ValueInput(state, onAction)
             }
         }
@@ -93,35 +95,39 @@ fun CreateTrackerScreen(
 @Composable
 private fun CustomUnitCreator(
     state: CreateTrackerWorkflow.State,
-    onAction: (Action) -> Unit
+    onAction: (Action) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    TextField(
-        value = state.customUnit.name,
-        label = { Text(stringResource(R.string.create_tracker_custom_unit_name_label)) },
-        onValueChange = { onAction(Action.CustomUnitNameChanged(it)) },
-        activeColor = MaterialTheme.colors.onSurface,
-        backgroundColor = MaterialTheme.colors.surface,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
-    )
-    Spacer(modifier = Modifier.height(16.dp))
-    Row {
+    Column(modifier) {
         TextField(
-            value = state.customUnit.symbol,
-            label = { Text(stringResource(R.string.create_tracker_custom_unit_symbol_label)) },
-            onValueChange = { onAction(Action.CustomUnitSymbolChanged(it)) },
+            value = state.customUnit.name,
+            label = { Text(stringResource(R.string.create_tracker_custom_unit_name_label)) },
+            onValueChange = { onAction(Action.CustomUnitNameChanged(it)) },
             activeColor = MaterialTheme.colors.onSurface,
             backgroundColor = MaterialTheme.colors.surface,
-            modifier = Modifier.padding(start = 16.dp).weight(2F)
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
         )
-        Spacer(modifier = Modifier.width(16.dp))
-        CustomUnitValueTypeDropDown(onAction, state)
+        Spacer(Modifier.height(16.dp))
+        Row {
+            TextField(
+                value = state.customUnit.symbol,
+                label = { Text(stringResource(R.string.create_tracker_custom_unit_symbol_label)) },
+                onValueChange = { onAction(Action.CustomUnitSymbolChanged(it)) },
+                activeColor = MaterialTheme.colors.onSurface,
+                backgroundColor = MaterialTheme.colors.surface,
+                modifier = Modifier.padding(start = 16.dp).weight(2F)
+            )
+            Spacer(Modifier.width(16.dp))
+            CustomUnitValueTypeDropDown(onAction, state)
+        }
     }
 }
 
 @Composable
 private fun RowScope.CustomUnitValueTypeDropDown(
     onAction: (Action) -> Unit,
-    state: CreateTrackerWorkflow.State
+    state: CreateTrackerWorkflow.State,
+    modifier: Modifier = Modifier
 ) {
     DropdownMenu(
         toggle = {
@@ -138,7 +144,8 @@ private fun RowScope.CustomUnitValueTypeDropDown(
         },
         expanded = state.isCustomUnitValueTypeDropdownShown,
         toggleModifier = Modifier.padding(end = 16.dp).gravity(Alignment.CenterVertically).weight(1F),
-        onDismissRequest = { onAction(Action.CustomUnitValueTypeDropdownDismissed) }
+        onDismissRequest = { onAction(Action.CustomUnitValueTypeDropdownDismissed) },
+        dropdownModifier = modifier
     ) {
         UnitValueType.values().drop(1).forEach {
             DropdownMenuItem(onClick = { onAction(Action.CustomUnitValueTypeSelected(it)) }) {
@@ -151,7 +158,8 @@ private fun RowScope.CustomUnitValueTypeDropDown(
 @Composable
 private fun CreateTrackerAppBar(
     onAction: (Action) -> Unit,
-    state: CreateTrackerWorkflow.State
+    state: CreateTrackerWorkflow.State,
+    modifier: Modifier = Modifier
 ) {
     TopAppBar(
         navigationIcon = {
@@ -169,14 +177,16 @@ private fun CreateTrackerAppBar(
             ) {
                 Text(stringResource(R.string.button_save))
             }
-        }
+        },
+        modifier = modifier
     )
 }
 
 @Composable
 private fun TitleInput(
     state: CreateTrackerWorkflow.State,
-    onAction: (Action) -> Unit
+    onAction: (Action) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     TextField(
         value = state.title,
@@ -184,41 +194,44 @@ private fun TitleInput(
         onValueChange = { onAction(Action.TitleChanged(it)) },
         activeColor = MaterialTheme.colors.onSurface,
         backgroundColor = MaterialTheme.colors.surface,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp)
     )
 }
 
 @Composable
 private fun UnitSelector(
     state: CreateTrackerWorkflow.State,
-    onAction: (Action) -> Unit
+    onAction: (Action) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val rootView = ViewAmbient.current
-    Text(
-        stringResource(R.string.create_tracker_unit_message),
-        style = MaterialTheme.typography.caption,
-        modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-    )
-    ChipGroup {
-        state.units.forEach { unit ->
-            Chip(
-                isSelected = unit == state.selectedUnit,
-                onClick = {
-                    onAction(Action.UnitSelected(unit))
-                    rootView.clearFocus()
+    Column(modifier) {
+        Text(
+            stringResource(R.string.create_tracker_unit_message),
+            style = MaterialTheme.typography.caption,
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+        )
+        ChipGroup {
+            state.units.forEach { unit ->
+                Chip(
+                    isSelected = unit == state.selectedUnit,
+                    onClick = {
+                        onAction(Action.UnitSelected(unit))
+                        rootView.clearFocus()
+                    }
+                ) {
+                    Text(unit.displayName)
                 }
-            ) {
-                Text(unit.displayName)
             }
-        }
-        Chip(
-            isSelected = state.isCustomUnitCreating,
-            bordered = !state.isCustomUnitValid,
-            contentColor = MaterialTheme.colors.onBackground,
-            activeColor = if (state.isCustomUnitValid) MaterialTheme.colors.success else MaterialTheme.colors.secondary,
-            onClick = { if (state.isCustomUnitValid) onAction(Action.CustomUnitCreated) else onAction(Action.AddCustomUnitClicked) }
-        ) {
-            Icon(if (state.isCustomUnitValid) Icons.Default.Done else Icons.Default.Add)
+            Chip(
+                isSelected = state.isCustomUnitCreating,
+                bordered = !state.isCustomUnitValid,
+                contentColor = MaterialTheme.colors.onBackground,
+                activeColor = if (state.isCustomUnitValid) MaterialTheme.colors.success else MaterialTheme.colors.secondary,
+                onClick = { if (state.isCustomUnitValid) onAction(Action.CustomUnitCreated) else onAction(Action.AddCustomUnitClicked) }
+            ) {
+                Icon(if (state.isCustomUnitValid) Icons.Default.Done else Icons.Default.Add)
+            }
         }
     }
 }
@@ -226,20 +239,23 @@ private fun UnitSelector(
 @Composable
 private fun DirectionSelector(
     state: CreateTrackerWorkflow.State,
-    onAction: (Action) -> Unit
+    onAction: (Action) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Text(
-        stringResource(R.string.create_tracker_progress_direction_message),
-        style = MaterialTheme.typography.caption,
-        modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-    )
-    ChipGroup {
-        ProgressDirection.values().forEach { unit ->
-            Chip(
-                isSelected = unit == state.selectedProgressDirection,
-                onClick = { onAction(Action.ProgressDirectionSelected(unit)) }
-            ) {
-                Text(unit.displayName)
+    Column(modifier) {
+        Text(
+            stringResource(R.string.create_tracker_progress_direction_message),
+            style = MaterialTheme.typography.caption,
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+        )
+        ChipGroup {
+            ProgressDirection.values().forEach { unit ->
+                Chip(
+                    isSelected = unit == state.selectedProgressDirection,
+                    onClick = { onAction(Action.ProgressDirectionSelected(unit)) }
+                ) {
+                    Text(unit.displayName)
+                }
             }
         }
     }
@@ -248,7 +264,8 @@ private fun DirectionSelector(
 @Composable
 private fun ValueInput(
     state: CreateTrackerWorkflow.State,
-    onAction: (Action) -> Unit
+    onAction: (Action) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     TextField(
         value = state.initialValue,
@@ -257,6 +274,6 @@ private fun ValueInput(
         keyboardType = state.initialValueKeyboardType,
         activeColor = MaterialTheme.colors.onSurface,
         backgroundColor = MaterialTheme.colors.surface,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp)
     )
 }

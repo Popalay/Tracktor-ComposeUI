@@ -24,7 +24,7 @@ import com.popalay.tracktor.ui.dialog.AddNewRecordDialog
 import com.popalay.tracktor.ui.widget.AnimatedSnackbar
 import com.popalay.tracktor.ui.widget.TrackerCategoryList
 import com.popalay.tracktor.utils.inject
-import com.popalay.tracktor.utils.navigationBarPadding
+import com.popalay.tracktor.utils.navigationBarsPadding
 
 @Composable
 fun TrackerDetailContentView(
@@ -55,7 +55,7 @@ fun TrackerDetailContentView(
                 )
                 FloatingActionButton(
                     onClick = { onAction(Action.AddRecordClicked) },
-                    modifier = Modifier.navigationBarPadding()
+                    modifier = Modifier.navigationBarsPadding()
                 ) {
                     Icon(Icons.Default.Add)
                 }

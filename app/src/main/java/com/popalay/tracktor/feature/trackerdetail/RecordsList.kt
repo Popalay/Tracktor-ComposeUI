@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.popalay.tracktor.data.model.TrackerWithRecords
 import com.popalay.tracktor.feature.trackerdetail.RecordsListAnimationState.STATE_END
 import com.popalay.tracktor.feature.trackerdetail.RecordsListAnimationState.STATE_START
-import com.popalay.tracktor.utils.navigationBarHeight
+import com.popalay.tracktor.utils.navigationBarsHeight
 
 private enum class RecordsListAnimationState {
     STATE_START, STATE_END
@@ -71,7 +71,7 @@ fun RecordsList(
                 if (items.lastIndex != index) {
                     Divider(modifier = Modifier.padding(vertical = 16.dp))
                 } else {
-                    Spacer(Modifier.navigationBarHeight())
+                    Spacer(Modifier.navigationBarsHeight())
                 }
             }
         }

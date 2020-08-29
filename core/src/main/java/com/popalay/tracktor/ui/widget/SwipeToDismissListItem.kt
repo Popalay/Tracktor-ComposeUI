@@ -1,4 +1,4 @@
-package com.popalay.tracktor.feature.list
+package com.popalay.tracktor.ui.widget
 
 import androidx.compose.animation.animate
 import androidx.compose.animation.asDisposableClock
@@ -20,7 +20,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.savedinstancestate.rememberSavedInstanceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.drawLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.AnimationClockAmbient
+import androidx.compose.ui.platform.HapticFeedBackAmbient
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -31,14 +33,17 @@ fun SwipeToDismissListItem(
     onDismissedToStart: () -> Unit = {},
     itemContent: @Composable () -> Unit
 ) {
+    val hapticFeed = HapticFeedBackAmbient.current
     val clock = AnimationClockAmbient.current.asDisposableClock()
-    val confirmStateChange: (DismissValue) -> Boolean = {
-        when (it) {
+    val confirmStateChange: (DismissValue) -> Boolean = { dismissValue ->
+        when (dismissValue) {
             DismissValue.DismissedToEnd -> onDismissedToEnd()
             DismissValue.DismissedToStart -> onDismissedToStart()
             DismissValue.Default -> Unit
         }
-        it != DismissValue.DismissedToEnd
+        (dismissValue != DismissValue.DismissedToEnd).also {
+            if (it) hapticFeed.performHapticFeedback(HapticFeedbackType.LongPress)
+        }
     }
     val dismissState = rememberSavedInstanceState(
         state,

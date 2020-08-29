@@ -12,7 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/SplashTheme">
 
-        <activity android:name="com.popalay.tracktor.MainActivity">
+        <activity
+            android:name="com.popalay.tracktor.MainActivity"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

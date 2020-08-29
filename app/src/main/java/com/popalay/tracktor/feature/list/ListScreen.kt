@@ -39,9 +39,10 @@ import com.popalay.tracktor.feature.list.ListWorkflow.Rendering
 import com.popalay.tracktor.ui.dialog.AddNewRecordDialog
 import com.popalay.tracktor.ui.widget.AllCategoryList
 import com.popalay.tracktor.ui.widget.AnimatedSnackbar
+import com.popalay.tracktor.ui.widget.SwipeToDismissListItem
 import com.popalay.tracktor.utils.Faker
-import com.popalay.tracktor.utils.navigationBarHeight
-import com.popalay.tracktor.utils.navigationBarPadding
+import com.popalay.tracktor.utils.navigationBarsHeight
+import com.popalay.tracktor.utils.navigationBarsPadding
 import com.squareup.workflow.ui.compose.composedViewFactory
 
 @OptIn(ExperimentalLayout::class)
@@ -88,7 +89,7 @@ fun ListScreen(
                 )
                 FloatingActionButton(
                     onClick = { rendering.onAction(Action.CreateTrackerClicked) },
-                    modifier = Modifier.navigationBarPadding()
+                    modifier = Modifier.navigationBarsPadding()
                 ) {
                     Icon(Icons.Default.Add)
                 }
@@ -147,7 +148,7 @@ private fun TrackerList(
         if (index != rendering.items.lastIndex) {
             Spacer(Modifier.height(8.dp))
         } else {
-            Spacer(Modifier.navigationBarHeight())
+            Spacer(Modifier.navigationBarsHeight())
         }
 
         onActive {

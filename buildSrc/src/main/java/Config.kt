@@ -1,7 +1,7 @@
 object AndroidConfig {
-    const val compileSdk = 29
+    const val compileSdk = 30
     const val minSdk = 26
-    const val targetSdk = 29
+    const val targetSdk = 30
 
     const val versionName = "1.7"
 }
@@ -16,12 +16,14 @@ object Version {
     const val workflow = "1.0.0-alpha.1"
     const val workflowCompose = "0.30.0"
     const val room = "2.2.5"
+    const val androidX = "1.5.0-alpha02"
 }
 
 object Libs {
     const val kotlinStd = "org.jetbrains.kotlin:kotlin-stdlib:${Version.kotlin}"
     const val materialDesign = "com.google.android.material:material:1.2.0"
     const val preferenceKtx = "androidx.preference:preference-ktx:1.1.1"
+    const val androidXCore = "androidx.core:core-ktx:${Version.androidX}"
 
     object Room {
         const val runtime = "androidx.room:room-runtime:${Version.room}"

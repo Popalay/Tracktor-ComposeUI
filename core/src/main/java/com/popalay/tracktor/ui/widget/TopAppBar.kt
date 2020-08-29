@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.popalay.tracktor.utils.statusBarHeight
+import com.popalay.tracktor.utils.statusBarsHeight
 
 private val TopAppBarElevation = 4.dp
 private val AppBarHorizontalPadding = 4.dp
@@ -49,14 +49,14 @@ fun TopAppBar(
             modifier = modifier.fillMaxWidth()
                 .padding(horizontal = AppBarHorizontalPadding, vertical = AppBarVerticalPadding)
         ) {
-            Spacer(Modifier.statusBarHeight())
+            Spacer(Modifier.statusBarsHeight())
             Row(verticalGravity = Alignment.CenterVertically) {
                 Providers(ContentColorAmbient provides MaterialTheme.colors.onPrimary) {
                     navigationIcon()
                     ProvideTextStyle(value = MaterialTheme.typography.h6) {
                         title()
                     }
-                    Spacer(modifier = Modifier.weight(1F))
+                    Spacer(Modifier.weight(1F))
                     actions()
                 }
             }
