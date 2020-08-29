@@ -79,13 +79,24 @@ class CreateTrackerWorkflow(
                     result.second?.also { setOutput(it) }
                     result.first
                 }
-                is TitleChanged -> nextState.copy(
-                    title = action.title,
-                    isUnitsVisible = action.title.isNotBlank(),
-                    isInitialValueVisible = action.title.isNotBlank() && nextState.selectedUnit != TrackableUnit.None,
-                    initialValue = if (action.title.isBlank()) "" else nextState.initialValue,
-                    selectedUnit = if (action.title.isBlank()) TrackableUnit.None else nextState.selectedUnit
-                )
+                is TitleChanged -> {
+                    if (action.title.isNotBlank()) {
+                        nextState.copy(
+                            title = action.title,
+                            isUnitsVisible = true
+                        )
+                    } else {
+                        nextState.copy(
+                            title = "",
+                            isUnitsVisible = false,
+                            isInitialValueVisible = false,
+                            isCustomUnitCreating = false,
+                            initialValue = "",
+                            selectedUnit = TrackableUnit.None,
+                            customUnit = TrackableUnit.None
+                        )
+                    }
+                }
                 is UnitSelected -> nextState.copy(
                     selectedUnit = action.unit,
                     selectedProgressDirection = if (action.unit == TrackableUnit.Word) ASCENDING else nextState.selectedProgressDirection,
@@ -163,18 +174,16 @@ class CreateTrackerWorkflow(
     override fun snapshotState(state: State): Snapshot = state.toSnapshot(moshi)
 
     private fun runSideEffects(state: State, context: RenderContext<State, Output>) {
-        when (state.currentAction) {
-            is Action.SaveClicked -> {
-                val tracker = Tracker(
-                    id = UUID.randomUUID().toString(),
-                    title = state.title.trim().capitalize(Locale.getDefault()),
-                    unit = state.selectedUnit,
-                    direction = state.selectedProgressDirection,
-                    date = LocalDateTime.now()
-                )
-                context.runningWorker(SaveTrackerWorker(tracker, state.initialValue, trackingRepository)) {
-                    Action.SideEffectAction(Action.TrackerSaved)
-                }
+        if (state.currentAction is Action.SaveClicked) {
+            val tracker = Tracker(
+                id = UUID.randomUUID().toString(),
+                title = state.title.trim().capitalize(Locale.getDefault()),
+                unit = state.selectedUnit,
+                direction = state.selectedProgressDirection,
+                date = LocalDateTime.now()
+            )
+            context.runningWorker(SaveTrackerWorker(tracker, state.initialValue, trackingRepository)) {
+                Action.SideEffectAction(Action.TrackerSaved)
             }
         }
     }

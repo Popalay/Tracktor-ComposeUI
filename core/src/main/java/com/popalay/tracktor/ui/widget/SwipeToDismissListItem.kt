@@ -33,7 +33,6 @@ fun SwipeToDismissListItem(
     onDismissedToStart: () -> Unit = {},
     itemContent: @Composable () -> Unit
 ) {
-    val hapticFeed = HapticFeedBackAmbient.current
     val clock = AnimationClockAmbient.current.asDisposableClock()
     val confirmStateChange: (DismissValue) -> Boolean = { dismissValue ->
         when (dismissValue) {
@@ -41,9 +40,7 @@ fun SwipeToDismissListItem(
             DismissValue.DismissedToStart -> onDismissedToStart()
             DismissValue.Default -> Unit
         }
-        (dismissValue != DismissValue.DismissedToEnd).also {
-            if (it) hapticFeed.performHapticFeedback(HapticFeedbackType.LongPress)
-        }
+        dismissValue != DismissValue.DismissedToEnd
     }
     val dismissState = rememberSavedInstanceState(
         state,
@@ -67,12 +64,14 @@ fun SwipeToDismissListItem(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SwipeToDismissBackground(dismissState: DismissState) {
+    val hapticFeed = HapticFeedBackAmbient.current
     val direction = dismissState.dismissDirection ?: return
     val (gravity, icon) = when (direction) {
         DismissDirection.StartToEnd -> ContentGravity.CenterStart to Icons.Default.Add
         DismissDirection.EndToStart -> ContentGravity.CenterEnd to Icons.Default.Delete
     }
     val scale = animate(if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f)
+    if (dismissState.targetValue != DismissValue.Default) hapticFeed.performHapticFeedback(HapticFeedbackType.LongPress)
 
     Box(
         modifier = Modifier.fillMaxSize(),
