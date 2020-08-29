@@ -48,22 +48,28 @@ fun SwipeToDismissListItem(
         saver = DismissState.Saver(clock, confirmStateChange)
     ) { DismissState(DismissValue.Default, clock, confirmStateChange) }
 
+    val threshold: (DismissDirection) -> Float = {
+        if (it == DismissDirection.StartToEnd) 0.25f else 0.5f
+    }
+
     SwipeToDismiss(
         state = dismissState,
         directions = setOf(DismissDirection.StartToEnd, DismissDirection.EndToStart),
-        dismissThresholds = { direction ->
-            FractionalThreshold(if (direction == DismissDirection.StartToEnd) 0.25f else 0.5f)
-        },
-        background = { SwipeToDismissBackground(dismissState) },
+        dismissThresholds = { FractionalThreshold(threshold(it)) },
+        background = { SwipeToDismissBackground(dismissState, threshold) },
         modifier = Modifier.padding(horizontal = 16.dp)
     ) {
         itemContent()
     }
 }
 
+@Suppress("UNUSED_VALUE")
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SwipeToDismissBackground(dismissState: DismissState) {
+fun SwipeToDismissBackground(
+    dismissState: DismissState,
+    threshold: (DismissDirection) -> Float
+) {
     val hapticFeed = HapticFeedBackAmbient.current
     val direction = dismissState.dismissDirection ?: return
     val (gravity, icon) = when (direction) {
@@ -71,7 +77,9 @@ fun SwipeToDismissBackground(dismissState: DismissState) {
         DismissDirection.EndToStart -> ContentGravity.CenterEnd to Icons.Default.Delete
     }
     val scale = animate(if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f)
-    if (dismissState.targetValue != DismissValue.Default) hapticFeed.performHapticFeedback(HapticFeedbackType.LongPress)
+    if (dismissState.progress.fraction == threshold(direction)) {
+        hapticFeed.performHapticFeedback(HapticFeedbackType.LongPress)
+    }
 
     Box(
         modifier = Modifier.fillMaxSize(),
