@@ -17,13 +17,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.savedinstancestate.rememberSavedInstanceState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.drawLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.AnimationClockAmbient
 import androidx.compose.ui.platform.HapticFeedBackAmbient
 import androidx.compose.ui.unit.dp
+import com.popalay.tracktor.utils.rememberMutableStateFor
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -48,15 +51,11 @@ fun SwipeToDismissListItem(
         saver = DismissState.Saver(clock, confirmStateChange)
     ) { DismissState(DismissValue.Default, clock, confirmStateChange) }
 
-    val threshold: (DismissDirection) -> Float = {
-        if (it == DismissDirection.StartToEnd) 0.25f else 0.5f
-    }
-
     SwipeToDismiss(
         state = dismissState,
         directions = setOf(DismissDirection.StartToEnd, DismissDirection.EndToStart),
-        dismissThresholds = { FractionalThreshold(threshold(it)) },
-        background = { SwipeToDismissBackground(dismissState, threshold) },
+        dismissThresholds = { FractionalThreshold(if (it == DismissDirection.StartToEnd) 0.25f else 0.5f) },
+        background = { SwipeToDismissBackground(dismissState) },
         modifier = Modifier.padding(horizontal = 16.dp)
     ) {
         itemContent()
@@ -66,19 +65,20 @@ fun SwipeToDismissListItem(
 @Suppress("UNUSED_VALUE")
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SwipeToDismissBackground(
-    dismissState: DismissState,
-    threshold: (DismissDirection) -> Float
-) {
-    val hapticFeed = HapticFeedBackAmbient.current
+fun SwipeToDismissBackground(dismissState: DismissState) {
     val direction = dismissState.dismissDirection ?: return
+    var isFeedbackApplied by rememberMutableStateFor(direction) { false }
+
+    val hapticFeed = HapticFeedBackAmbient.current
     val (gravity, icon) = when (direction) {
         DismissDirection.StartToEnd -> ContentGravity.CenterStart to Icons.Default.Add
         DismissDirection.EndToStart -> ContentGravity.CenterEnd to Icons.Default.Delete
     }
     val scale = animate(if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f)
-    if (dismissState.progress.fraction == threshold(direction)) {
+
+    if (!isFeedbackApplied && dismissState.targetValue != DismissValue.Default) {
         hapticFeed.performHapticFeedback(HapticFeedbackType.LongPress)
+        isFeedbackApplied = true
     }
 
     Box(
