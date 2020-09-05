@@ -30,8 +30,8 @@ private val darkThemeColors = darkColors(
     primary = Color(0xFF1F1F1F),
     primaryVariant = Color(0xFF404040),
     secondary = Color.White,
-    background = Color(0xFF121212),
-    surface = Color.Black,
+    background = Color.Black,
+    surface = Color(0xFF090909),
     error = Color(0xFFCF6679),
     onPrimary = Color.White,
     onSecondary = Color.Black,
@@ -45,6 +45,8 @@ private val shapes = Shapes(
 )
 
 val Colors.success get() = Color(0xFF348F50)
+
+val Colors.primaryBackground: Color get() = if (isLight) primary else background
 
 val gradients = listOf(
     listOf(Color(0xFF64BFE1), Color(0xFFA091B7), Color(0xFFE0608A)),
