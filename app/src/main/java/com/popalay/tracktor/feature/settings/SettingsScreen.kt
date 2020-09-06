@@ -14,13 +14,10 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.CallMade
-import androidx.compose.material.icons.filled.CallReceived
-import androidx.compose.material.icons.filled.FeaturedPlayList
-import androidx.compose.material.icons.filled.RateReview
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import com.popalay.tracktor.core.R
@@ -53,23 +50,23 @@ fun SettingsScreen(
     ) {
         Column {
             SettingItem(
-                icon = { Icon(Icons.Default.FeaturedPlayList) },
+                icon = { Icon(vectorResource(R.drawable.featured_play_list_black_24dp)) },
                 title = { Text(stringResource(R.string.feature_flags_title)) },
                 onClick = { onAction(Action.FeatureTogglesClicked) }
             )
             if (false) {
                 SettingItem(
-                    icon = { Icon(Icons.Default.RateReview) },
+                    icon = { Icon(vectorResource(R.drawable.rate_review_24px)) },
                     title = { Text(stringResource(R.string.settings_review_title)) },
                     onClick = {}
                 )
                 SettingItem(
-                    icon = { Icon(Icons.Default.CallMade) },
+                    icon = { Icon(vectorResource(R.drawable.call_made_24px)) },
                     title = { Text(stringResource(R.string.settings_import_title)) },
                     onClick = {}
                 )
                 SettingItem(
-                    icon = { Icon(Icons.Default.CallReceived) },
+                    icon = { Icon(vectorResource(R.drawable.call_received_24px)) },
                     title = { Text(stringResource(R.string.settings_export_title)) },
                     onClick = {}
                 )

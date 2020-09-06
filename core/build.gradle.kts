@@ -24,7 +24,6 @@ dependencies {
     implementation(Libs.Compose.foundation)
     implementation(Libs.Compose.foundationLayout)
     implementation(Libs.Compose.material)
-    implementation(Libs.Compose.materialIconsExtended)
     implementation(Libs.Compose.runtime)
     implementation(Libs.Compose.ui)
 
