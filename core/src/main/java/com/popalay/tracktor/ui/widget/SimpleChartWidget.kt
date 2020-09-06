@@ -50,7 +50,7 @@ fun SimpleChartWidget(
         initState = if (animate) STATE_START else STATE_END
     )
     Canvas(modifier) {
-        val points = createPoints(data, size)
+        val points = createPoints(data, size, lineWidth)
         val (conPoints1, conPoints2) = createConnectionPoints(points)
 
         if (points.isEmpty() || conPoints1.isEmpty() || conPoints2.isEmpty()) return@Canvas

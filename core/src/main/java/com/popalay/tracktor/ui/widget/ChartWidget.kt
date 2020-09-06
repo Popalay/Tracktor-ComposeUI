@@ -84,7 +84,7 @@ fun ChartWidget(
     ) {
         val amplifier = transitionState[amplifierKey]
         val shift = Offset(0F, size.height * (1 - amplifier))
-        val points = createPoints(data, size, labelRadius.toPx(), topOffset.toPx(), topOffset.toPx()).map { it + shift }
+        val points = createPoints(data, size, lineWidth, labelRadius.toPx(), topOffset.toPx(), topOffset.toPx()).map { it + shift }
         val (conPoints1, conPoints2) = createConnectionPoints(points)
 
         if (points.isEmpty() || conPoints1.isEmpty() || conPoints2.isEmpty()) return@Canvas
@@ -128,15 +128,17 @@ private fun DrawScope.drawTouchable(
     }
 }
 
-fun createPoints(
+fun DrawScope.createPoints(
     data: List<Double>,
     size: Size,
+    lineWidth: Dp,
     labelRadiusPx: Float = 0F,
     topOffsetPx: Float = 0F,
     bottomOffsetPx: Float = 0F
 ): List<Offset> {
     val bottomY = size.height - bottomOffsetPx
     val xDiff = size.width / max(data.size - 1, 1)
+    val pointOffset = lineWidth.toPx() / 2
 
     val minData = data.minOrNull() ?: 0.0
     val optimizedData = data.let { if (it.size == 1) emptyList() else it }
@@ -144,8 +146,9 @@ fun createPoints(
     val maxData = optimizedData.maxOrNull()?.toFloat() ?: 0F
 
     return optimizedData.mapIndexed { index, item ->
-        val y = max(bottomY - item.toFloat() / maxData * bottomY, labelRadiusPx + topOffsetPx)
-        Offset(xDiff * index, y)
+        val y = (bottomY - item.toFloat() / maxData * bottomY).coerceIn(labelRadiusPx + topOffsetPx + pointOffset, size.height - pointOffset)
+        val x = (xDiff * index).coerceIn(pointOffset, size.width - pointOffset)
+        Offset(x, y)
     }.let { offsets ->
         if (optimizedData.all { it == 0.0 }) {
             offsets.map { it.copy(y = bottomY / 2) }
