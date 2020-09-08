@@ -24,6 +24,6 @@ class SaveTrackerWorker(
 
     override fun doesSameWorkAs(otherWorker: Worker<*>): Boolean =
         super.doesSameWorkAs(otherWorker) &&
-                tracker == (otherWorker as? SaveTrackerWorker)?.tracker &&
+                tracker.title == (otherWorker as? SaveTrackerWorker)?.tracker?.title &&
                 initialValue == (otherWorker as? SaveTrackerWorker)?.initialValue
 }
