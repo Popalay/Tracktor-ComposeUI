@@ -180,7 +180,8 @@ class CreateTrackerWorkflow(
                 title = state.title.trim().capitalize(Locale.getDefault()),
                 unit = state.selectedUnit,
                 direction = state.selectedProgressDirection,
-                date = LocalDateTime.now()
+                date = LocalDateTime.now(),
+                isDeleted = false
             )
             context.runningWorker(SaveTrackerWorker(tracker, state.initialValue, trackingRepository)) {
                 Action.SideEffectAction(Action.TrackerSaved)

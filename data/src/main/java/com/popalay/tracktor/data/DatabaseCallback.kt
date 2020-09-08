@@ -22,7 +22,8 @@ class DatabaseCallback : RoomDatabase.Callback(), KoinComponent {
                         "Number of cool app installs",
                         TrackableUnit.Quantity,
                         ProgressDirection.ASCENDING,
-                        LocalDateTime.now()
+                        LocalDateTime.now(),
+                        false
                     )
                 )
                 get<RecordDao>().insert(ValueRecord("id", "id", 42.0, "", LocalDateTime.now()))

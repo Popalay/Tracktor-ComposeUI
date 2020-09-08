@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TrackerDao {
     @Transaction
-    @Query("SELECT * FROM tracker ORDER by date DESC")
+    @Query("SELECT * FROM tracker WHERE isDeleted = 0 ORDER by date DESC")
     fun getAllTrackersWithRecords(): Flow<List<TrackerWithRecords>>
 
     @Transaction
@@ -25,4 +25,10 @@ interface TrackerDao {
 
     @Delete
     suspend fun delete(value: Tracker)
+
+    @Query("UPDATE tracker SET isDeleted = 1 WHERE id=:id")
+    suspend fun softDelete(id: String)
+
+    @Query("UPDATE tracker SET isDeleted = 0 WHERE id=:id")
+    suspend fun restore(id: String)
 }
