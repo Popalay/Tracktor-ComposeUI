@@ -11,7 +11,8 @@ data class Tracker(
     val title: String,
     @Embedded val unit: TrackableUnit,
     val direction: ProgressDirection,
-    val date: LocalDateTime
+    val date: LocalDateTime,
+    val isDeleted: Boolean,
 ) {
     val compatibleUnit: TrackableUnit
         get() = when (unit.name) {

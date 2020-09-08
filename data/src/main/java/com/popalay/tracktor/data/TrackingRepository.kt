@@ -56,14 +56,16 @@ class TrackingRepository(
         trackerDao.delete(tracker)
     }
 
+    suspend fun softDeleteTracker(trackerId: String) = withContext(Dispatchers.IO) {
+        trackerDao.softDelete(trackerId)
+    }
+
     suspend fun deleteRecord(record: ValueRecord) = withContext(Dispatchers.IO) {
         recordDao.delete(record)
     }
 
-    suspend fun restoreTracker(trackerWithRecords: TrackerWithRecords) = withContext(Dispatchers.IO) {
-        trackerDao.insert(trackerWithRecords.tracker)
-        recordDao.insertAll(trackerWithRecords.records)
-        categoryDao.updateForTracker(trackerWithRecords.tracker.id, trackerWithRecords.categories)
+    suspend fun restoreTracker(trackerId: String) = withContext(Dispatchers.IO) {
+        trackerDao.restore(trackerId)
     }
 
     suspend fun restoreRecord(record: ValueRecord) = withContext(Dispatchers.IO) {

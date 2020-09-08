@@ -15,8 +15,9 @@ object Faker {
         title: String = "title",
         unit: TrackableUnit = TrackableUnit.Weight,
         direction: ProgressDirection = ProgressDirection.ASCENDING,
-        date: LocalDateTime = LocalDateTime.now()
-    ): Tracker = Tracker(id, title, unit, direction, date)
+        date: LocalDateTime = LocalDateTime.now(),
+        isDeleted: Boolean = false
+    ): Tracker = Tracker(id, title, unit, direction, date, isDeleted)
 
     fun fakeRecord(
         id: String = "valueId",

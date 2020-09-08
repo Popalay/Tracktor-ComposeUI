@@ -47,7 +47,7 @@ class ListWorkflow(
         @Transient val filteredItems: List<TrackerListItem> = emptyList(),
         @Transient val allCategories: List<Category> = emptyList(),
         @Transient val itemInEditing: Tracker? = null,
-        @Transient val itemInDeleting: TrackerWithRecords? = null,
+        @Transient val itemInDeleting: Tracker? = null,
         @Transient val currentAction: Action? = null,
         @Transient val statistic: Statistic? = null,
         val selectedCategory: Category = Category.All,
@@ -79,7 +79,7 @@ class ListWorkflow(
         val filteredItems: List<TrackerListItem>,
         val allCategories: List<Category>,
         val itemInEditing: Tracker?,
-        val itemInDeleting: TrackerWithRecords?,
+        val itemInDeleting: Tracker?,
         val statistic: Statistic?,
         val selectedCategory: Category,
         val showEmptyState: Boolean,
@@ -127,7 +127,7 @@ class ListWorkflow(
                 }
                 is AddRecordClicked -> nextState.copy(itemInEditing = action.item.tracker)
                 is TrackerClicked -> nextState.copy(childState = ChildState.TrackerDetail(action.item.tracker.id))
-                is DeleteSubmitted -> nextState.copy(itemInDeleting = action.item)
+                is DeleteSubmitted -> nextState.copy(itemInDeleting = action.item.tracker)
                 is CategoryClick -> nextState.copy(
                     selectedCategory = action.category,
                     filteredItems = nextState.items.filterByCategory(action.category),
@@ -142,7 +142,7 @@ class ListWorkflow(
                     TrackerDetailWorkflow.Output.Back -> nextState.copy(childState = null)
                     is TrackerDetailWorkflow.Output.TrackerDeleted -> nextState.copy(
                         childState = null,
-                        itemInDeleting = output.item
+                        itemInDeleting = output.item.tracker
                     )
                 }
                 CreateTrackerClicked -> nextState.copy(childState = ChildState.TrackerCreation())
@@ -207,12 +207,12 @@ class ListWorkflow(
                 context.runningWorker(worker) { Action.SideEffectAction(Action.TrackDialogDismissed) }
             }
             is Action.DeleteTrackerClicked -> {
-                val worker = Worker.from { trackingRepository.deleteTracker(action.item.tracker) }
+                val worker = Worker.from { trackingRepository.softDeleteTracker(action.item.tracker.id) }
                 context.runningWorker(worker) { Action.SideEffectAction(Action.DeleteSubmitted(action.item)) }
             }
             is Action.UndoDeletingClicked -> {
                 state.itemInDeleting?.let {
-                    val worker = Worker.from { trackingRepository.restoreTracker(it) }
+                    val worker = Worker.from { trackingRepository.restoreTracker(it.id) }
                     context.runningWorker(worker) { Action.SideEffectAction(Action.UndoPerformed) }
                 }
             }

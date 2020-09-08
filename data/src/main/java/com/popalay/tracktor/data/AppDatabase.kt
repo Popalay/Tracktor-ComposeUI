@@ -14,7 +14,7 @@ import com.popalay.tracktor.data.model.TrackerCategoryCrossRef
 import com.popalay.tracktor.data.model.ValueRecord
 
 @TypeConverters(value = [LocalDateTimeConverter::class, UnitValueTypeConverter::class, ProgressDirectionConverter::class])
-@Database(entities = [Tracker::class, ValueRecord::class, Category::class, TrackerCategoryCrossRef::class], version = 7)
+@Database(entities = [Tracker::class, ValueRecord::class, Category::class, TrackerCategoryCrossRef::class], version = 8)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun trackerDao(): TrackerDao
     abstract fun recordDao(): RecordDao
@@ -118,5 +118,11 @@ val MIGRATION_6_7 = object : Migration(6, 7) {
         database.execSQL("CREATE INDEX IF NOT EXISTS index_TrackerCategoryCrossRef_categoryId ON TrackerCategoryCrossRef(categoryId)")
         database.execSQL("CREATE INDEX IF NOT EXISTS index_TrackerCategoryCrossRef_id ON TrackerCategoryCrossRef(id)")
         database.execSQL("COMMIT;")
+    }
+}
+
+val MIGRATION_7_8 = object : Migration(7, 8) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE tracker ADD COLUMN isDeleted INTEGER NOT NULL default 0")
     }
 }

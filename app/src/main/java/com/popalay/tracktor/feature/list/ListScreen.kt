@@ -79,7 +79,7 @@ fun ListScreen(
         floatingActionButton = {
             Column(horizontalGravity = Alignment.CenterHorizontally) {
                 AnimatedSnackbar(
-                    message = rendering.itemInDeleting?.tracker?.title?.let {
+                    message = rendering.itemInDeleting?.title?.let {
                         stringResource(R.string.tracker_item_removed_message, it)
                     }.orEmpty(),
                     actionText = stringResource(R.string.button_undo),

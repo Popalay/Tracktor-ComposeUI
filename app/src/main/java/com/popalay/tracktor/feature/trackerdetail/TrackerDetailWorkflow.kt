@@ -127,7 +127,7 @@ class TrackerDetailWorkflow(
             }
             is Action.DeleteTrackerClicked -> {
                 state.trackerWithRecords?.tracker?.let {
-                    val worker = Worker.from { trackingRepository.deleteTracker(it) }
+                    val worker = Worker.from { trackingRepository.softDeleteTracker(it.id) }
                     context.runningWorker(worker) { Action.SideEffectAction(Action.DeleteSubmitted(state.trackerWithRecords)) }
                 }
             }
