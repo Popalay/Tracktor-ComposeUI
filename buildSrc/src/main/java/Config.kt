@@ -7,8 +7,8 @@ object AndroidConfig {
 }
 
 object Version {
-    const val androidGradlePlugin = "4.2.0-alpha09"
-    const val kotlin = "1.4.0"
+    const val androidGradlePlugin = "4.2.0-alpha10"
+    const val kotlin = "1.4.10"
     const val koin = "2.1.6"
     const val moshi = "1.10.0"
     const val moshiSealed = "0.2.0"
