@@ -4,6 +4,7 @@ import androidx.compose.foundation.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
@@ -55,6 +56,7 @@ fun TrackerDetailContentView(
                 )
                 FloatingActionButton(
                     onClick = { onAction(Action.AddRecordClicked) },
+                    shape = RoundedCornerShape(24.dp),
                     modifier = Modifier.navigationBarsPadding()
                 ) {
                     Icon(Icons.Default.Add)

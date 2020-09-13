@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumnForIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
@@ -89,6 +90,7 @@ fun ListScreen(
                 )
                 FloatingActionButton(
                     onClick = { rendering.onAction(Action.CreateTrackerClicked) },
+                    shape = RoundedCornerShape(24.dp),
                     modifier = Modifier.navigationBarsPadding()
                 ) {
                     Icon(Icons.Default.Add)
