@@ -1,0 +1,19 @@
+import kotlinx.datetime.LocalDateTime;
+
+CREATE TABLE ValueRecord (
+    id TEXT PRIMARY KEY NOT NULL,
+    trackerId TEXT NOT NULL,
+    value REAL NOT NULL,
+    stringValue TEXT NOT NULL,
+    date TEXT as LocalDateTime NOT NULL,
+    FOREIGN KEY(trackerId) REFERENCES Tracker(id) ON UPDATE NO ACTION ON DELETE CASCADE
+);
+
+insert:
+INSERT OR ABORT INTO ValueRecord(id, trackerId, value, stringValue, date) VALUES ?;
+
+deleteById:
+DELETE FROM ValueRecord WHERE id = ?;
+
+getAllByTrackerId:
+SELECT * FROM ValueRecord WHERE trackerId = ?;

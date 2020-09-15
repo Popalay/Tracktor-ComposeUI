@@ -10,20 +10,19 @@ import com.popalay.tracktor.domain.worker.GetAllCategoriesWorker
 import com.popalay.tracktor.domain.worker.GetTrackerByIdWorker
 import com.popalay.tracktor.utils.toData
 import com.popalay.tracktor.utils.toSnapshot
-import com.squareup.moshi.JsonClass
-import com.squareup.moshi.Moshi
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow
 import com.squareup.workflow.Worker
 import com.squareup.workflow.WorkflowAction
 import com.squareup.workflow.applyTo
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 class TrackerDetailWorkflow(
     private val trackingRepository: TrackingRepository,
     private val categoryRepository: CategoryRepository,
-    private val getAllCategoriesWorker: GetAllCategoriesWorker,
-    private val moshi: Moshi
+    private val getAllCategoriesWorker: GetAllCategoriesWorker
 ) : StatefulWorkflow<TrackerDetailWorkflow.Props, TrackerDetailWorkflow.State, TrackerDetailWorkflow.Output, TrackerDetailWorkflow.Rendering>() {
     companion object {
         private const val DELETING_UNDO_TIMEOUT_MILLIS = 2500L
@@ -31,7 +30,7 @@ class TrackerDetailWorkflow(
 
     data class Props(val trackerId: String)
 
-    @JsonClass(generateAdapter = true)
+    @Serializable
     data class State(
         val isAddRecordDialogShowing: Boolean = false,
         val isAddCategoryDialogShowing: Boolean = false,
@@ -95,7 +94,7 @@ class TrackerDetailWorkflow(
         val onAction: (Action) -> Unit
     )
 
-    override fun initialState(props: Props, snapshot: Snapshot?): State = snapshot?.toData(moshi) ?: State()
+    override fun initialState(props: Props, snapshot: Snapshot?): State = snapshot?.toData() ?: State()
 
     override fun render(
         props: Props,
@@ -112,7 +111,7 @@ class TrackerDetailWorkflow(
         )
     }
 
-    override fun snapshotState(state: State): Snapshot = state.toSnapshot(moshi)
+    override fun snapshotState(state: State): Snapshot = state.toSnapshot()
 
     private fun runSideEffects(state: State, context: RenderContext<State, Output>) {
         when (val action = state.currentAction) {

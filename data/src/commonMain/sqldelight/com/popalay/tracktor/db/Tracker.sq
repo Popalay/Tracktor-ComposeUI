@@ -1,0 +1,35 @@
+import kotlinx.datetime.LocalDateTime;
+import com.popalay.tracktor.data.model.UnitValueType;
+import com.popalay.tracktor.data.model.ProgressDirection;
+
+CREATE TABLE Tracker (
+    id TEXT PRIMARY KEY NOT NULL,
+    title TEXT NOT NULL,
+    direction TEXT as ProgressDirection NOT NULL,
+    date TEXT as LocalDateTime NOT NULL,
+    unitName TEXT NOT NULL,
+    unitSymbol TEXT NOT NULL,
+    unitValueType TEXT as UnitValueType NOT NULL,
+    isDeleted INTEGER AS Boolean NOT NULL DEFAULT 0
+);
+
+insert:
+INSERT OR REPLACE INTO Tracker(id, title, direction, date, unitName, unitSymbol, unitValueType) VALUES ?;
+
+deleteById:
+DELETE FROM Tracker WHERE id = ?;
+
+getAll:
+SELECT * FROM Tracker WHERE isDeleted = 0 ORDER BY date DESC;
+
+getById:
+SELECT * FROM Tracker WHERE id = ?;
+
+softDeleteById:
+UPDATE Tracker SET isDeleted = 1 WHERE id = ?;
+
+restoreById:
+UPDATE Tracker SET isDeleted = 0 WHERE id = ?;
+
+getAllWithTrackers:
+SELECT * FROM Tracker LEFT JOIN ValueRecord ON trackerId = Tracker.id;

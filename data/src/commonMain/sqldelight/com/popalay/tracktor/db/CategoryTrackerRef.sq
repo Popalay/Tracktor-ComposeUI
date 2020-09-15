@@ -1,0 +1,18 @@
+CREATE TABLE CategoryTrackerRef(
+    trackerId TEXT NOT NULL,
+    categoryId TEXT NOT NULL,
+    FOREIGN KEY(trackerId) REFERENCES Tracker(id) ON DELETE CASCADE,
+    FOREIGN KEY(categoryId) REFERENCES Category(categoryId) ON DELETE CASCADE
+);
+
+CREATE INDEX TrackerIndex ON CategoryTrackerRef(trackerId);
+CREATE INDEX CategoryIndex ON CategoryTrackerRef(categoryId);
+
+insert:
+INSERT OR ABORT INTO CategoryTrackerRef(trackerId, categoryId) VALUES ?;
+
+deleteAllByTracker:
+DELETE FROM CategoryTrackerRef WHERE trackerId = ?;
+
+getAllByTrackerId:
+SELECT * FROM CategoryTrackerRef WHERE trackerId = ?;

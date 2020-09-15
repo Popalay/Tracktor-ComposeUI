@@ -1,13 +1,11 @@
 package com.popalay.tracktor.utils
 
-import com.squareup.moshi.Moshi
 import com.squareup.workflow.Snapshot
-import okio.ByteString.Companion.toByteString
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalStdlibApi::class)
-inline fun <reified T> T.toSnapshot(moshi: Moshi): Snapshot = Snapshot.of {
-    moshi.adapter(T::class.java).toJson(this).encodeToByteArray().toByteString()
-}
+inline fun <reified T : Any> T.toSnapshot(): Snapshot = Snapshot.EMPTY //TODO: revert when move to domain Snapshot.of(Json.encodeToString(this))
 
 @OptIn(ExperimentalStdlibApi::class)
-inline fun <reified T> Snapshot.toData(moshi: Moshi): T? = moshi.adapter(T::class.java).fromJson(bytes.toByteArray().decodeToString())
+inline fun <reified T> Snapshot.toData(): T? = Json.decodeFromString(bytes.utf8())

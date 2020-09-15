@@ -1,6 +1,5 @@
 package com.popalay.tracktor.feature.featureflagslist
 
-import com.popalay.tracktor.data.featureflags.FeatureFlagsManager
 import com.popalay.tracktor.data.model.FeatureFlagListItem
 import com.popalay.tracktor.utils.updateItem
 import com.squareup.workflow.RenderContext
@@ -8,9 +7,8 @@ import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow
 import com.squareup.workflow.WorkflowAction
 
-class FeatureFlagsListWorkflow(
-    private val featureFlagsManager: FeatureFlagsManager
-) : StatefulWorkflow<Unit, FeatureFlagsListWorkflow.State, FeatureFlagsListWorkflow.Output, FeatureFlagsListWorkflow.Rendering>() {
+class FeatureFlagsListWorkflow :
+    StatefulWorkflow<Unit, FeatureFlagsListWorkflow.State, FeatureFlagsListWorkflow.Output, FeatureFlagsListWorkflow.Rendering>() {
 
     data class State(
         val featureFlags: List<FeatureFlagListItem> = emptyList()

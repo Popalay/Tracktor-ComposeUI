@@ -7,6 +7,8 @@ include(":data")
 include(":core")
 include(":domain")
 
+enableFeaturePreview("GRADLE_METADATA")
+
 if (System.getenv("CI") != "true") {
     includeBuild("../workflow-kotlin-compose") {
         dependencySubstitution {
@@ -27,6 +29,7 @@ pluginManagement {
     repositories {
         maven(url = "https://dl.bintray.com/kotlin/kotlin-eap/")
         gradlePluginPortal()
+        mavenCentral()
         jcenter()
         google()
     }

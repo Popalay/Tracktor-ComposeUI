@@ -14,8 +14,6 @@ import com.popalay.tracktor.feature.settings.SettingsWorkflow
 import com.popalay.tracktor.feature.trackerdetail.TrackerDetailWorkflow
 import com.popalay.tracktor.utils.toData
 import com.popalay.tracktor.utils.toSnapshot
-import com.squareup.moshi.JsonClass
-import com.squareup.moshi.Moshi
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow
@@ -23,8 +21,8 @@ import com.squareup.workflow.Worker
 import com.squareup.workflow.WorkflowAction
 import com.squareup.workflow.applyTo
 import com.squareup.workflow.renderChild
-import dev.zacsweers.moshisealed.annotations.DefaultNull
-import dev.zacsweers.moshisealed.annotations.TypeLabel
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.koin.core.KoinComponent
 
 class ListWorkflow(
@@ -32,8 +30,7 @@ class ListWorkflow(
     private val getAllTrackersWorker: GetAllTrackersWorker,
     private val trackerDetailWorkflow: TrackerDetailWorkflow,
     private val createTrackerWorkflow: CreateTrackerWorkflow,
-    private val settingsWorkflow: SettingsWorkflow,
-    private val moshi: Moshi
+    private val settingsWorkflow: SettingsWorkflow
 ) : StatefulWorkflow<ListWorkflow.Props, ListWorkflow.State, ListWorkflow.Output, Any>(), KoinComponent {
     companion object {
         private const val DELETING_UNDO_TIMEOUT_MILLIS = 4000L
@@ -41,7 +38,7 @@ class ListWorkflow(
 
     object Props
 
-    @JsonClass(generateAdapter = true)
+    @Serializable
     data class State(
         @Transient val items: List<TrackerListItem> = emptyList(),
         @Transient val filteredItems: List<TrackerListItem> = emptyList(),
@@ -56,20 +53,16 @@ class ListWorkflow(
         val animate: Boolean = true
     )
 
-    @DefaultNull
-    @JsonClass(generateAdapter = true, generator = "sealed:type")
+    @Serializable
     sealed class ChildState {
-        @TypeLabel("TrackerDetail")
-        @JsonClass(generateAdapter = true)
+        @Serializable
         data class TrackerDetail(val trackerId: String) : ChildState()
 
-        @TypeLabel("Settings")
-        @JsonClass(generateAdapter = true)
+        @Serializable
         @Suppress("CanSealedSubClassBeObject")
         class Settings : ChildState()
 
-        @TypeLabel("TrackerCreation")
-        @JsonClass(generateAdapter = true)
+        @Serializable
         @Suppress("CanSealedSubClassBeObject")
         class TrackerCreation : ChildState()
     }
@@ -163,7 +156,7 @@ class ListWorkflow(
             .let { if (it.isEmpty()) it else listOf(Category.All).plus(it) }
     }
 
-    override fun initialState(props: Props, snapshot: Snapshot?): State = snapshot?.toData(moshi) ?: State()
+    override fun initialState(props: Props, snapshot: Snapshot?): State = snapshot?.toData() ?: State()
 
     override fun render(
         props: Props,
@@ -194,7 +187,7 @@ class ListWorkflow(
         }
     }
 
-    override fun snapshotState(state: State): Snapshot = state.toSnapshot(moshi)
+    override fun snapshotState(state: State): Snapshot = state.toSnapshot()
 
     private fun runSideEffects(state: State, context: RenderContext<State, Output>) {
         when (val action = state.currentAction) {

@@ -1,12 +1,6 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("kapt")
-}
-
-kapt {
-    correctErrorTypes = true
-    useBuildCache = true
 }
 
 val isCI = System.getenv("CI") == "true"
@@ -86,7 +80,8 @@ dependencies {
     implementation(Libs.kotlinStd)
     implementation(Libs.materialDesign)
     implementation(Libs.androidXCore)
-
+    implementation(Libs.Kotlinx.datetime)
+    implementation(Libs.Kotlinx.serialization)
     implementation(Libs.Compose.animation)
     implementation(Libs.Compose.foundation)
     implementation(Libs.Compose.foundationLayout)
@@ -114,10 +109,4 @@ dependencies {
 
     implementation(Libs.Koin.core)
     implementation(Libs.Koin.android)
-
-    implementation(Libs.Moshi.core)
-    implementation(Libs.Moshi.adapters)
-    implementation(Libs.Moshi.sealedAnnotations)
-    kapt(Libs.Moshi.codegen)
-    kapt(Libs.Moshi.sealedCodgen)
 }

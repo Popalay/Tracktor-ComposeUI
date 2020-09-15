@@ -2,6 +2,7 @@ package com.popalay.tracktor.feature.createtracker
 
 import androidx.compose.ui.text.input.KeyboardType
 import com.popalay.tracktor.data.TrackingRepository
+import com.popalay.tracktor.data.extensions.now
 import com.popalay.tracktor.data.model.ProgressDirection
 import com.popalay.tracktor.data.model.ProgressDirection.ASCENDING
 import com.popalay.tracktor.data.model.TrackableUnit
@@ -11,24 +12,23 @@ import com.popalay.tracktor.domain.worker.GetAllUnitsWorker
 import com.popalay.tracktor.domain.worker.SaveTrackerWorker
 import com.popalay.tracktor.utils.toData
 import com.popalay.tracktor.utils.toSnapshot
-import com.squareup.moshi.JsonClass
-import com.squareup.moshi.Moshi
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow
 import com.squareup.workflow.WorkflowAction
 import com.squareup.workflow.applyTo
-import java.time.LocalDateTime
+import kotlinx.datetime.LocalDateTime
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import java.util.Locale
 import java.util.UUID
 
 class CreateTrackerWorkflow(
     private val trackingRepository: TrackingRepository,
-    private val getAllUnitsWorker: GetAllUnitsWorker,
-    private val moshi: Moshi
+    private val getAllUnitsWorker: GetAllUnitsWorker
 ) : StatefulWorkflow<Unit, CreateTrackerWorkflow.State, CreateTrackerWorkflow.Output, CreateTrackerWorkflow.Rendering>() {
 
-    @JsonClass(generateAdapter = true)
+    @Serializable
     data class State(
         val title: String = "",
         val selectedUnit: TrackableUnit = TrackableUnit.None,
@@ -155,7 +155,7 @@ class CreateTrackerWorkflow(
         val onAction: (Action) -> Unit
     )
 
-    override fun initialState(props: Unit, snapshot: Snapshot?): State = snapshot?.toData(moshi) ?: State()
+    override fun initialState(props: Unit, snapshot: Snapshot?): State = snapshot?.toData() ?: State()
 
     override fun render(
         props: Unit,
@@ -171,7 +171,7 @@ class CreateTrackerWorkflow(
         )
     }
 
-    override fun snapshotState(state: State): Snapshot = state.toSnapshot(moshi)
+    override fun snapshotState(state: State): Snapshot = state.toSnapshot()
 
     private fun runSideEffects(state: State, context: RenderContext<State, Output>) {
         if (state.currentAction is Action.SaveClicked) {
