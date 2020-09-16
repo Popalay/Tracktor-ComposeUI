@@ -10,7 +10,7 @@ kotlin {
     ios {
         binaries {
             framework {
-                baseName = "data-shared"
+                baseName = "data"
             }
         }
     }

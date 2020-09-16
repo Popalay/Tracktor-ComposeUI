@@ -1,9 +1,9 @@
 -keepattributes *Annotation*, InnerClasses
 -dontnote kotlinx.serialization.SerializationKt
--keep,includedescriptorclasses class com.popalay.datashared.**$$serializer { *; }
--keepclassmembers class com.popalay.datashared.** {
+-keep,includedescriptorclasses class com.popalay.data.**$$serializer { *; }
+-keepclassmembers class com.popalay.data.** {
     *** Companion;
 }
--keepclasseswithmembers class com.popalay.datashared.** {
+-keepclasseswithmembers class com.popalay.data.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
