@@ -1,6 +1,5 @@
-package com.popalay.tracktor
+package com.popalay.tracktor.domain.workflow
 
-import com.popalay.tracktor.feature.list.ListWorkflow
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow

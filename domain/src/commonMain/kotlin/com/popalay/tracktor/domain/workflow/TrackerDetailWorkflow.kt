@@ -1,4 +1,4 @@
-package com.popalay.tracktor.feature.trackerdetail
+package com.popalay.tracktor.domain.workflow
 
 import com.popalay.tracktor.data.CategoryRepository
 import com.popalay.tracktor.data.TrackingRepository
@@ -6,10 +6,10 @@ import com.popalay.tracktor.data.model.Category
 import com.popalay.tracktor.data.model.TrackableUnit
 import com.popalay.tracktor.data.model.TrackerWithRecords
 import com.popalay.tracktor.data.model.ValueRecord
+import com.popalay.tracktor.domain.utils.toData
+import com.popalay.tracktor.domain.utils.toSnapshot
 import com.popalay.tracktor.domain.worker.GetAllCategoriesWorker
 import com.popalay.tracktor.domain.worker.GetTrackerByIdWorker
-import com.popalay.tracktor.utils.toData
-import com.popalay.tracktor.utils.toSnapshot
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow

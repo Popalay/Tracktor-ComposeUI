@@ -20,26 +20,28 @@ import androidx.ui.tooling.preview.Preview
 import androidx.ui.tooling.preview.PreviewParameter
 import androidx.ui.tooling.preview.PreviewParameterProvider
 import com.popalay.tracktor.core.R
-import com.popalay.tracktor.feature.featureflagslist.FeatureFlagsListWorkflow.Action
+import com.popalay.tracktor.domain.workflow.FeatureFlagsListWorkflow.Action
+import com.popalay.tracktor.domain.workflow.FeatureFlagsListWorkflow.Rendering
+import com.popalay.tracktor.domain.workflow.FeatureFlagsListWorkflow.State
 import com.popalay.tracktor.ui.widget.TopAppBar
 import com.popalay.tracktor.utils.Faker
 import com.popalay.tracktor.utils.onBackPressed
 import com.squareup.workflow.ui.compose.composedViewFactory
 
-val FeatureFlagsListBinding = composedViewFactory<FeatureFlagsListWorkflow.Rendering> { rendering, _ ->
+val FeatureFlagsListBinding = composedViewFactory<Rendering> { rendering, _ ->
     onBackPressed { rendering.onAction(Action.BackClicked) }
     FeatureFlagsListScreen(rendering.state, rendering.onAction)
 }
 
-class FeatureFlagsListPreviewProvider : PreviewParameterProvider<FeatureFlagsListWorkflow.State> {
-    override val values: Sequence<FeatureFlagsListWorkflow.State>
-        get() = sequenceOf(FeatureFlagsListWorkflow.State(List(5) { Faker.fakeFeatureFlag() }))
+class FeatureFlagsListPreviewProvider : PreviewParameterProvider<State> {
+    override val values: Sequence<State>
+        get() = sequenceOf(State(List(5) { Faker.fakeFeatureFlag() }))
 }
 
 @Preview
 @Composable
 fun FeatureFlagsListScreen(
-    @PreviewParameter(FeatureFlagsListPreviewProvider::class) state: FeatureFlagsListWorkflow.State,
+    @PreviewParameter(FeatureFlagsListPreviewProvider::class) state: State,
     onAction: (Action) -> Unit = {}
 ) {
     Scaffold(

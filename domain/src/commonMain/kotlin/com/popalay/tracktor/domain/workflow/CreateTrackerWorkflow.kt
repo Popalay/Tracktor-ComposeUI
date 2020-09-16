@@ -1,6 +1,5 @@
-package com.popalay.tracktor.feature.createtracker
+package com.popalay.tracktor.domain.workflow
 
-import androidx.compose.ui.text.input.KeyboardType
 import com.popalay.tracktor.data.TrackingRepository
 import com.popalay.tracktor.data.extensions.now
 import com.popalay.tracktor.data.model.ProgressDirection
@@ -8,10 +7,10 @@ import com.popalay.tracktor.data.model.ProgressDirection.ASCENDING
 import com.popalay.tracktor.data.model.TrackableUnit
 import com.popalay.tracktor.data.model.Tracker
 import com.popalay.tracktor.data.model.UnitValueType
+import com.popalay.tracktor.domain.utils.toData
+import com.popalay.tracktor.domain.utils.toSnapshot
 import com.popalay.tracktor.domain.worker.GetAllUnitsWorker
 import com.popalay.tracktor.domain.worker.SaveTrackerWorker
-import com.popalay.tracktor.utils.toData
-import com.popalay.tracktor.utils.toSnapshot
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow
@@ -41,7 +40,7 @@ class CreateTrackerWorkflow(
         val isCustomUnitValueTypeDropdownShown: Boolean = false,
         val isCustomUnitValid: Boolean = false,
         @Transient val units: List<TrackableUnit> = emptyList(),
-        @Transient val initialValueKeyboardType: KeyboardType = KeyboardType.Number,
+        @Transient val initialValueKeyboardType: String = "Number",
         @Transient val currentAction: Action? = null
     ) {
         val isValidToSave: Boolean
@@ -100,7 +99,7 @@ class CreateTrackerWorkflow(
                 is UnitSelected -> nextState.copy(
                     selectedUnit = action.unit,
                     selectedProgressDirection = if (action.unit == TrackableUnit.Word) ASCENDING else nextState.selectedProgressDirection,
-                    initialValueKeyboardType = if (action.unit == TrackableUnit.Word) KeyboardType.Text else KeyboardType.Number,
+                    initialValueKeyboardType = if (action.unit == TrackableUnit.Word) "Text" else "Number",
                     isInitialValueVisible = nextState.title.isNotBlank() && action.unit != TrackableUnit.None,
                     isCustomUnitCreating = false,
                     customUnit = TrackableUnit.None

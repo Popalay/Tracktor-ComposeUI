@@ -1,4 +1,4 @@
-package com.popalay.tracktor.feature.list
+package com.popalay.tracktor.domain.workflow
 
 import com.popalay.tracktor.data.TrackingRepository
 import com.popalay.tracktor.data.model.Category
@@ -8,12 +8,9 @@ import com.popalay.tracktor.data.model.Tracker
 import com.popalay.tracktor.data.model.TrackerListItem
 import com.popalay.tracktor.data.model.TrackerWithRecords
 import com.popalay.tracktor.data.model.toListItem
+import com.popalay.tracktor.domain.utils.toData
+import com.popalay.tracktor.domain.utils.toSnapshot
 import com.popalay.tracktor.domain.worker.GetAllTrackersWorker
-import com.popalay.tracktor.feature.createtracker.CreateTrackerWorkflow
-import com.popalay.tracktor.feature.settings.SettingsWorkflow
-import com.popalay.tracktor.feature.trackerdetail.TrackerDetailWorkflow
-import com.popalay.tracktor.utils.toData
-import com.popalay.tracktor.utils.toSnapshot
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow

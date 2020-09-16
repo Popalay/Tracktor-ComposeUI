@@ -19,8 +19,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.popalay.tracktor.core.R
 import com.popalay.tracktor.domain.formatter.ValueRecordFormatter
-import com.popalay.tracktor.feature.trackerdetail.TrackerDetailWorkflow.Action
-import com.popalay.tracktor.feature.trackerdetail.TrackerDetailWorkflow.State
+import com.popalay.tracktor.domain.workflow.TrackerDetailWorkflow.Action
+import com.popalay.tracktor.domain.workflow.TrackerDetailWorkflow.State
 import com.popalay.tracktor.ui.dialog.AddNewRecordDialog
 import com.popalay.tracktor.ui.widget.AnimatedSnackbar
 import com.popalay.tracktor.ui.widget.TrackerCategoryList
@@ -76,7 +76,7 @@ fun TrackerDetailContentView(
             }
             ChartCard(requireNotNull(state.trackerWithRecords), modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
             TrackerCategoryList(
-                categories = state.trackerWithRecords.categories,
+                categories = state.trackerWithRecords?.categories ?: emptyList(),
                 availableCategories = state.allCategories,
                 isAddCategoryDialogShowing = state.isAddCategoryDialogShowing,
                 animate = state.animate,

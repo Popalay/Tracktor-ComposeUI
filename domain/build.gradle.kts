@@ -19,6 +19,8 @@ kotlin {
                 implementation(project(":data"))
 
                 implementation(Libs.Workflow.core)
+                implementation(Libs.Kotlinx.serialization)
+                implementation(Libs.Kotlinx.datetime)
                 implementation(Libs.Koin.core)
             }
         }
