@@ -1,11 +1,11 @@
 import java.net.URI
 
-rootProject.name = "Tracktor"
-
 include(":app")
 include(":data")
 include(":core")
 include(":domain")
+
+rootProject.name = "Tracktor"
 
 enableFeaturePreview("GRADLE_METADATA")
 
