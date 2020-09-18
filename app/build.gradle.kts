@@ -88,23 +88,15 @@ dependencies {
     implementation(Libs.Compose.material)
     implementation(Libs.Compose.runtime)
     implementation(Libs.Compose.ui)
-
-    if (!isCI) {
-        implementation(Libs.Workflow.compose)
-        implementation(Libs.Workflow.composeTooling)
-    } else {
-        implementation("com.squareup.workflow:core-compose") {
-            version {
-                branch = "main"
-            }
-        }
-        implementation("com.squareup.workflow:compose-tooling") {
-            version {
-                branch = "main"
-            }
-        }
-    }
-
     implementation(Libs.Koin.core)
     implementation(Libs.Koin.android)
+    implementation(Libs.Workflow.runtime) {
+        version { branch = "popalay/multiplatform" }
+    }
+    implementation(Libs.Workflow.compose) {
+        version { branch = "popalay/multiplatform" }
+    }
+    implementation(Libs.Workflow.composeTooling) {
+        version { branch = "popalay/multiplatform" }
+    }
 }

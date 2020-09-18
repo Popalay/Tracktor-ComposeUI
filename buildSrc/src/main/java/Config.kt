@@ -35,8 +35,9 @@ object Libs {
 
     object Workflow {
         const val core = "com.squareup.workflow:workflow-core"
-        const val compose = "com.squareup.workflow:workflow-ui-core-compose:${Version.workflowCompose}"
-        const val composeTooling = "com.squareup.workflow:workflow-ui-compose-tooling:${Version.workflowCompose}"
+        const val runtime = "com.squareup.workflow:workflow-runtime"
+        const val compose = "com.squareup.workflow:core-compose"
+        const val composeTooling = "com.squareup.workflow:compose-tooling"
     }
 
     object Koin {

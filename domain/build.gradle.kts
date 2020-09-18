@@ -31,9 +31,7 @@ kotlin {
                 implementation(Libs.uuid)
                 implementation(Libs.Kotlinx.serialization)
                 api(Libs.Workflow.core) {
-                    version {
-                        branch = "popalay/multiplatform"
-                    }
+                    version { branch = "popalay/multiplatform" }
                 }
                 api(Libs.Kotlinx.datetime)
                 api(Libs.Koin.core)
