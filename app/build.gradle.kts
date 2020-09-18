@@ -93,11 +93,11 @@ dependencies {
         implementation(Libs.Workflow.compose)
         implementation(Libs.Workflow.composeTooling)
     } else {
-/*        implementation("com.squareup.workflow:core-compose") {
+        implementation("com.squareup.workflow:core-compose") {
             version {
                 branch = "main"
             }
-        }*/
+        }
         implementation("com.squareup.workflow:compose-tooling") {
             version {
                 branch = "main"

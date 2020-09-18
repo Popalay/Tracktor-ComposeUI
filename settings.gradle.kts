@@ -20,6 +20,7 @@ if (System.getenv("CI") != "true") {
         dependencySubstitution {
             substitute(module("com.squareup.workflow:workflow-core")).with(project(":workflow-core"))
             substitute(module("om.squareup.workflow:workflow-runtime")).with(project(":workflow-runtime"))
+            substitute(module("om.squareup.workflow:workflow-ui-core-android")).with(project(":workflow-ui:core-android"))
         }
     }
 } else {
@@ -32,6 +33,7 @@ if (System.getenv("CI") != "true") {
         gitRepository(URI("https://github.com/Popalay/workflow.git")) {
             producesModule("com.squareup.workflow:workflow-core")
             producesModule("com.squareup.workflow:workflow-runtime")
+            producesModule("com.squareup.workflow:workflow-ui-core-android")
         }
     }
 }
