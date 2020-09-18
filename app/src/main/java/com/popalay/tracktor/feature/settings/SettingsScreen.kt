@@ -21,12 +21,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import com.popalay.tracktor.core.R
-import com.popalay.tracktor.feature.settings.SettingsWorkflow.Action
+import com.popalay.tracktor.domain.workflow.SettingsWorkflow.Action
+import com.popalay.tracktor.domain.workflow.SettingsWorkflow.Rendering
 import com.popalay.tracktor.ui.widget.TopAppBar
 import com.popalay.tracktor.utils.onBackPressed
 import com.squareup.workflow.ui.compose.composedViewFactory
 
-val SettingsBinding = composedViewFactory<SettingsWorkflow.Rendering> { rendering, _ ->
+val SettingsBinding = composedViewFactory<Rendering> { rendering, _ ->
     onBackPressed { rendering.onAction(Action.BackClicked) }
     SettingsScreen(rendering.onAction)
 }

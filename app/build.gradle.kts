@@ -1,12 +1,6 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("kapt")
-}
-
-kapt {
-    correctErrorTypes = true
-    useBuildCache = true
 }
 
 val isCI = System.getenv("CI") == "true"
@@ -86,38 +80,23 @@ dependencies {
     implementation(Libs.kotlinStd)
     implementation(Libs.materialDesign)
     implementation(Libs.androidXCore)
-
+    implementation(Libs.Kotlinx.datetime)
+    implementation(Libs.Kotlinx.serialization)
     implementation(Libs.Compose.animation)
     implementation(Libs.Compose.foundation)
     implementation(Libs.Compose.foundationLayout)
     implementation(Libs.Compose.material)
     implementation(Libs.Compose.runtime)
     implementation(Libs.Compose.ui)
-
-    implementation(Libs.Workflow.core)
-    implementation(Libs.Workflow.runtime)
-    if (!isCI) {
-        implementation(Libs.Workflow.compose)
-        implementation(Libs.Workflow.composeTooling)
-    } else {
-        implementation("com.squareup.workflow:core-compose") {
-            version {
-                branch = "main"
-            }
-        }
-        implementation("com.squareup.workflow:compose-tooling") {
-            version {
-                branch = "main"
-            }
-        }
-    }
-
     implementation(Libs.Koin.core)
     implementation(Libs.Koin.android)
-
-    implementation(Libs.Moshi.core)
-    implementation(Libs.Moshi.adapters)
-    implementation(Libs.Moshi.sealedAnnotations)
-    kapt(Libs.Moshi.codegen)
-    kapt(Libs.Moshi.sealedCodgen)
+    implementation(Libs.Workflow.runtime) {
+        version { branch = "popalay/multiplatform" }
+    }
+    implementation(Libs.Workflow.compose) {
+        version { branch = "popalay/multiplatform" }
+    }
+    implementation(Libs.Workflow.composeTooling) {
+        version { branch = "popalay/multiplatform" }
+    }
 }

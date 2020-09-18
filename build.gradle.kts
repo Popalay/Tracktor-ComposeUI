@@ -11,7 +11,10 @@ plugins {
 allprojects {
     repositories {
         maven(url = "https://dl.bintray.com/kotlin/kotlin-eap/")
+        maven(url = "https://kotlin.bintray.com/kotlinx/")
         maven(url = "https://jitpack.io")
+        maven(url = "https://dl.bintray.com/ekito/koin")
+        mavenCentral()
         jcenter()
         google()
     }
@@ -36,8 +39,8 @@ subprojects {
     configurations.all {
         resolutionStrategy {
             force(
-                "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7",
-                "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.7"
+                "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9",
+                "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9"
             )
         }
     }

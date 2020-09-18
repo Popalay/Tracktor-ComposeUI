@@ -1,40 +1,67 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+
 plugins {
     id("com.android.library")
-    kotlin("android")
-    kotlin("kapt")
+    id("com.squareup.sqldelight") version Version.sqlDelight
+    id("org.jetbrains.kotlin.native.cocoapods")
+    kotlin("multiplatform")
+    kotlin("plugin.serialization") version Version.kotlin
 }
 
-kapt {
-    correctErrorTypes = true
-    useBuildCache = true
-}
+version = AndroidConfig.versionName
 
-android {
-    defaultConfig {
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments.putAll(
-                    setOf(
-                        "room.schemaLocation" to "$projectDir/schemas",
-                        "room.incremental" to "true"
-                    )
-                )
+kotlin {
+    android()
+
+    val iOSTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget =
+        if (System.getenv("SDK_NAME")?.startsWith("iphoneos") == true) ::iosArm64 else ::iosX64
+
+    iOSTarget("ios"){}
+
+    cocoapods {
+        summary = "Shared Data code for Android/iOS"
+        homepage = "Link to a Kotlin/Native module homepage"
+    }
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(Libs.Kotlinx.datetime)
+                implementation(Libs.Kotlinx.serialization)
+                implementation(Libs.Kotlinx.coroutinesCore)
+                implementation(Libs.uuid)
+                implementation(Libs.Koin.core)
+                implementation(Libs.SqlDelight.runtime)
+                implementation(Libs.SqlDelight.coroutinesExtensions)
             }
         }
+        val androidMain by getting {
+            dependencies {
+                implementation(Libs.Kotlinx.coroutinesAndroid)
+                implementation(Libs.SqlDelight.android)
+            }
+        }
+        val iosMain by getting {
+            dependencies {
+                implementation(Libs.SqlDelight.native)
+            }
+        }
+        val commonTest by getting
+        val androidTest by getting
+        val iosTest by getting
     }
 }
 
-dependencies {
-    implementation(Libs.kotlinStd)
-    implementation(Libs.preferenceKtx)
+sqldelight {
+    database("TracktorDatabase") {
+        packageName = "com.popalay.tracktor.db"
+        sourceFolders = listOf("sqldelight")
+    }
+}
 
-    implementation(Libs.Room.runtime)
-    implementation(Libs.Room.ktx)
-    kapt(Libs.Room.compiler)
-
-    implementation(Libs.Koin.core)
-    implementation(Libs.Koin.android)
-
-    implementation(Libs.Moshi.core)
-    kapt(Libs.Moshi.codegen)
+android {
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    defaultConfig {
+        consumerProguardFile("proguard-rules.pro")
+    }
 }

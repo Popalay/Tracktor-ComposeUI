@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ViewAmbient
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
@@ -41,7 +42,9 @@ import androidx.ui.tooling.preview.PreviewParameterProvider
 import com.popalay.tracktor.core.R
 import com.popalay.tracktor.data.model.ProgressDirection
 import com.popalay.tracktor.data.model.UnitValueType
-import com.popalay.tracktor.feature.createtracker.CreateTrackerWorkflow.Action
+import com.popalay.tracktor.domain.workflow.CreateTrackerWorkflow.Action
+import com.popalay.tracktor.domain.workflow.CreateTrackerWorkflow.Rendering
+import com.popalay.tracktor.domain.workflow.CreateTrackerWorkflow.State
 import com.popalay.tracktor.success
 import com.popalay.tracktor.ui.widget.Chip
 import com.popalay.tracktor.ui.widget.ChipGroup
@@ -50,21 +53,21 @@ import com.popalay.tracktor.utils.imePadding
 import com.popalay.tracktor.utils.onBackPressed
 import com.squareup.workflow.ui.compose.composedViewFactory
 
-val CreateTrackerBinding = composedViewFactory<CreateTrackerWorkflow.Rendering> { rendering, _ ->
+val CreateTrackerBinding = composedViewFactory<Rendering> { rendering, _ ->
     onBackPressed { rendering.onAction(Action.BackClicked) }
     CreateTrackerScreen(rendering.state, rendering.onAction)
 }
 
-class CreateTrackerStatePreviewProvider : PreviewParameterProvider<CreateTrackerWorkflow.State> {
-    override val values: Sequence<CreateTrackerWorkflow.State>
-        get() = sequenceOf(CreateTrackerWorkflow.State())
+class CreateTrackerStatePreviewProvider : PreviewParameterProvider<State> {
+    override val values: Sequence<State>
+        get() = sequenceOf(State())
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 @Preview
 @Composable
 fun CreateTrackerScreen(
-    @PreviewParameter(CreateTrackerStatePreviewProvider::class) state: CreateTrackerWorkflow.State,
+    @PreviewParameter(CreateTrackerStatePreviewProvider::class) state: State,
     onAction: (Action) -> Unit = {}
 ) {
     Scaffold(topBar = { CreateTrackerAppBar(onAction, state) }) {
@@ -94,7 +97,7 @@ fun CreateTrackerScreen(
 
 @Composable
 private fun CustomUnitCreator(
-    state: CreateTrackerWorkflow.State,
+    state: State,
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -126,7 +129,7 @@ private fun CustomUnitCreator(
 @Composable
 private fun RowScope.CustomUnitValueTypeDropDown(
     onAction: (Action) -> Unit,
-    state: CreateTrackerWorkflow.State,
+    state: State,
     modifier: Modifier = Modifier
 ) {
     DropdownMenu(
@@ -158,7 +161,7 @@ private fun RowScope.CustomUnitValueTypeDropDown(
 @Composable
 private fun CreateTrackerAppBar(
     onAction: (Action) -> Unit,
-    state: CreateTrackerWorkflow.State,
+    state: State,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
@@ -184,7 +187,7 @@ private fun CreateTrackerAppBar(
 
 @Composable
 private fun TitleInput(
-    state: CreateTrackerWorkflow.State,
+    state: State,
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -200,7 +203,7 @@ private fun TitleInput(
 
 @Composable
 private fun UnitSelector(
-    state: CreateTrackerWorkflow.State,
+    state: State,
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -238,7 +241,7 @@ private fun UnitSelector(
 
 @Composable
 private fun DirectionSelector(
-    state: CreateTrackerWorkflow.State,
+    state: State,
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -263,7 +266,7 @@ private fun DirectionSelector(
 
 @Composable
 private fun ValueInput(
-    state: CreateTrackerWorkflow.State,
+    state: State,
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -271,7 +274,7 @@ private fun ValueInput(
         value = state.initialValue,
         label = { Text(stringResource(R.string.create_tracker_value_label)) },
         onValueChange = { onAction(Action.ValueChanged(it)) },
-        keyboardType = state.initialValueKeyboardType,
+        keyboardType = KeyboardType.valueOf(state.initialValueKeyboardType),
         activeColor = MaterialTheme.colors.onSurface,
         backgroundColor = MaterialTheme.colors.surface,
         modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp)

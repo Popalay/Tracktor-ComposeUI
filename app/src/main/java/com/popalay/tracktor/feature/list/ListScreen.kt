@@ -35,8 +35,8 @@ import com.popalay.tracktor.core.R
 import com.popalay.tracktor.data.model.Category
 import com.popalay.tracktor.data.model.Statistic
 import com.popalay.tracktor.data.model.toListItem
-import com.popalay.tracktor.feature.list.ListWorkflow.Action
-import com.popalay.tracktor.feature.list.ListWorkflow.Rendering
+import com.popalay.tracktor.domain.workflow.ListWorkflow.Action
+import com.popalay.tracktor.domain.workflow.ListWorkflow.Rendering
 import com.popalay.tracktor.ui.dialog.AddNewRecordDialog
 import com.popalay.tracktor.ui.widget.AllCategoryList
 import com.popalay.tracktor.ui.widget.AnimatedSnackbar
@@ -102,9 +102,9 @@ fun ListScreen(
             when {
                 rendering.itemInEditing != null -> {
                     AddNewRecordDialog(
-                        tracker = rendering.itemInEditing,
+                        tracker = rendering.itemInEditing!!,
                         onDismissRequest = { rendering.onAction(Action.TrackDialogDismissed) },
-                        onSave = { rendering.onAction(Action.NewRecordSubmitted(rendering.itemInEditing, it)) }
+                        onSave = { rendering.onAction(Action.NewRecordSubmitted(rendering.itemInEditing!!, it)) }
                     )
                 }
             }

@@ -1,0 +1,16 @@
+CREATE TABLE Category (
+    categoryId TEXT PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL
+);
+
+insert:
+INSERT OR IGNORE INTO Category(categoryId, name) VALUES ?;
+
+deleteById:
+DELETE FROM Category WHERE categoryId = ?;
+
+getAll:
+SELECT * FROM Category ORDER BY name DESC;
+
+getById:
+SELECT * FROM Category WHERE categoryId = ?;
