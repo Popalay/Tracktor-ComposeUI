@@ -45,11 +45,11 @@ jobs:
       - name: Copy CI gradle.properties
         run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
 
-      - uses: actions/cache@v1
-        continue-on-error: true # continue if the cache restore/upload fails
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
+#      - uses: actions/cache@v1
+#        continue-on-error: true # continue if the cache restore/upload fails
+#        with:
+#          path: ~/.gradle/caches
+#          key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
 
       - name: Detekt all
         uses: natiginfo/action-detekt-all@1.11.0
