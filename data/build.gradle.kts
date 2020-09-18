@@ -1,19 +1,28 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+
 plugins {
     id("com.android.library")
     id("com.squareup.sqldelight") version Version.sqlDelight
+    id("org.jetbrains.kotlin.native.cocoapods")
     kotlin("multiplatform")
     kotlin("plugin.serialization") version Version.kotlin
 }
 
+version = AndroidConfig.versionName
+
 kotlin {
     android()
-    ios {
-        binaries {
-            framework {
-                baseName = "data"
-            }
-        }
+
+    val iOSTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget =
+        if (System.getenv("SDK_NAME")?.startsWith("iphoneos") == true) ::iosArm64 else ::iosX64
+
+    iOSTarget("ios"){}
+
+    cocoapods {
+        summary = "Shared Data code for Android/iOS"
+        homepage = "Link to a Kotlin/Native module homepage"
     }
+
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -56,17 +65,3 @@ android {
         consumerProguardFile("proguard-rules.pro")
     }
 }
-
-val packForXcode by tasks.creating(Sync::class) {
-    group = "build"
-    val mode = System.getenv("CONFIGURATION") ?: "DEBUG"
-    val sdkName = System.getenv("SDK_NAME") ?: "iphonesimulator"
-    val targetName = "ios" + if (sdkName.startsWith("iphoneos")) "Arm64" else "X64"
-    val framework = kotlin.targets.getByName<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>(targetName).binaries.getFramework(mode)
-    inputs.property("mode", mode)
-    dependsOn(framework.linkTask)
-    val targetDir = File(buildDir, "xcode-frameworks")
-    from({ framework.outputDirectory })
-    into(targetDir)
-}
-tasks.getByName("build").dependsOn(packForXcode)

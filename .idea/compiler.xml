@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="1.8" />
+    <bytecodeTargetLevel target="1.8">
+      <module name="workflow.workflow-core.commonMain" target="1.8" />
+      <module name="workflow.workflow-core.commonTest" target="1.8" />
+      <module name="workflow.workflow-core.jvmMain" target="1.8" />
+      <module name="workflow.workflow-core.jvmTest" target="1.8" />
+      <module name="workflow.workflow-runtime.commonMain" target="1.8" />
+      <module name="workflow.workflow-runtime.commonTest" target="1.8" />
+      <module name="workflow.workflow-runtime.jvmJmh" target="1.8" />
+      <module name="workflow.workflow-runtime.jvmMain" target="1.8" />
+      <module name="workflow.workflow-runtime.jvmTest" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

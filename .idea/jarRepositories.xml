@@ -61,5 +61,10 @@
       <option name="name" value="maven4" />
       <option name="url" value="https://dl.bintray.com/ekito/koin" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven5" />
+      <option name="name" value="maven5" />
+      <option name="url" value="https://dl.bintray.com/suparnatural/kotlin-multiplatform" />
+    </remote-repository>
   </component>
 </project>

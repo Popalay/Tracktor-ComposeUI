@@ -16,11 +16,22 @@ if (System.getenv("CI") != "true") {
             substitute(module("om.squareup.workflow:workflow-ui-compose-tooling")).with(project(":compose-tooling"))
         }
     }
+    includeBuild("../workflow") {
+        dependencySubstitution {
+            substitute(module("com.squareup.workflow:workflow-core")).with(project(":workflow-core"))
+            substitute(module("om.squareup.workflow:workflow-runtime")).with(project(":workflow-runtime"))
+        }
+    }
 } else {
     sourceControl {
         gitRepository(URI("https://github.com/Popalay/workflow-kotlin-compose.git")) {
             producesModule("com.squareup.workflow:core-compose")
             producesModule("com.squareup.workflow:compose-tooling")
+        }
+
+        gitRepository(URI("https://github.com/Popalay/workflow.git")) {
+            producesModule("com.squareup.workflow:workflow-core")
+            producesModule("com.squareup.workflow:workflow-runtime")
         }
     }
 }

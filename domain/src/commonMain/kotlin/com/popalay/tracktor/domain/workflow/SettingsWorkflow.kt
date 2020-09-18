@@ -1,16 +1,19 @@
 package com.popalay.tracktor.domain.workflow
 
+import com.popalay.tracktor.domain.utils.toData
+import com.popalay.tracktor.domain.utils.toSnapshot
 import com.squareup.workflow.RenderContext
 import com.squareup.workflow.Snapshot
 import com.squareup.workflow.StatefulWorkflow
 import com.squareup.workflow.WorkflowAction
 import com.squareup.workflow.renderChild
-import java.nio.charset.Charset
+import kotlinx.serialization.Serializable
 
 class SettingsWorkflow(
     private val featureFlagsListWorkflow: FeatureFlagsListWorkflow
 ) : StatefulWorkflow<Unit, SettingsWorkflow.State, SettingsWorkflow.Output, Any>() {
 
+    @Serializable
     enum class State {
         Root, FeatureFlagsList
     }
@@ -39,8 +42,7 @@ class SettingsWorkflow(
         val onAction: (Action) -> Unit
     )
 
-    override fun initialState(props: Unit, snapshot: Snapshot?) =
-        snapshot?.let { State.valueOf(it.bytes.string(Charset.defaultCharset())) } ?: State.Root
+    override fun initialState(props: Unit, snapshot: Snapshot?) = snapshot?.toData() ?: State.Root
 
     override fun render(
         props: Unit,
@@ -53,5 +55,5 @@ class SettingsWorkflow(
         State.FeatureFlagsList -> context.renderChild(featureFlagsListWorkflow) { Action.FeatureFlagListOutput(it) }
     }
 
-    override fun snapshotState(state: State): Snapshot = Snapshot.of(state.name)
+    override fun snapshotState(state: State): Snapshot = state.toSnapshot()
 }

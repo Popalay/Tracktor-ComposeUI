@@ -1,5 +1,6 @@
 package com.popalay.tracktor.domain.workflow
 
+import com.benasher44.uuid.uuid4
 import com.popalay.tracktor.data.TrackingRepository
 import com.popalay.tracktor.data.extensions.now
 import com.popalay.tracktor.data.model.ProgressDirection
@@ -19,8 +20,6 @@ import com.squareup.workflow.applyTo
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import java.util.Locale
-import java.util.UUID
 
 class CreateTrackerWorkflow(
     private val trackingRepository: TrackingRepository,
@@ -175,8 +174,8 @@ class CreateTrackerWorkflow(
     private fun runSideEffects(state: State, context: RenderContext<State, Output>) {
         if (state.currentAction is Action.SaveClicked) {
             val tracker = Tracker(
-                id = UUID.randomUUID().toString(),
-                title = state.title.trim().capitalize(Locale.getDefault()),
+                id = uuid4().toString(),
+                title = state.title.trim().capitalize(),
                 unit = state.selectedUnit,
                 direction = state.selectedProgressDirection,
                 date = LocalDateTime.now(),

@@ -89,17 +89,15 @@ dependencies {
     implementation(Libs.Compose.runtime)
     implementation(Libs.Compose.ui)
 
-    implementation(Libs.Workflow.core)
-    implementation(Libs.Workflow.runtime)
     if (!isCI) {
         implementation(Libs.Workflow.compose)
         implementation(Libs.Workflow.composeTooling)
     } else {
-        implementation("com.squareup.workflow:core-compose") {
+/*        implementation("com.squareup.workflow:core-compose") {
             version {
                 branch = "main"
             }
-        }
+        }*/
         implementation("com.squareup.workflow:compose-tooling") {
             version {
                 branch = "main"

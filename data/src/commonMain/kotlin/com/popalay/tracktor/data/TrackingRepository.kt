@@ -25,6 +25,8 @@ class TrackingRepository(
     private val recordDao: ValueRecordQueries,
     private val categoryRepository: CategoryRepository
 ) {
+    fun getTextFromSharedModule() = "You have just gotten text from shared module"
+
     fun getAllTrackersWithRecords(): Flow<List<TrackerWithRecords>> = trackerDao.getAll().asFlow().mapToList()
         .flatMapLatest { trackers -> combine(trackers.map { fetchDataForTracker(it.map()) }) { it.toList() } }
 

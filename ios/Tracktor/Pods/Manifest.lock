@@ -1,0 +1,16 @@
+PODS:
+  - domain (1.8)
+
+DEPENDENCIES:
+  - domain (from `../../domain`)
+
+EXTERNAL SOURCES:
+  domain:
+    :path: "../../domain"
+
+SPEC CHECKSUMS:
+  domain: ea70bcae5180c3909f5f408b7f38c8ae275edbe6
+
+PODFILE CHECKSUM: 60ac40290c3224e4542b894e9af5ac5d63948d5f
+
+COCOAPODS: 1.9.3

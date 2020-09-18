@@ -29,6 +29,5 @@ dependencies {
     implementation(Libs.Compose.material)
     implementation(Libs.Compose.runtime)
     implementation(Libs.Compose.ui)
-    implementation(Libs.Workflow.core)
     implementation(Libs.Koin.core)
 }
