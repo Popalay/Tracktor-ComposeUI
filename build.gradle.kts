@@ -5,7 +5,7 @@ import com.android.build.gradle.LibraryPlugin
 
 plugins {
     id("com.android.application") version Version.androidGradlePlugin apply false
-    kotlin("android") version Version.kotlin apply false
+    kotlin("android") version 1.7.20 apply false
 }
 
 allprojects {
